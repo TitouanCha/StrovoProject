@@ -12,12 +12,7 @@ import androidx.navigation.NavController
 fun ProfileScreen(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Page Dashboard")
-        Button(onClick = { navController.navigate(Screen.Profile.route) }) {
-            Text("Aller au Profil")
-        }
+
     }
 }
