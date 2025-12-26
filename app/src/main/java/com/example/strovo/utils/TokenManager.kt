@@ -38,4 +38,8 @@ class TokenManager(context: Context) {
     fun clearTokens() {
         sharedPreferences.edit() { clear() }
     }
+
+    fun hasTokens(): Boolean {
+        return (getAccessToken() != null && getRefreshToken() != null) || (getAccessToken() == "" && getRefreshToken() == "")
+    }
 }

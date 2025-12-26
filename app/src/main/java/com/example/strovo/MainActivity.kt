@@ -79,7 +79,7 @@ fun BottomNavBar(navController: NavController) {
         NavigationBarItem(
             icon = {
                 Image(
-                    painter = painterResource(id = R.drawable.dashboard_icon),
+                    painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
                     contentDescription = "Dashboard",
                     modifier = Modifier.size(24.dp)
                 )
