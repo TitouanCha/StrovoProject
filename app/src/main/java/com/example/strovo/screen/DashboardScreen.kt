@@ -1,8 +1,11 @@
 package com.example.strovo.screen
 
+import android.provider.CalendarContract
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
@@ -19,20 +22,36 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.MainActivity
 import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
+import com.kizitonwose.calendar.compose.HeatMapCalendar
+import com.kizitonwose.calendar.compose.HorizontalCalendar
+import com.kizitonwose.calendar.compose.WeekCalendar
+import com.kizitonwose.calendar.compose.heatmapcalendar.rememberHeatMapCalendarState
+import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import java.time.DayOfWeek
 import java.time.Instant
+import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import java.util.Locale
 import kotlin.isInitialized
 import kotlin.math.log
+import kotlin.rem
+import kotlin.text.toLong
 
 @Composable
 fun RowScope.dataDisplay(title: String, data: String) {
@@ -51,6 +70,56 @@ fun RowScope.dataDisplay(title: String, data: String) {
         )
     }
 }
+
+@Composable
+fun HeatMapCalendarSample() {
+    val heatMapData = remember {
+        mapOf(
+            LocalDate.now().minusDays(1) to 1,
+            LocalDate.now().minusDays(2) to 3,
+            LocalDate.now().minusDays(3) to 5,
+            LocalDate.now() to 2
+        )
+    }
+
+    val today = remember { LocalDate.now() }
+    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
+
+    val startOfCurrentWeek = remember {
+        today.minusDays(((today.dayOfWeek.value - firstDayOfWeek.value + 7) % 7).toLong())
+    }
+
+    val state = rememberWeekCalendarState(
+        startDate = startOfCurrentWeek,
+        endDate = startOfCurrentWeek,
+        firstDayOfWeek = firstDayOfWeek
+    )
+    WeekCalendar(
+        state = state,
+        dayContent = { day ->
+            val value = heatMapData[day.date] ?: 0
+            Box(
+                modifier = Modifier
+                    .padding(6.dp)
+                    .size(40.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(4.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = day.date.dayOfMonth.toString(),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    )
+
+}
+
 
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
@@ -100,9 +169,45 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 )
             }
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column {
+                HeatMapCalendarSample()
+                HeatMapCalendarSample()
+                HeatMapCalendarSample()
+                HeatMapCalendarSample()
+            }
+        }
+
         when {
             isLoading.value -> CircularProgressIndicator()
-            errorMessage.value != null -> Text(text = "Error: ${errorMessage.value}")
+            errorMessage.value != null -> {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            text = "Erreur lors du chargement des activités",
+                            modifier = Modifier.padding(8.dp),
+                            fontSize = 20.sp
+                        )
+                        Text(
+                            text = "Verrifier votre connexion a Strava.",
+                            modifier = Modifier.padding(8.dp),
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
             activities.value != null -> {
                 activities.value?.firstOrNull()?.let { activity ->
                     Card(
@@ -160,6 +265,9 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 }
             }
         }
+
+
+
     }
 }
 

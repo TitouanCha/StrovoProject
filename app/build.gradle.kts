@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
-
 android {
     namespace = "com.example.strovo"
     compileSdk = 36
@@ -83,6 +82,12 @@ dependencies {
 
     //EncryptedSharedPreferences
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    //Calendar library for Android
+    implementation("com.kizitonwose.calendar:view:2.6.1")
+
+    // The compose calendar library for Android
+    implementation("com.kizitonwose.calendar:compose:2.6.1")
 
 }
 
