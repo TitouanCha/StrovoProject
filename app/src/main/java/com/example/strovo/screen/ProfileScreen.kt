@@ -106,7 +106,7 @@ fun ProfileScreen(navController: NavController, viewModel: StravaViewModel = vie
             Button(
                 onClick = {
                     viewModel.getAccessToken(textValue, context)
-                    navController.navigate(Screen.Dashboard)
+                    //navController.navigate(Screen.Dashboard)
                 },
                 modifier = Modifier
                     .weight(1f)

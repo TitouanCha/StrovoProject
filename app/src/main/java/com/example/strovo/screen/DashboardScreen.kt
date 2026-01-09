@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.strovo.R
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.MainActivity
+import com.example.strovo.data.GetStravaActivitiesModel
+import com.example.strovo.data.getStravaActivitiesModelItem
 import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
@@ -42,6 +45,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -72,60 +76,9 @@ fun RowScope.dataDisplay(title: String, data: String) {
 }
 
 @Composable
-fun HeatMapCalendarSample() {
-    val heatMapData = remember {
-        mapOf(
-            LocalDate.now().minusDays(1) to 1,
-            LocalDate.now().minusDays(2) to 3,
-            LocalDate.now().minusDays(3) to 5,
-            LocalDate.now() to 2
-        )
-    }
-
-    val today = remember { LocalDate.now() }
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
-
-    val startOfCurrentWeek = remember {
-        today.minusDays(((today.dayOfWeek.value - firstDayOfWeek.value + 7) % 7).toLong())
-    }
-
-    val state = rememberWeekCalendarState(
-        startDate = startOfCurrentWeek,
-        endDate = startOfCurrentWeek,
-        firstDayOfWeek = firstDayOfWeek
-    )
-    WeekCalendar(
-        state = state,
-        dayContent = { day ->
-            val value = heatMapData[day.date] ?: 0
-            Box(
-                modifier = Modifier
-                    .padding(6.dp)
-                    .size(40.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(4.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = day.date.dayOfMonth.toString(),
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    )
-
-}
-
-
-@Composable
 fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
     val context = LocalContext.current
     val isInitialized = viewModel.isInitialized.collectAsState()
-    val tokenManager = TokenManager(context)
     val dataFormatting = DataFormattingUtils()
 
     val activities = viewModel.activities.collectAsState()
@@ -136,11 +89,14 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
 
     LaunchedEffect(isInitialized.value) {
         if (isInitialized.value) {
+            val beforeDate = todayDate.epochSecond.toString()
             val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
             viewModel.getActivities(
                 context = context,
                 perPage = 30,
-                page = 1
+                page = 1,
+                before = beforeDate,
+                after = afterDate
             )
         }
     }
@@ -169,21 +125,6 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 )
             }
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column {
-                HeatMapCalendarSample()
-                HeatMapCalendarSample()
-                HeatMapCalendarSample()
-                HeatMapCalendarSample()
-            }
-        }
-
         when {
             isLoading.value -> CircularProgressIndicator()
             errorMessage.value != null -> {
@@ -209,7 +150,8 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 }
             }
             activities.value != null -> {
-                activities.value?.firstOrNull()?.let { activity ->
+                var filteredActivity = activities.value?.filter {  it.type == "Run" }
+                filteredActivity?.firstOrNull()?.let { activity ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -263,11 +205,111 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                         }
                     }
                 }
+                var activitiesData = activities.value ?: emptyList()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column {
+                        val days = listOf("L", "Ma", "Me", "J", "V", "S", "D")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            days.forEach { day ->
+                                Text(
+                                    text = day,
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                        CalendarDisplay(3, activitiesData)
+                        CalendarDisplay(2, activitiesData)
+                        CalendarDisplay(1, activitiesData)
+                        CalendarDisplay(0, activitiesData)
+                    }
+                }
             }
         }
-
-
-
     }
 }
 
+@Composable
+fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
+    val today = remember { LocalDate.now().minusDays(week * 7L) }
+    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
+    val startOfWeek = remember(today) {
+        today.minusDays(
+            ((today.dayOfWeek.value - firstDayOfWeek.value + 7) % 7).toLong()
+        )
+    }
+    val endOfWeek = remember(startOfWeek) {
+        startOfWeek.plusDays(6)
+    }
+
+    val weekActivities = data.filter { activity ->
+        val date = OffsetDateTime
+            .parse(activity.start_date_local)
+            .toLocalDate()
+        date >= startOfWeek && date <= endOfWeek
+    }
+    val activitiesByDate = remember(weekActivities) {
+        weekActivities.groupBy { activity ->
+            OffsetDateTime.parse(activity.start_date_local).toLocalDate()
+        }
+    }
+
+    val state = rememberWeekCalendarState(
+        startDate = startOfWeek,
+        endDate = startOfWeek,
+        firstDayOfWeek = firstDayOfWeek
+    )
+    WeekCalendar(
+        state = state,
+        dayContent = { day ->
+            val activitiesForDay = activitiesByDate[day.date].orEmpty()
+            val activityCount = activitiesForDay.size
+            Box(
+                modifier = Modifier
+                    .padding(6.dp)
+                    .size(40.dp)
+                    .background(
+                        if (activityCount > 0)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(4.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                when{
+                    activityCount > 0 -> {
+                        val iconRes = when (activitiesForDay[0].type) {
+                            "Run" -> R.drawable.running_svgrepo_com
+                            "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
+                            "Ride" -> R.drawable.biking_svgrepo_com
+                            "Hike" -> R.drawable.man_in_hike_svgrepo_com
+                            else -> R.drawable.man_doing_exercises_svgrepo_com
+                        }
+                        Icon(
+                            painter = painterResource( id = iconRes),
+                            contentDescription = "Activity Icon",
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = day.date.dayOfMonth.toString(),
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    )
+}
