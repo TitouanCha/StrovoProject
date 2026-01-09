@@ -17,12 +17,21 @@ object RetrofitInstance {
         .addInterceptor(logger)
         .build()
 
-    val api: StravaAuthServices by lazy {
+    val authApi: StravaAuthServices by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(StravaAuthServices::class.java)
+    }
+
+    val activityApi: StravaActivityServices by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(StravaActivityServices::class.java)
     }
 }

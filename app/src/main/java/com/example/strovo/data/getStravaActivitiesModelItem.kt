@@ -1,0 +1,32 @@
+package com.example.strovo.data
+
+data class getStravaActivitiesModelItem(
+    val achievement_count: Int,
+    val athlete: Athlete,
+    val athlete_count: Int,
+    val average_cadence: Double,
+    val average_speed: Double,
+    val comment_count: Int,
+    val distance: Double,
+    val elapsed_time: Int,
+    val elev_high: Double,
+    val elev_low: Double,
+    val end_latlng: List<Double>,
+    val has_kudoed: Boolean,
+    val id: Long,
+    val kudos_count: Int,
+    val map: Map,
+    val max_speed: Double,
+    val moving_time: Int,
+    val name: String,
+    val photo_count: Int,
+    val resource_state: Int,
+    val sport_type: String,
+    val start_date_local: String,
+    val start_latlng: List<Double>,
+    val total_elevation_gain: Double,
+    val type: String,
+    val upload_id: Long,
+    val utc_offset: Double,
+    val workout_type: Any
+)

@@ -41,8 +41,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -74,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Dashboard.route) {
-                            DashboardScreen(navController)
+                            DashboardScreen(navController, stravaViewModel)
                         }
                         composable(Screen.Profile.route) {
                             ProfileScreen(navController)
