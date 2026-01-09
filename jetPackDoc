@@ -1,0 +1,72 @@
+## Composants de base (Foundation)
+
+- `Box` - conteneur de superposition
+- `Column` - disposition verticale
+- `Row` - disposition horizontale
+- `LazyColumn` - liste verticale scrollable
+- `LazyRow` - liste horizontale scrollable
+- `LazyVerticalGrid` - grille verticale
+- `Spacer` - espace vide
+
+## Material 3 (Material Design)
+
+### Boutons
+- `Button` - bouton standard
+- `OutlinedButton` - bouton avec bordure
+- `TextButton` - bouton texte
+- `IconButton` - bouton icône
+- `FloatingActionButton` - bouton flottant
+
+### Texte
+- `Text` - texte simple
+- `TextField` - champ de texte
+- `OutlinedTextField` - champ avec bordure
+
+### Cartes et surfaces
+- `Card` - carte Material
+- `Surface` - surface de base
+- `Scaffold` - structure de page
+
+### Navigation
+- `NavigationBar` - barre de navigation inférieure
+- `NavigationRail` - navigation latérale
+- `TopAppBar` - barre d'outils supérieure
+- `BottomAppBar` - barre inférieure
+
+### Dialogues et menus
+- `AlertDialog` - dialogue d'alerte
+- `DropdownMenu` - menu déroulant
+- `ModalBottomSheet` - panneau modal
+
+### Sélection
+- `Checkbox` - case à cocher
+- `RadioButton` - bouton radio
+- `Switch` - interrupteur
+- `Slider` - curseur
+
+### Affichage
+- `Icon` - icône
+- `Image` - image
+- `CircularProgressIndicator` - indicateur circulaire
+- `LinearProgressIndicator` - barre de progression
+
+### Listes
+- `ListItem` - élément de liste
+- `Divider` - séparateur
+
+## Modificateurs communs
+
+```kotlin
+Modifier
+    .fillMaxSize()
+    .fillMaxWidth()
+    .fillMaxHeight()
+    .padding()
+    .size()
+    .background()
+    .border()
+    .clickable()
+    .clip()
+    .shadow()
+```
+

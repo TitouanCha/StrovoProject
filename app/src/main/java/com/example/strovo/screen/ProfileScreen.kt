@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,9 +31,11 @@ fun ProfileScreen(navController: NavController, viewModel: StravaViewModel = vie
     var textValue by remember { mutableStateOf("") }
     var tokenManager = TokenManager(LocalContext.current)
     var context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxSize()
             .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -39,7 +43,7 @@ fun ProfileScreen(navController: NavController, viewModel: StravaViewModel = vie
         ) {
             Text(
                 text = "Statut de la connexion Strava",
-                fontSize = 30.sp,
+                fontSize = 18.sp,
                 modifier = Modifier.weight(3f)
             )
             Image(
@@ -50,7 +54,7 @@ fun ProfileScreen(navController: NavController, viewModel: StravaViewModel = vie
                         com.example.strovo.R.drawable.outline_dangerous_24),
                 contentDescription = "Connection ok Icon",
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(45.dp)
                     .weight(1f)
             )
 
@@ -63,51 +67,52 @@ fun ProfileScreen(navController: NavController, viewModel: StravaViewModel = vie
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 context.startActivity(intent)
             },
-            contentPadding = PaddingValues(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         ) {
             Text(
-                text = "Autorisation strava",
-                fontSize = 20.sp
+                text = "Autorisation strava"
             )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 painter = androidx.compose.ui.res.painterResource(id = com.example.strovo.R.drawable.open_outline_svgrepo_com),
-                contentDescription = "Strava Icon",
-                modifier = Modifier.size(24.dp)
+                contentDescription = "Strava Icon"
             )
         }
         Row(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(4.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
+
         ) {
             OutlinedTextField(
                 value = textValue,
                 onValueChange = { textValue = it },
-                label = { Text("Entrer le code Strava") },
+                label = {
+                    Text(
+                        text = "Entrer le code Strava",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
                 singleLine = true,
                 modifier = Modifier
                     .weight(2f)
-                    .padding(4.dp)
+                    .padding(horizontal = 4.dp)
             )
-
             Button(
                 onClick = {
                     viewModel.getAccessToken(textValue, context)
                 },
                 modifier = Modifier
-                    .fillMaxHeight()
                     .weight(1f)
-                    .padding(4.dp)
+                    .padding(horizontal = 4.dp)
             ) {
                 Text(
-                    text = "Valider",
-                    fontSize = 18.sp
+                    text = "Valider"
                 )
             }
         }
