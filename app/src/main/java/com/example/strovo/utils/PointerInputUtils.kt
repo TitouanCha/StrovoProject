@@ -21,11 +21,11 @@ class PointerInputUtils {
 
     fun Modifier.verticalDragToRefresh(
         refreshScrollState: MutableState<Boolean>,
-        triggerDistance: Float,
         isInitialized: Boolean,
         onRefresh: () -> Unit
     ): Modifier = this.pointerInput(Unit) {
-        var totalDrag = 150f
+        var totalDrag = 0f
+        var triggerDistance = 300f
         detectVerticalDragGestures(
             onDragEnd = {
                 refreshScrollState.value = false

@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                 { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Dashboard.route,
+                        startDestination = Screen.Progress.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Dashboard.route) {

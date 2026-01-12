@@ -203,7 +203,6 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                                 with(pointerUtils) {
                                     verticalDragToRefresh(
                                         refreshScrollState = refreshScrollState,
-                                        triggerDistance = 150f,
                                         isInitialized = isInitialized.value
                                     ) {
                                         getMonthActivities(viewModel, context)

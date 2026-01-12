@@ -89,6 +89,11 @@ dependencies {
     // The compose calendar library for Android
     implementation("com.kizitonwose.calendar:compose:2.6.1")
 
+    // Vico chart library
+    implementation("com.patrykandpatrick.vico:compose:2.0.0")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0")
+
+
 }
 
 secrets {
