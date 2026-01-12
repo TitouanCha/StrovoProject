@@ -22,7 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.strovo.screen.DashboardScreen
-import com.example.strovo.screen.HistoricScreen
+import com.example.strovo.screen.ProgressScreen
 import com.example.strovo.screen.ProfileScreen
 import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
@@ -72,8 +72,8 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Profile.route) {
                             ProfileScreen(navController)
                         }
-                        composable(Screen.Historic.route) {
-                            HistoricScreen(navController)
+                        composable(Screen.Progress.route) {
+                            ProgressScreen(navController)
                         }
                     }
                 }
@@ -90,21 +90,21 @@ fun BottomNavBar(navController: NavController) {
         NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.outline_archive_icon),
-                    contentDescription = "Historique",
+                    painter = painterResource(id = R.drawable.progress_svgrepo_com),
+                    contentDescription = "Progress Icon",
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            label = { Text("Historique") },
+            label = { Text("Progrés") },
             selected = false,
-            onClick = { navController.navigate(Screen.Historic.route) }
+            onClick = { navController.navigate(Screen.Progress.route) }
         )
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
-                    contentDescription = "Dashboard",
+                    contentDescription = "Dashboard Icon",
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

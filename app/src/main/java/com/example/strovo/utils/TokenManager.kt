@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import androidx.core.content.edit
+import com.example.strovo.data.Athlete
 
 class TokenManager(context: Context) {
 
@@ -19,10 +20,11 @@ class TokenManager(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    fun saveTokens(accessToken: String, refreshToken: String) {
+    fun saveTokens(accessToken: String, refreshToken: String, athleteId: String) {
         sharedPreferences.edit().apply {
             putString("access_token", accessToken)
             putString("refresh_token", refreshToken)
+            putString("athlete_id", athleteId)
             apply()
         }
     }
@@ -33,6 +35,10 @@ class TokenManager(context: Context) {
 
     fun getRefreshToken(): String? {
         return sharedPreferences.getString("refresh_token", null)
+    }
+
+    fun getAthleteId(): String? {
+        return sharedPreferences.getString("athlete_id", null)
     }
 
     fun clearTokens() {

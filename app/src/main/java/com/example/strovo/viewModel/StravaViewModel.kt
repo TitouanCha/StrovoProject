@@ -11,6 +11,7 @@ import com.example.strovo.services.RetrofitInstance
 import com.example.strovo.data.GetStravaTokenModel
 import com.example.strovo.data.RefreshStravaTokenModel
 import com.example.strovo.data.GetStravaActivitiesModel
+import com.example.strovo.data.OverallStats
 import com.example.strovo.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +44,7 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e("StravaViewModel", "Error refreshing access token: ${e.message}")
                 e.printStackTrace()
             }finally {
-                tokenManager.saveTokens(newAccessToken, newRefreshToken)
+                tokenManager.saveTokens(newAccessToken, newRefreshToken, tokenManager.getAthleteId() ?: "")
                 _isInitialized.value = true
 
             }
@@ -60,8 +61,9 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 val accessToken = response.access_token
                 val refreshToken = response.refresh_token
+                val athleteId = response.athlete.id
 
-                tokenManager.saveTokens(accessToken, refreshToken)
+                tokenManager.saveTokens(accessToken, refreshToken, athleteId)
                 Toast.makeText(context, "Token Strava enregistré", Toast.LENGTH_SHORT).show()
 
             } catch (e: Exception) {
@@ -77,26 +79,36 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _activities = MutableStateFlow<GetStravaActivitiesModel?>(null)
     val activities: StateFlow<GetStravaActivitiesModel?> = _activities.asStateFlow()
+    private val _overallStats = MutableStateFlow<OverallStats?>(null)
+    val overallStats: StateFlow<OverallStats?> = _overallStats.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    fun getActivities(page: Int? = null, perPage: Int? = null, before: String? = null, after: String? = null, context: Context){
+    fun getActivities(page: Int? = null, perPage: Int? = null, before: String? = null, after: String? = null, context: Context, isStats: Boolean){
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
             try {
-                val response: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
+                val activityResponse: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
                     authorization = "Bearer ${tokenManager.getAccessToken()}",
                     perPage = perPage,
                     page = page,
                     before = before,
                     after = after
                 )
-                _activities.value = response
+                _activities.value = activityResponse
                 Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
 
+                if(isStats) {
+                    val statsResponse: OverallStats = RetrofitInstance.activityApi.getAthleteStats(
+                        authorization = "Bearer ${tokenManager.getAccessToken()}",
+                        athleteId = "${tokenManager.getAthleteId()}"
+                    )
+                    _overallStats.value = statsResponse
+                    Toast.makeText(context, "Stats récupérées", Toast.LENGTH_SHORT).show()
+                }
             }catch (e: Exception){
                 Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")

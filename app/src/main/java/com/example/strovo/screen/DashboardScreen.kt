@@ -1,5 +1,6 @@
 package com.example.strovo.screen
 
+import android.adservices.common.AdData
 import android.provider.CalendarContract
 import android.util.Log
 import android.widget.Toast
@@ -11,7 +12,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -24,13 +24,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.MainActivity
+import com.example.strovo.data.AllRunTotals
 import com.example.strovo.data.GetStravaActivitiesModel
+import com.example.strovo.data.OverallStats
 import com.example.strovo.data.getStravaActivitiesModelItem
 import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.utils.TokenManager
@@ -58,7 +61,7 @@ import kotlin.rem
 import kotlin.text.toLong
 
 @Composable
-fun RowScope.dataDisplay(title: String, data: String) {
+fun RowScope.DataActivityDisplay(title: String, data: String) {
     Column(
         modifier = Modifier.weight(1f)
     ) {
@@ -76,12 +79,34 @@ fun RowScope.dataDisplay(title: String, data: String) {
 }
 
 @Composable
+fun DataOverallStatsDisplay(title: String, data: String){
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            modifier = Modifier.weight(1f),
+            text = title
+        )
+        Text(
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            text = ":"
+        )
+        Text(
+            modifier = Modifier.weight(2f),
+            text = data
+        )
+    }
+}
+
+@Composable
 fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
     val context = LocalContext.current
     val isInitialized = viewModel.isInitialized.collectAsState()
     val dataFormatting = DataFormattingUtils()
 
     val activities = viewModel.activities.collectAsState()
+    val overallAthleteStat = viewModel.overallStats.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
 
@@ -96,7 +121,8 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 perPage = 30,
                 page = 1,
                 before = beforeDate,
-                after = afterDate
+                after = afterDate,
+                isStats = true
             )
         }
     }
@@ -198,9 +224,9 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                                     .fillMaxWidth()
                                     .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                             ) {
-                                dataDisplay("Distance", "${"%.1f".format(activity.distance / 1000)}km")
-                                dataDisplay("Durée", dataFormatting.secondsToHms(activity.moving_time))
-                                dataDisplay("Allure", dataFormatting.speedToPaceMinPerKm(activity.average_speed))
+                                DataActivityDisplay("Distance", "${"%.1f".format(activity.distance / 1000)}km")
+                                DataActivityDisplay("Durée", dataFormatting.secondsToHms(activity.moving_time))
+                                DataActivityDisplay("Allure", dataFormatting.speedToPaceMinPerKm(activity.average_speed))
                             }
                         }
                     }
@@ -232,6 +258,38 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                         CalendarDisplay(1, activitiesData)
                         CalendarDisplay(0, activitiesData)
                     }
+                }
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    overallAthleteStat.value?.all_run_totals?.let { stats ->
+                        Column(
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(R.drawable.progress_svgrepo_com),
+                                    contentDescription = "Stats Icon",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    modifier = Modifier.padding(8.dp),
+                                    text = "Stats générales",
+                                    fontSize = 18.sp,
+                                    lineHeight = 20.sp
+                                )
+                            }
+                            DataOverallStatsDisplay("Activités", stats.count.toString())
+                            DataOverallStatsDisplay( "Distance", "${"%.0f".format(stats.distance / 1000)} km")
+                            DataOverallStatsDisplay("Temps", dataFormatting.secondsToHms(stats.moving_time))
+                        }
+                    }
+
                 }
             }
         }

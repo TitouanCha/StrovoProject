@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.Image
 
 sealed class Screen(val route: String) {
-    object Historic : Screen("historic")
+    object Progress : Screen("progress")
     object Dashboard : Screen("dashboard")
     object Profile : Screen("profile")
 }

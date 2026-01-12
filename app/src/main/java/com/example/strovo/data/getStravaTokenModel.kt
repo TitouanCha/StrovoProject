@@ -5,5 +5,6 @@ data class GetStravaTokenModel(
     val expires_at: Int,
     val expires_in: Int,
     val refresh_token: String,
-    val token_type: String
+    val token_type: String,
+    val athlete: Athlete
 )
