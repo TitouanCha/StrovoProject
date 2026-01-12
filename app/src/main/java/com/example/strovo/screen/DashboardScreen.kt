@@ -1,12 +1,16 @@
 package com.example.strovo.screen
 
 import android.adservices.common.AdData
+import android.content.Context
 import android.provider.CalendarContract
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
@@ -23,9 +27,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -36,6 +43,7 @@ import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.OverallStats
 import com.example.strovo.data.getStravaActivitiesModelItem
 import com.example.strovo.utils.DataFormattingUtils
+import com.example.strovo.utils.PointerInputUtils
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
 import com.kizitonwose.calendar.compose.HeatMapCalendar
@@ -45,6 +53,7 @@ import com.kizitonwose.calendar.compose.heatmapcalendar.rememberHeatMapCalendarS
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import kotlinx.coroutines.flow.internal.SendingCollector
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -99,31 +108,38 @@ fun DataOverallStatsDisplay(title: String, data: String){
     }
 }
 
+fun getMonthActivities(viewModel: StravaViewModel, context: Context) {
+    val todayDate = Instant.now()
+    val beforeDate = todayDate.epochSecond.toString()
+    val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
+    viewModel.getActivities(
+        context = context,
+        perPage = 30,
+        page = 1,
+        before = beforeDate,
+        after = afterDate,
+        isStats = true
+    )
+}
+
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
     val context = LocalContext.current
     val isInitialized = viewModel.isInitialized.collectAsState()
     val dataFormatting = DataFormattingUtils()
+    val pointerUtils = PointerInputUtils()
 
     val activities = viewModel.activities.collectAsState()
     val overallAthleteStat = viewModel.overallStats.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
 
-    val todayDate = Instant.now()
+    var refreshScrollState = remember { mutableStateOf(false) }
+    var totalDrag = remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(isInitialized.value) {
-        if (isInitialized.value) {
-            val beforeDate = todayDate.epochSecond.toString()
-            val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
-            viewModel.getActivities(
-                context = context,
-                perPage = 30,
-                page = 1,
-                before = beforeDate,
-                after = afterDate,
-                isStats = true
-            )
+        if (isInitialized.value && activities.value == null) {
+            getMonthActivities(viewModel, context)
         }
     }
 
@@ -178,13 +194,26 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
             activities.value != null -> {
                 var filteredActivity = activities.value?.filter {  it.type == "Run" }
                 filteredActivity?.firstOrNull()?.let { activity ->
+                    if (refreshScrollState.value){ CircularProgressIndicator()  }
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
+                            .run {
+                                with(pointerUtils) {
+                                    verticalDragToRefresh(
+                                        refreshScrollState = refreshScrollState,
+                                        triggerDistance = 150f,
+                                        isInitialized = isInitialized.value
+                                    ) {
+                                        getMonthActivities(viewModel, context)
+                                    }
+                                }
+                            }
                     ) {
                         Column(
-                            modifier = Modifier.padding(8.dp)
+                            modifier = Modifier
+                                .padding(8.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically

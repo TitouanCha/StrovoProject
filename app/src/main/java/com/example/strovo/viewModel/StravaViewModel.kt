@@ -99,7 +99,6 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                     after = after
                 )
                 _activities.value = activityResponse
-                Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
 
                 if(isStats) {
                     val statsResponse: OverallStats = RetrofitInstance.activityApi.getAthleteStats(
@@ -107,8 +106,9 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                         athleteId = "${tokenManager.getAthleteId()}"
                     )
                     _overallStats.value = statsResponse
-                    Toast.makeText(context, "Stats récupérées", Toast.LENGTH_SHORT).show()
                 }
+                Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
+
             }catch (e: Exception){
                 Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
