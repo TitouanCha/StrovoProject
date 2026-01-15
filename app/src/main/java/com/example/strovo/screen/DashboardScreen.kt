@@ -112,13 +112,10 @@ fun getMonthActivities(viewModel: StravaViewModel, context: Context) {
     val todayDate = Instant.now()
     val beforeDate = todayDate.epochSecond.toString()
     val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
-    viewModel.getActivities(
+    viewModel.getMonthActivities(
         context = context,
-        perPage = 30,
-        page = 1,
         before = beforeDate,
-        after = afterDate,
-        isStats = true
+        after = afterDate
     )
 }
 
@@ -129,13 +126,12 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
     val dataFormatting = DataFormattingUtils()
     val pointerUtils = PointerInputUtils()
 
-    val activities = viewModel.activities.collectAsState()
+    val activities = viewModel.monthActivities.collectAsState()
     val overallAthleteStat = viewModel.overallStats.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
 
     var refreshScrollState = remember { mutableStateOf(false) }
-    var totalDrag = remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(isInitialized.value) {
         if (isInitialized.value && activities.value == null) {
@@ -169,7 +165,7 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
         }
         when {
             isLoading.value -> CircularProgressIndicator()
-            errorMessage.value != null -> {
+            errorMessage.value != null && activities.value == null -> {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

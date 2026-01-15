@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(navController)
                         }
                         composable(Screen.Progress.route) {
-                            ProgressScreen(navController)
+                            ProgressScreen(navController, stravaViewModel)
                         }
                     }
                 }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavType
 import com.example.strovo.BuildConfig
 import com.example.strovo.services.RetrofitInstance
 import com.example.strovo.data.GetStravaTokenModel
@@ -77,8 +78,10 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private val _activities = MutableStateFlow<GetStravaActivitiesModel?>(null)
-    val activities: StateFlow<GetStravaActivitiesModel?> = _activities.asStateFlow()
+    private val _monthActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
+    val monthActivities: StateFlow<GetStravaActivitiesModel?> = _monthActivities.asStateFlow()
+    private val _yearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
+    val yearActivities: StateFlow<GetStravaActivitiesModel?> = _yearActivities.asStateFlow()
     private val _overallStats = MutableStateFlow<OverallStats?>(null)
     val overallStats: StateFlow<OverallStats?> = _overallStats.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
@@ -86,26 +89,59 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    fun getActivities(page: Int? = null, perPage: Int? = null, before: String? = null, after: String? = null, context: Context, isStats: Boolean){
+    suspend fun getActivities(page: Int? = null, perPage: Int? = null, before: String? = null, after: String? = null): GetStravaActivitiesModel?{
+        try {
+            val activityResponse: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
+                authorization = "Bearer ${tokenManager.getAccessToken()}",
+                perPage = perPage,
+                page = page,
+                before = before,
+                after = after
+            )
+            return activityResponse
+        }catch (e: Exception){
+            return null
+        }
+    }
+    fun getMonthActivities(before: String? = null, after: String? = null, context: Context){
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
             try {
-                val activityResponse: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
-                    authorization = "Bearer ${tokenManager.getAccessToken()}",
-                    perPage = perPage,
-                    page = page,
-                    before = before,
-                    after = after
-                )
-                _activities.value = activityResponse
+                _monthActivities.value = getActivities(1, 30, before, after)
 
-                if(isStats) {
-                    val statsResponse: OverallStats = RetrofitInstance.activityApi.getAthleteStats(
-                        authorization = "Bearer ${tokenManager.getAccessToken()}",
-                        athleteId = "${tokenManager.getAthleteId()}"
-                    )
-                    _overallStats.value = statsResponse
+                val statsResponse: OverallStats = RetrofitInstance.activityApi.getAthleteStats(
+                    authorization = "Bearer ${tokenManager.getAccessToken()}",
+                    athleteId = "${tokenManager.getAthleteId()}"
+                )
+                _overallStats.value = statsResponse
+                Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
+
+            }catch (e: Exception){
+                Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
+                Log.e("StravaViewModel", "Error getting activities: ${e.message}")
+
+                _errorMessage.value = e.message.toString()
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getYearActivities(before: String? = null, after: String? = null, context: Context){
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null;
+            try {
+                val page1: GetStravaActivitiesModel? = getActivities(1, 200, before, after)
+                val page2: GetStravaActivitiesModel? = getActivities(2, 200, before, after)
+                val pages = GetStravaActivitiesModel().apply {
+                    page1?.let { addAll(it) }
+                    page2?.let { addAll(it) }
+                }
+                _yearActivities.value = GetStravaActivitiesModel().apply {
+                    addAll(pages.filter { it.type == "Run" })
                 }
                 Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
 
