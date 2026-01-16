@@ -177,17 +177,18 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
             getYearActivities(selectedYear.intValue, viewModel, context)
         }
     }
-    LaunchedEffect(lastYearActivities.value) {
+    LaunchedEffect(activities.value) {
         averageStats.value = getAverageStats(activities.value, selectedYear.intValue)
         monthlyDistances.value = parseActivitiesForChart(activities.value, selectedYear.intValue)
-    }
-    LaunchedEffect(monthlyDistances.value) {
-        val lastYearParsedActivities = parseActivitiesForChart(lastYearActivities.value, selectedYear.intValue-1)
-        Log.e("ProgressScreen", "Last Year Parsed Activities: $lastYearParsedActivities")
         activitiesModelProducer.runTransaction {
-            columnSeries { series(monthlyDistances.value.map{it.distance})}
+            columnSeries { series(monthlyDistances.value.map { it.distance }) }
+        }
+    }
+    LaunchedEffect(lastYearActivities.value) {
+        val lastYearParsedActivities = parseActivitiesForChart(lastYearActivities.value, selectedYear.intValue-1)
+        activitiesModelProducer.runTransaction {
+            columnSeries { series(monthlyDistances.value.map { it.distance }) }
             lineSeries { series(lastYearParsedActivities.map{it.distance}) }
-
         }
     }
 

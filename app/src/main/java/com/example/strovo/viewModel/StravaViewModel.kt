@@ -14,12 +14,16 @@ import com.example.strovo.data.RefreshStravaTokenModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.OverallStats
 import com.example.strovo.utils.TokenManager
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Async
 import java.time.Instant
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import kotlin.contracts.contract
 
 class StravaViewModel(application: Application) : AndroidViewModel(application) {
@@ -40,8 +44,6 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 newAccessToken = response.access_token
                 newRefreshToken = response.refresh_token
-
-                Toast.makeText(context, "Token Strava rafraîchi", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(context, "Erreur lors du rafraîchissement du token", Toast.LENGTH_LONG).show()
                 Log.e("StravaViewModel", "Error refreshing access token: ${e.message}")
@@ -136,52 +138,44 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    suspend fun fetchRunActivitiesParallel(
+        before: String,
+        after: String
+    ): GetStravaActivitiesModel {
+        return coroutineScope {
+            val page1 = async { getActivities(1, 200, before, after) }
+            val page2 = async { getActivities(2, 200, before, after) }
+
+            GetStravaActivitiesModel().apply {
+                page1.await()?.let { addAll(it) }
+                page2.await()?.let { addAll(it) }
+            }.filter { it.type == "Run" }
+                .toCollection(GetStravaActivitiesModel())
+        }
+    }
+
     fun getYearActivities(before: String, after: String, context: Context){
-        val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-            .minusYears(1)
-            .atStartOfDay(ZoneId.systemDefault())
-            .toEpochSecond()
-        val afterOneYearAgo = Instant.ofEpochSecond(after.toLong())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-            .minusYears(1)
-            .atStartOfDay(ZoneId.systemDefault())
-            .toEpochSecond()
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
             try {
-                var page1: GetStravaActivitiesModel? = getActivities(1, 200, before, after)
-                var page2: GetStravaActivitiesModel? = getActivities(2, 200, before, after)
-                var pages = GetStravaActivitiesModel().apply {
-                    page1?.let { addAll(it) }
-                    page2?.let { addAll(it) }
-                }
-                _yearActivities.value = GetStravaActivitiesModel().apply {
-                    addAll(pages.filter { it.type == "Run" })
-                }
+                _yearActivities.value = fetchRunActivitiesParallel(before, after)
+                _isLoading.value = false
 
-                page1 = getActivities(1, 200, beforeOneYearAgo.toString(), afterOneYearAgo.toString())
-                page2 = getActivities(2, 200, beforeOneYearAgo.toString(), afterOneYearAgo.toString())
-                pages = GetStravaActivitiesModel().apply {
-                    page1?.let { addAll(it) }
-                    page2?.let { addAll(it) }
-                }
-                _lastYearActivities.value = GetStravaActivitiesModel().apply {
-                    addAll(pages.filter { it.type == "Run" })
-                }
+                val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong())
+                    .minus(365, ChronoUnit.DAYS)
+                    .epochSecond
+                val afterOneYearAgo = Instant.ofEpochSecond(after.toLong())
+                    .minus(365, ChronoUnit.DAYS)
+                    .epochSecond
+                _lastYearActivities.value = fetchRunActivitiesParallel(beforeOneYearAgo.toString(), afterOneYearAgo.toString())
+
                 Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
-
             }catch (e: Exception){
                 Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
-
                 _errorMessage.value = e.message.toString()
                 e.printStackTrace()
-            } finally {
-                _isLoading.value = false
             }
         }
     }
