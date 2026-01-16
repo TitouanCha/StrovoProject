@@ -188,13 +188,15 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                 }
             }
             activities.value != null -> {
-                var filteredActivity = activities.value?.filter {  it.type == "Run" }
+                var filteredActivity = activities.value?.filter { it.type == "Run" }
                 filteredActivity?.firstOrNull()?.let { activity ->
-                    if (refreshScrollState.value){ CircularProgressIndicator()  }
-                    Card(
+                    if (refreshScrollState.value) {
+                        CircularProgressIndicator()
+                    }
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
                             .run {
                                 with(pointerUtils) {
                                     verticalDragToRefresh(
@@ -206,114 +208,145 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                                 }
                             }
                     ) {
-                        Column(
+                        Box(
                             modifier = Modifier
-                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .padding(16.dp)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.running_man_icon),
-                                    contentDescription = "Activities Icon",
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .padding(end = 8.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
                                 Column(
                                     modifier = Modifier
+                                        .padding(8.dp)
                                 ) {
-                                    Text(
-                                        text = "Dernieres Activités",
-                                        modifier = Modifier,
-                                        fontSize = 16.sp,
-                                        lineHeight = 18.sp
-                                    )
-                                    Text(
-                                        text = "Course du ${
-                                            dataFormatting.stravaDateToLocal(
-                                                activity.start_date_local
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.running_man_icon),
+                                            contentDescription = "Activities Icon",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .padding(end = 8.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Column(
+                                            modifier = Modifier
+                                        ) {
+                                            Text(
+                                                text = "Dernieres Activités",
+                                                modifier = Modifier,
+                                                fontSize = 16.sp,
+                                                lineHeight = 18.sp
                                             )
-                                        } a Yerres",
-                                        modifier = Modifier,
-                                        fontSize = 10.sp,
-                                        lineHeight = 12.sp
-                                    )
+                                            Text(
+                                                text = "Course du ${
+                                                    dataFormatting.stravaDateToLocal(
+                                                        activity.start_date_local
+                                                    )
+                                                } a Yerres",
+                                                modifier = Modifier,
+                                                fontSize = 10.sp,
+                                                lineHeight = 12.sp
+                                            )
+                                        }
+
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                                    ) {
+                                        DataActivityDisplay(
+                                            "Distance",
+                                            "${"%.1f".format(activity.distance / 1000)}km"
+                                        )
+                                        DataActivityDisplay(
+                                            "Durée",
+                                            dataFormatting.secondsToHms(activity.moving_time)
+                                        )
+                                        DataActivityDisplay(
+                                            "Allure",
+                                            dataFormatting.speedToPaceMinPerKm(activity.average_speed)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        var activitiesData = activities.value ?: emptyList()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column {
+                                val days = listOf("L", "Ma", "Me", "J", "V", "S", "D")
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    days.forEach { day ->
+                                        Text(
+                                            text = day,
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+                                }
+                                CalendarDisplay(3, activitiesData)
+                                CalendarDisplay(2, activitiesData)
+                                CalendarDisplay(1, activitiesData)
+                                CalendarDisplay(0, activitiesData)
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                overallAthleteStat.value?.all_run_totals?.let { stats ->
+                                    Column(
+                                        modifier = Modifier.padding(8.dp)
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .padding(8.dp),
+                                                painter = painterResource(R.drawable.progress_svgrepo_com),
+                                                contentDescription = "Stats Icon",
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                modifier = Modifier.padding(8.dp),
+                                                text = "Stats générales",
+                                                fontSize = 18.sp,
+                                                lineHeight = 20.sp
+                                            )
+                                        }
+                                        DataOverallStatsDisplay("Activités", stats.count.toString())
+                                        DataOverallStatsDisplay(
+                                            "Distance",
+                                            "${"%.0f".format(stats.distance / 1000)} km"
+                                        )
+                                        DataOverallStatsDisplay(
+                                            "Temps",
+                                            dataFormatting.secondsToHms(stats.moving_time)
+                                        )
+                                    }
                                 }
 
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                            ) {
-                                DataActivityDisplay("Distance", "${"%.1f".format(activity.distance / 1000)}km")
-                                DataActivityDisplay("Durée", dataFormatting.secondsToHms(activity.moving_time))
-                                DataActivityDisplay("Allure", dataFormatting.speedToPaceMinPerKm(activity.average_speed))
-                            }
                         }
                     }
-                }
-                var activitiesData = activities.value ?: emptyList()
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column {
-                        val days = listOf("L", "Ma", "Me", "J", "V", "S", "D")
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            days.forEach { day ->
-                                Text(
-                                    text = day,
-                                    modifier = Modifier.weight(1f),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                        }
-                        CalendarDisplay(3, activitiesData)
-                        CalendarDisplay(2, activitiesData)
-                        CalendarDisplay(1, activitiesData)
-                        CalendarDisplay(0, activitiesData)
-                    }
-                }
-                Card(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    overallAthleteStat.value?.all_run_totals?.let { stats ->
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .padding(8.dp),
-                                    painter = painterResource(R.drawable.progress_svgrepo_com),
-                                    contentDescription = "Stats Icon",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    modifier = Modifier.padding(8.dp),
-                                    text = "Stats générales",
-                                    fontSize = 18.sp,
-                                    lineHeight = 20.sp
-                                )
-                            }
-                            DataOverallStatsDisplay("Activités", stats.count.toString())
-                            DataOverallStatsDisplay( "Distance", "${"%.0f".format(stats.distance / 1000)} km")
-                            DataOverallStatsDisplay("Temps", dataFormatting.secondsToHms(stats.moving_time))
-                        }
-                    }
-
                 }
             }
         }

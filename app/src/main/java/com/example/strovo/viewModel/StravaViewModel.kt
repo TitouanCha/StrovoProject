@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.contracts.contract
 
 class StravaViewModel(application: Application) : AndroidViewModel(application) {
@@ -82,10 +84,15 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
     val monthActivities: StateFlow<GetStravaActivitiesModel?> = _monthActivities.asStateFlow()
     private val _yearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
     val yearActivities: StateFlow<GetStravaActivitiesModel?> = _yearActivities.asStateFlow()
+    private val _lastYearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
+    val lastYearActivities: StateFlow<GetStravaActivitiesModel?> = _lastYearActivities.asStateFlow()
+
     private val _overallStats = MutableStateFlow<OverallStats?>(null)
     val overallStats: StateFlow<OverallStats?> = _overallStats.asStateFlow()
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
@@ -103,7 +110,7 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             return null
         }
     }
-    fun getMonthActivities(before: String? = null, after: String? = null, context: Context){
+    fun getMonthActivities(before: String, after: String, context: Context){
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
@@ -129,18 +136,40 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getYearActivities(before: String? = null, after: String? = null, context: Context){
+    fun getYearActivities(before: String, after: String, context: Context){
+        val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .minusYears(1)
+            .atStartOfDay(ZoneId.systemDefault())
+            .toEpochSecond()
+        val afterOneYearAgo = Instant.ofEpochSecond(after.toLong())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .minusYears(1)
+            .atStartOfDay(ZoneId.systemDefault())
+            .toEpochSecond()
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
             try {
-                val page1: GetStravaActivitiesModel? = getActivities(1, 200, before, after)
-                val page2: GetStravaActivitiesModel? = getActivities(2, 200, before, after)
-                val pages = GetStravaActivitiesModel().apply {
+                var page1: GetStravaActivitiesModel? = getActivities(1, 200, before, after)
+                var page2: GetStravaActivitiesModel? = getActivities(2, 200, before, after)
+                var pages = GetStravaActivitiesModel().apply {
                     page1?.let { addAll(it) }
                     page2?.let { addAll(it) }
                 }
                 _yearActivities.value = GetStravaActivitiesModel().apply {
+                    addAll(pages.filter { it.type == "Run" })
+                }
+
+                page1 = getActivities(1, 200, beforeOneYearAgo.toString(), afterOneYearAgo.toString())
+                page2 = getActivities(2, 200, beforeOneYearAgo.toString(), afterOneYearAgo.toString())
+                pages = GetStravaActivitiesModel().apply {
+                    page1?.let { addAll(it) }
+                    page2?.let { addAll(it) }
+                }
+                _lastYearActivities.value = GetStravaActivitiesModel().apply {
                     addAll(pages.filter { it.type == "Run" })
                 }
                 Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()

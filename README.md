@@ -1,5 +1,5 @@
 A faire :
- - Meilleur récupération du code -> custom scheme
+ - Meilleur récupération du code strava
  - Ajouter la date d'expiration du Token -> moins de requette a l'api
   
 Resources : 

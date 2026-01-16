@@ -15,8 +15,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("string", "STRAVA_CLIENT_ID", "\"${project.findProperty("STRAVA_CLIENT_ID") ?: ""}\"")
-        buildConfigField("string", "STRAVA_CLIENT_SECRET", "\"${project.findProperty("STRAVA_CLIENT_SECRET") ?: ""}\"")
+        buildConfigField("String", "STRAVA_CLIENT_ID", "\"${project.findProperty("STRAVA_CLIENT_ID") ?: ""}\"")
+        buildConfigField("String", "STRAVA_CLIENT_SECRET", "\"${project.findProperty("STRAVA_CLIENT_SECRET") ?: ""}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

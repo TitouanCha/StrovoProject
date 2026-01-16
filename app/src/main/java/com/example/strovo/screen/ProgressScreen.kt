@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,13 +56,17 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.collections.addAll
@@ -88,9 +94,9 @@ fun RowScope.AverageStatsDisplay(title: String, data: String){
     }
 }
 
-fun getYearActivities(currentYear: Int, viewModel: StravaViewModel, context: Context){
-    val firstDayOfYear = LocalDate.of(currentYear, 1, 1)
-    val lastDayOfYear = LocalDate.of(currentYear, 12, 31)
+fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Context){
+    val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
+    val lastDayOfYear = LocalDate.of(selectedYear, 12, 31)
     val afterDate = firstDayOfYear
         .atStartOfDay(ZoneId.systemDefault())
         .toEpochSecond().toString()
@@ -149,43 +155,67 @@ fun parseActivitiesForChart(activities: GetStravaActivitiesModel?, selectedYear:
 
 @Composable
 fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
+    val pointerUtils = PointerInputUtils()
     val activitiesModelProducer = remember { CartesianChartModelProducer() }
-    val historicModelProducer = remember { CartesianChartModelProducer() }
     val context = LocalContext.current
     val isInitialized = viewModel.isInitialized.collectAsState()
-    val dataFormatting = DataFormattingUtils()
 
     val activities = viewModel.yearActivities.collectAsState()
+    val lastYearActivities = viewModel.lastYearActivities.collectAsState()
+
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
+
     var averageStats = remember { mutableStateOf<AverageStatsModel?>(null) }
     var monthlyDistances = remember { mutableStateOf(mutableListOf<ChartDistanceModel>()) }
 
     var selectedYear = remember { mutableIntStateOf(LocalDate.now().year) }
+    var refreshScrollState = remember { mutableStateOf(false) }
 
     LaunchedEffect(isInitialized.value) {
         if(isInitialized.value && activities.value == null){
             getYearActivities(selectedYear.intValue, viewModel, context)
         }
     }
-    LaunchedEffect(activities.value) {
+    LaunchedEffect(lastYearActivities.value) {
         averageStats.value = getAverageStats(activities.value, selectedYear.intValue)
         monthlyDistances.value = parseActivitiesForChart(activities.value, selectedYear.intValue)
     }
     LaunchedEffect(monthlyDistances.value) {
+        val lastYearParsedActivities = parseActivitiesForChart(lastYearActivities.value, selectedYear.intValue-1)
+        Log.e("ProgressScreen", "Last Year Parsed Activities: $lastYearParsedActivities")
         activitiesModelProducer.runTransaction {
             columnSeries { series(monthlyDistances.value.map{it.distance})}
+            lineSeries { series(lastYearParsedActivities.map{it.distance}) }
+
         }
     }
 
+
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
+        if (refreshScrollState.value) {
+            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .run {
+                    with(pointerUtils) {
+                        verticalDragToRefresh(
+                            refreshScrollState = refreshScrollState,
+                            isInitialized = isInitialized.value
+                        ) {
+                            selectedYear.intValue = LocalDate.now().year
+                            getYearActivities(LocalDate.now().year, viewModel, context)
+                        }
+                    }
+                },
         ) {
             Row(
                 modifier = Modifier
@@ -277,6 +307,15 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                     CartesianChartHost(
                         rememberCartesianChart(
                             rememberColumnCartesianLayer(),
+                            rememberLineCartesianLayer(
+                                lineProvider = LineCartesianLayer.LineProvider.series(
+                                    LineCartesianLayer.Line(
+                                        fill = LineCartesianLayer.LineFill.single(
+                                            fill(MaterialTheme.colorScheme.secondary)
+                                        )
+                                    )
+                                )
+                            ),
                             startAxis = VerticalAxis.rememberStart(
                             ),
                             bottomAxis = HorizontalAxis.rememberBottom(
@@ -287,10 +326,10 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                                 }
                             ),
                         ),
-                        activitiesModelProducer,
+                        modelProducer = activitiesModelProducer,
                         zoomState = rememberVicoZoomState(
                             initialZoom = Zoom.Content,
-                            zoomEnabled = false
+                            zoomEnabled = true
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -321,14 +360,6 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
         }
         when{
             isLoading.value -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(30.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
             }
             monthlyDistances.value.isEmpty() -> {
                 Text("Erreur lors du chargement des activités. Veuillez vérifier votre connexion à Strava.")
