@@ -1,3 +1,6 @@
+
+Application Android qui permet l'analyse et la visualisation de vos activités sportives via l'api strava.
+
 A faire :
  - Meilleur récupération du code strava
  - Ajouter la date d'expiration du Token -> moins de requette a l'api
