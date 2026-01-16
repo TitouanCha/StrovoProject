@@ -1,6 +1,7 @@
 package com.example.strovo
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
 
@@ -86,6 +88,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BottomNavBar(navController: NavController) {
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route
+
     NavigationBar{
         NavigationBarItem(
             icon = {
@@ -98,7 +103,11 @@ fun BottomNavBar(navController: NavController) {
             },
             label = { Text("Progrés") },
             selected = false,
-            onClick = { navController.navigate(Screen.Progress.route) }
+            onClick = {
+                if(currentRoute != Screen.Progress.route) {
+                    navController.navigate(Screen.Progress.route)
+                }
+            }
         )
         NavigationBarItem(
             icon = {
@@ -111,7 +120,11 @@ fun BottomNavBar(navController: NavController) {
             },
             label = { Text("Dashboard") },
             selected = false,
-            onClick = { navController.navigate(Screen.Dashboard.route) }
+            onClick = {
+                if(currentRoute != Screen.Dashboard.route) {
+                    navController.navigate(Screen.Dashboard.route)
+                }
+            }
         )
     }
 }
