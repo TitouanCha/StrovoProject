@@ -1,11 +1,13 @@
 package com.example.strovo.screen
 
+import android.R.attr.theme
 import android.adservices.common.AdData
 import android.content.Context
 import android.provider.CalendarContract
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,6 +57,7 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import kotlinx.coroutines.flow.internal.SendingCollector
+import java.nio.file.WatchEvent
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -140,31 +144,43 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .run {
+                with(pointerUtils) {
+                    verticalDragToRefresh(
+                        refreshScrollState = refreshScrollState,
+                        isInitialized = isInitialized.value
+                    ) {
+                        getMonthActivities(viewModel, context)
+                    }
+                }
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
+                .padding(start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .weight(1f),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            Text("Profil")
             IconButton(onClick = {
-                navController.navigate(Screen.Profile.route)
+                navController.navigate(Screen.Settings.route)
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.outline_account_icon),
-                    contentDescription = "Profile Icon",
+                    painter = painterResource(id = R.drawable.baseline_settings_24),
+                    contentDescription = "Settings Icon",
                     modifier = Modifier.size(50.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
         when {
-            isLoading.value -> CircularProgressIndicator()
+            isLoading.value -> CircularProgressIndicator( modifier = Modifier.weight(25f))
             errorMessage.value != null && activities.value == null -> {
                 Card(
                     modifier = Modifier
@@ -193,158 +209,167 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                     if (refreshScrollState.value) {
                         CircularProgressIndicator()
                     }
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .run {
-                                with(pointerUtils) {
-                                    verticalDragToRefresh(
-                                        refreshScrollState = refreshScrollState,
-                                        isInitialized = isInitialized.value
-                                    ) {
-                                        getMonthActivities(viewModel, context)
-                                    }
-                                }
-                            }
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .weight(8f)
                     ) {
-                        Box(
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp)
                         ) {
-                            Card(
+                            Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .padding(8.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(8.dp)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Icon(
+                                        painter =
+                                            if(activity.name.contains("Finisher", ignoreCase = true))
+                                                painterResource(id = R.drawable.trophy_cup_silhouette_svgrepo_com)
+                                            else
+                                                painterResource(id = R.drawable.running_man_icon),
+                                        contentDescription = "Activities Icon",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .padding(end = 8.dp),
+                                        tint =
+                                            if(activity.name.contains("Finisher", ignoreCase = true))
+                                                MaterialTheme.colorScheme.tertiary
+                                            else
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Column(
+                                        modifier = Modifier
                                     ) {
+                                        Text(
+                                            text = "Dernieres Activités",
+                                            modifier = Modifier,
+                                            fontSize = 16.sp,
+                                            lineHeight = 18.sp
+                                        )
+                                        Text(
+                                            text = "Course du ${
+                                                dataFormatting.stravaDateToLocal(
+                                                    activity.start_date_local
+                                                )
+                                            } a Yerres",
+                                            modifier = Modifier,
+                                            fontSize = 10.sp,
+                                            lineHeight = 12.sp
+                                        )
+                                    }
+
+                                }
+                                var fontSize = 20.sp
+                                if(activity.name.length > 30){
+                                    fontSize = 16.sp
+                                } else if(activity.name.length > 20){
+                                    fontSize = 20.sp
+                                }
+                                Text(activity.name,
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+                                    fontSize = fontSize,
+                                    lineHeight = fontSize,
+                                    maxLines = 2,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                                ) {
+                                    DataActivityDisplay(
+                                        "Distance",
+                                        "${"%.1f".format(activity.distance / 1000)}km"
+                                    )
+                                    DataActivityDisplay(
+                                        "Durée",
+                                        dataFormatting.secondsToHms(activity.moving_time)
+                                    )
+                                    DataActivityDisplay(
+                                        "Allure",
+                                        dataFormatting.speedToPaceMinPerKm(activity.average_speed)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    var activitiesData = activities.value ?: emptyList()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .weight(10f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column {
+                            val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                days.forEach { day ->
+                                    Text(
+                                        text = day,
+                                        modifier = Modifier.weight(1f),
+                                        textAlign = TextAlign.Center,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                            CalendarDisplay(3, activitiesData)
+                            CalendarDisplay(2, activitiesData)
+                            CalendarDisplay(1, activitiesData)
+                            CalendarDisplay(0, activitiesData)
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .weight(7f),
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            overallAthleteStat.value?.all_run_totals?.let { stats ->
+                                Column(
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.running_man_icon),
-                                            contentDescription = "Activities Icon",
                                             modifier = Modifier
                                                 .size(40.dp)
-                                                .padding(end = 8.dp),
+                                                .padding(8.dp),
+                                            painter = painterResource(R.drawable.progress_svgrepo_com),
+                                            contentDescription = "Stats Icon",
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
-                                        Column(
-                                            modifier = Modifier
-                                        ) {
-                                            Text(
-                                                text = "Dernieres Activités",
-                                                modifier = Modifier,
-                                                fontSize = 16.sp,
-                                                lineHeight = 18.sp
-                                            )
-                                            Text(
-                                                text = "Course du ${
-                                                    dataFormatting.stravaDateToLocal(
-                                                        activity.start_date_local
-                                                    )
-                                                } a Yerres",
-                                                modifier = Modifier,
-                                                fontSize = 10.sp,
-                                                lineHeight = 12.sp
-                                            )
-                                        }
-
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                                    ) {
-                                        DataActivityDisplay(
-                                            "Distance",
-                                            "${"%.1f".format(activity.distance / 1000)}km"
-                                        )
-                                        DataActivityDisplay(
-                                            "Durée",
-                                            dataFormatting.secondsToHms(activity.moving_time)
-                                        )
-                                        DataActivityDisplay(
-                                            "Allure",
-                                            dataFormatting.speedToPaceMinPerKm(activity.average_speed)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        var activitiesData = activities.value ?: emptyList()
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column {
-                                val days = listOf("L", "Ma", "Me", "J", "V", "S", "D")
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    days.forEach { day ->
                                         Text(
-                                            text = day,
-                                            modifier = Modifier.weight(1f),
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.bodySmall
+                                            modifier = Modifier.padding(8.dp),
+                                            text = "Stats générales",
+                                            fontSize = 18.sp,
+                                            lineHeight = 20.sp
                                         )
                                     }
+                                    DataOverallStatsDisplay("Activités", stats.count.toString())
+                                    DataOverallStatsDisplay(
+                                        "Distance",
+                                        "${"%.0f".format(stats.distance / 1000)} km"
+                                    )
+                                    DataOverallStatsDisplay(
+                                        "Temps",
+                                        dataFormatting.secondsToHms(stats.moving_time)
+                                    )
                                 }
-                                CalendarDisplay(3, activitiesData)
-                                CalendarDisplay(2, activitiesData)
-                                CalendarDisplay(1, activitiesData)
-                                CalendarDisplay(0, activitiesData)
                             }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                overallAthleteStat.value?.all_run_totals?.let { stats ->
-                                    Column(
-                                        modifier = Modifier.padding(8.dp)
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(40.dp)
-                                                    .padding(8.dp),
-                                                painter = painterResource(R.drawable.progress_svgrepo_com),
-                                                contentDescription = "Stats Icon",
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                modifier = Modifier.padding(8.dp),
-                                                text = "Stats générales",
-                                                fontSize = 18.sp,
-                                                lineHeight = 20.sp
-                                            )
-                                        }
-                                        DataOverallStatsDisplay("Activités", stats.count.toString())
-                                        DataOverallStatsDisplay(
-                                            "Distance",
-                                            "${"%.0f".format(stats.distance / 1000)} km"
-                                        )
-                                        DataOverallStatsDisplay(
-                                            "Temps",
-                                            dataFormatting.secondsToHms(stats.moving_time)
-                                        )
-                                    }
-                                }
 
-                            }
                         }
                     }
                 }
@@ -377,54 +402,89 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
             OffsetDateTime.parse(activity.start_date_local).toLocalDate()
         }
     }
-
     val state = rememberWeekCalendarState(
         startDate = startOfWeek,
         endDate = startOfWeek,
         firstDayOfWeek = firstDayOfWeek
     )
-    WeekCalendar(
-        state = state,
-        dayContent = { day ->
-            val activitiesForDay = activitiesByDate[day.date].orEmpty()
-            val activityCount = activitiesForDay.size
-            Box(
-                modifier = Modifier
-                    .padding(6.dp)
-                    .size(40.dp)
-                    .background(
-                        if (activityCount > 0)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(4.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                when{
-                    activityCount > 0 -> {
-                        val iconRes = when (activitiesForDay[0].type) {
-                            "Run" -> R.drawable.running_svgrepo_com
-                            "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
-                            "Ride" -> R.drawable.biking_svgrepo_com
-                            "Hike" -> R.drawable.man_in_hike_svgrepo_com
-                            else -> R.drawable.man_doing_exercises_svgrepo_com
+    Row{
+        Box(
+            modifier = Modifier.weight(7f)
+        ) {
+            WeekCalendar(
+                state = state,
+                dayContent = { day ->
+                    val activitiesForDay = activitiesByDate[day.date].orEmpty().reversed()
+                    val activityCount = activitiesForDay.size
+                    Box(
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .size(35.dp)
+                            .background(
+                                if (activityCount > 0)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (activitiesForDay.isNotEmpty() &&
+                                   activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                      MaterialTheme.colorScheme.tertiary
+                                else
+                                   Color.Transparent,
+                                shape = RoundedCornerShape(4.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        when {
+                            activityCount > 0 -> {
+                                val iconRes = when (activitiesForDay[0].type) {
+                                    "Run" -> R.drawable.running_svgrepo_com
+                                    "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
+                                    "Ride" -> R.drawable.biking_svgrepo_com
+                                    "Hike" -> R.drawable.man_in_hike_svgrepo_com
+                                    else -> R.drawable.man_doing_exercises_svgrepo_com
+                                }
+                                Icon(
+                                    painter =
+                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                            painterResource(id = R.drawable.trophy_cup_silhouette_svgrepo_com)
+                                        else
+                                            painterResource(id = iconRes),
+                                    contentDescription = "Activity Icon",
+                                    modifier = Modifier.size(20.dp),
+                                    tint =
+                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                            MaterialTheme.colorScheme.tertiary
+                                        else
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            else -> {
+                                Text(
+                                    text = day.date.dayOfMonth.toString(),
+                                    fontSize = 14.sp
+                                )
+                            }
                         }
-                        Icon(
-                            painter = painterResource( id = iconRes),
-                            contentDescription = "Activity Icon",
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    else -> {
-                        Text(
-                            text = day.date.dayOfMonth.toString(),
-                            fontSize = 14.sp
-                        )
                     }
                 }
-            }
+            )
         }
-    )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(6.dp)
+                .size(40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = weekActivities.sumOf { it.distance }
+                    .let { "%.0f".format(it / 1000) },
+                textAlign = TextAlign.Center
+            )
+        }
+    }
 }

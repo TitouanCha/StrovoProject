@@ -24,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.strovo.screen.DashboardScreen
 import com.example.strovo.screen.ProgressScreen
-import com.example.strovo.screen.ProfileScreen
 import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
 import androidx.compose.material3.Icon
@@ -32,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
 
@@ -71,8 +71,8 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Dashboard.route) {
                             DashboardScreen(navController, stravaViewModel)
                         }
-                        composable(Screen.Profile.route) {
-                            ProfileScreen(navController)
+                        composable(Screen.Settings.route) {
+                            SettingsScreen(navController)
                         }
                         composable(Screen.Progress.route) {
                             ProgressScreen(navController, stravaViewModel)
@@ -102,7 +102,7 @@ fun BottomNavBar(navController: NavController) {
                 )
             },
             label = { Text("Progrés") },
-            selected = false,
+            selected = currentRoute == Screen.Progress.route,
             onClick = {
                 if(currentRoute != Screen.Progress.route) {
                     navController.navigate(Screen.Progress.route)
@@ -119,7 +119,7 @@ fun BottomNavBar(navController: NavController) {
                 )
             },
             label = { Text("Dashboard") },
-            selected = false,
+            selected = currentRoute == Screen.Dashboard.route,
             onClick = {
                 if(currentRoute != Screen.Dashboard.route) {
                     navController.navigate(Screen.Dashboard.route)
