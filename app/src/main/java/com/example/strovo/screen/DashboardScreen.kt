@@ -117,7 +117,6 @@ fun getMonthActivities(viewModel: StravaViewModel, context: Context) {
     val beforeDate = todayDate.epochSecond.toString()
     val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
     viewModel.getMonthActivities(
-        context = context,
         before = beforeDate,
         after = afterDate
     )

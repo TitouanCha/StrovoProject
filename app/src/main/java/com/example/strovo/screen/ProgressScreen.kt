@@ -1,41 +1,28 @@
 package com.example.strovo.screen
 
-import android.annotation.SuppressLint
 import com.example.strovo.R
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,9 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.strovo.data.AverageStatsModel
-import com.example.strovo.data.ChartDistanceModel
+import com.example.strovo.data.MonthlyDistanceModel
 import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.utils.PointerInputUtils
 import com.example.strovo.viewmodel.StravaViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -69,10 +55,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.collections.addAll
 import kotlin.collections.filter
-import kotlin.text.toFloat
-import kotlin.text.toInt
 
 
 @Composable
@@ -95,6 +78,7 @@ fun RowScope.AverageStatsDisplay(title: String, data: String){
 }
 
 fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Context){
+    Log.d("StravaViewModel", "Lunch fetching $selectedYear")
     val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
     val lastDayOfYear = LocalDate.of(selectedYear, 12, 31)
     val afterDate = firstDayOfYear
@@ -106,51 +90,7 @@ fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Co
     viewModel.getYearActivities(
         after = afterDate,
         before = beforeDate,
-        context = context,
     )
-}
-
-fun getAverageStats(activities: GetStravaActivitiesModel?, selectedYear: Int): AverageStatsModel?{
-    if(activities == null){
-        return null
-    }
-    var distance = activities.sumOf { it.distance}
-    var monthlyAverage: Double
-    var weeklyAverage: Double
-    if(selectedYear != LocalDate.now().year){
-        monthlyAverage = distance / 12
-        weeklyAverage = distance / 52
-    }else{
-        val currentMonth = LocalDate.now().monthValue
-        monthlyAverage = distance / currentMonth
-        weeklyAverage = distance / (LocalDate.now().dayOfYear / 7)
-    }
-    return AverageStatsModel(
-        activities = activities.size.toString(),
-        distance = "%.2f km".format(distance / 1000),
-        monthly_average = "%.2f km".format(monthlyAverage / 1000),
-        weekly_average = "%.2f km".format(weeklyAverage / 1000)
-    )
-}
-
-fun parseActivitiesForChart(activities: GetStravaActivitiesModel?, selectedYear: Int): MutableList<ChartDistanceModel> {
-    val monthlyDistances = MutableList(12) { ChartDistanceModel(0, null) } //mutableListOf<ChartDistanceModel>( ChartDistanceModel(0, null) )
-
-    if (activities == null) {
-        return monthlyDistances
-    }
-    for (i in 1..12) {
-        val monthActivities = activities.filter { activity ->
-            val activityDate = LocalDate.parse(activity.start_date_local.substring(0, 10))
-            activityDate.year == selectedYear && activityDate.monthValue == i
-        }
-        monthlyDistances[i-1].distance = (monthActivities.sumOf { it.distance } / 1000).toInt()
-        monthlyDistances[i-1].activities = GetStravaActivitiesModel().apply {
-            addAll(monthActivities)
-        }
-    }
-    Log.e("ProgressScreen", "Monthly Distances: $monthlyDistances")
-    return monthlyDistances
 }
 
 @Composable
@@ -161,34 +101,34 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
     val isInitialized = viewModel.isInitialized.collectAsState()
 
     val activities = viewModel.yearActivities.collectAsState()
-    val lastYearActivities = viewModel.lastYearActivities.collectAsState()
 
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
 
-    var averageStats = remember { mutableStateOf<AverageStatsModel?>(null) }
-    var monthlyDistances = remember { mutableStateOf(mutableListOf<ChartDistanceModel>()) }
+    val monthlyDistances = viewModel.monthlyDistances.collectAsState()
+    val averageStats = viewModel.averageStats.collectAsState()
 
-    var selectedYear = remember { mutableIntStateOf(LocalDate.now().year) }
+
+    val selectedYear = viewModel.selectedYear.collectAsState()
     var refreshScrollState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(isInitialized.value) {
-        if(isInitialized.value && activities.value == null){
-            getYearActivities(selectedYear.intValue, viewModel, context)
+
+    LaunchedEffect(isInitialized.value, selectedYear.value) {
+        if(isInitialized.value){
+            getYearActivities(selectedYear.value, viewModel, context)
         }
     }
-    LaunchedEffect(activities.value) {
-        averageStats.value = getAverageStats(activities.value, selectedYear.intValue)
-        monthlyDistances.value = parseActivitiesForChart(activities.value, selectedYear.intValue)
+    LaunchedEffect(monthlyDistances.value) {
         activitiesModelProducer.runTransaction {
-            columnSeries { series(monthlyDistances.value.map { it.distance }) }
-        }
-    }
-    LaunchedEffect(lastYearActivities.value) {
-        val lastYearParsedActivities = parseActivitiesForChart(lastYearActivities.value, selectedYear.intValue-1)
-        activitiesModelProducer.runTransaction {
-            columnSeries { series(monthlyDistances.value.map { it.distance }) }
-            lineSeries { series(lastYearParsedActivities.map{it.distance}) }
+            val currentYearData = monthlyDistances.value.selectedYear
+            val lastYearData = monthlyDistances.value.lastYear
+
+            if (currentYearData != null) {
+                columnSeries { series(currentYearData.map { it.distance }) }
+            }
+            if (lastYearData != null) {
+                lineSeries { series(lastYearData.map { it.distance }) }
+            }
         }
     }
 
@@ -212,8 +152,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                             refreshScrollState = refreshScrollState,
                             isInitialized = isInitialized.value
                         ) {
-                            selectedYear.intValue = LocalDate.now().year
-                            getYearActivities(LocalDate.now().year, viewModel, context)
+                            viewModel.setYear(LocalDate.now().year)
                         }
                     }
                 },
@@ -227,8 +166,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                 IconButton(
                     onClick = {
                         if(!isLoading.value) {
-                            selectedYear.intValue -= 1
-                            getYearActivities(selectedYear.intValue, viewModel, context)
+                            viewModel.decrementYear()
                         }
                     },
                     modifier = Modifier
@@ -242,19 +180,18 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                     )
                 }
                 Text(
-                    text = "Donnée de ${selectedYear.intValue}",
+                    text = "Donnée de ${selectedYear.value}",
                     modifier = Modifier
                         .weight(3f),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
-                if(selectedYear.intValue != LocalDate.now().year){
+                if(selectedYear.value != LocalDate.now().year){
                     IconButton(
                         onClick = {
                             if(!isLoading.value){
-                                selectedYear.intValue += 1
-                                getYearActivities(selectedYear.intValue, viewModel, context)
+                                viewModel.incrementYear()
                             }
                         },
                         modifier = Modifier
@@ -362,16 +299,14 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
         when{
             isLoading.value -> {
             }
-            monthlyDistances.value.isEmpty() -> {
-                Text("Erreur lors du chargement des activités. Veuillez vérifier votre connexion à Strava.")
-            }
-            !monthlyDistances.value.isEmpty() -> {
+            monthlyDistances.value.selectedYear != null -> {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ){
-                    monthlyDistances.value.forEachIndexed { index, monthData ->
+                    var currentYearData = monthlyDistances.value.selectedYear
+                    currentYearData?.forEachIndexed { index, monthData ->
                         val monthName = listOf(
                             "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                             "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
@@ -380,7 +315,8 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
+                                    .padding(bottom = 16.dp),
+                                onClick = {navController.navigate(Screen.MonthlyActivities.createRoute(index))}
                             ){
                                 Row(
                                     modifier = Modifier

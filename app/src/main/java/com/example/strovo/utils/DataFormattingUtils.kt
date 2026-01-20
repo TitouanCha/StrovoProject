@@ -1,9 +1,13 @@
 package com.example.strovo.utils
 
+import com.example.strovo.data.AverageStatsModel
+import com.example.strovo.data.GetStravaActivitiesModel
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.collections.sumOf
 
 class DataFormattingUtils {
     fun secondsToHms(seconds: Int): String {

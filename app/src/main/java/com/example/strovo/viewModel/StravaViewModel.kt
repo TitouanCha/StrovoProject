@@ -6,12 +6,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import com.example.strovo.BuildConfig
+import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.services.RetrofitInstance
 import com.example.strovo.data.GetStravaTokenModel
 import com.example.strovo.data.RefreshStravaTokenModel
 import com.example.strovo.data.GetStravaActivitiesModel
+import com.example.strovo.data.MonthlyDistanceItem
+import com.example.strovo.data.MonthlyDistanceModel
 import com.example.strovo.data.OverallStats
 import com.example.strovo.utils.TokenManager
 import kotlinx.coroutines.async
@@ -22,8 +26,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.Async
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import kotlin.collections.MutableList
+import kotlin.collections.minusAssign
+import kotlin.collections.plusAssign
 import kotlin.contracts.contract
 
 class StravaViewModel(application: Application) : AndroidViewModel(application) {
@@ -82,6 +90,18 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private val _selectedYear = MutableStateFlow<Int>(Instant.now().atZone(ZoneId.systemDefault()).year)
+    val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
+    fun incrementYear() {
+        _selectedYear.value += 1
+    }
+    fun decrementYear() {
+        _selectedYear.value -= 1
+    }
+    fun setYear(year: Int) {
+        _selectedYear.value = year
+    }
+
     private val _monthActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
     val monthActivities: StateFlow<GetStravaActivitiesModel?> = _monthActivities.asStateFlow()
     private val _yearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
@@ -112,7 +132,7 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             return null
         }
     }
-    fun getMonthActivities(before: String, after: String, context: Context){
+    fun getMonthActivities(before: String, after: String){
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null;
@@ -124,10 +144,8 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                     athleteId = "${tokenManager.getAthleteId()}"
                 )
                 _overallStats.value = statsResponse
-                Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
 
             }catch (e: Exception){
-                Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
 
                 _errorMessage.value = e.message.toString()
@@ -154,12 +172,14 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getYearActivities(before: String, after: String, context: Context){
+    fun getYearActivities(before: String, after: String){
         viewModelScope.launch {
             _isLoading.value = true
-            _errorMessage.value = null;
+            _errorMessage.value = null
             try {
                 _yearActivities.value = fetchRunActivitiesParallel(before, after)
+                getAverageStats(_yearActivities.value, _selectedYear.value)
+                getMonthlyDistances(_yearActivities.value, _selectedYear.value)
                 _isLoading.value = false
 
                 val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong())
@@ -168,16 +188,85 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                 val afterOneYearAgo = Instant.ofEpochSecond(after.toLong())
                     .minus(365, ChronoUnit.DAYS)
                     .epochSecond
-                _lastYearActivities.value = fetchRunActivitiesParallel(beforeOneYearAgo.toString(), afterOneYearAgo.toString())
+                _lastYearActivities.value = fetchRunActivitiesParallel(
+                    beforeOneYearAgo.toString(),
+                    afterOneYearAgo.toString()
+                )
+                getLastYearMonthlyDistances(_lastYearActivities.value, _selectedYear.value)
 
-                Toast.makeText(context, "Activités récupérées", Toast.LENGTH_SHORT).show()
-            }catch (e: Exception){
-                Toast.makeText(context, "Erreur lors de la récupération des activités", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
                 _errorMessage.value = e.message.toString()
                 e.printStackTrace()
             }
         }
+    }
+
+    private val _averageStats = MutableStateFlow<AverageStatsModel?>(null)
+    val averageStats: StateFlow<AverageStatsModel?> = _averageStats.asStateFlow()
+    fun getAverageStats(activities: GetStravaActivitiesModel?, selectedYear: Int){
+        if(activities == null){
+            _averageStats.value =  null
+            return
+        }
+        var distance = activities.sumOf { it.distance}
+        var monthlyAverage: Double
+        var weeklyAverage: Double
+        if(selectedYear != LocalDate.now().year){
+            monthlyAverage = distance / 12
+            weeklyAverage = distance / 52
+        }else{
+            val currentMonth = LocalDate.now().monthValue
+            monthlyAverage = distance / currentMonth
+            weeklyAverage = distance / (LocalDate.now().dayOfYear / 7)
+        }
+        _averageStats.value =  AverageStatsModel(
+            activities = activities.size.toString(),
+            distance = "%.2f km".format(distance / 1000),
+            monthly_average = "%.2f km".format(monthlyAverage / 1000),
+            weekly_average = "%.2f km".format(weeklyAverage / 1000)
+        )
+    }
+
+
+
+    private val _monthlyDistances = MutableStateFlow<MonthlyDistanceModel>(MonthlyDistanceModel(null, null))
+    val monthlyDistances: StateFlow<MonthlyDistanceModel> = _monthlyDistances.asStateFlow()
+    fun getMonthlyDistances(activities: GetStravaActivitiesModel?, selectedYear: Int) {
+        val current = _monthlyDistances.value
+        _monthlyDistances.value = current.copy(
+            selectedYear = parseMonthlyActivitiesDistance(
+                activities,
+                selectedYear
+            ),
+            lastYear = null
+        )
+    }
+    fun getLastYearMonthlyDistances(activities: GetStravaActivitiesModel?, selectedYear: Int) {
+        val current = _monthlyDistances.value
+        _monthlyDistances.value = current.copy(
+            lastYear = parseMonthlyActivitiesDistance(
+                activities,
+                selectedYear - 1
+            )
+        )
+    }
+    fun parseMonthlyActivitiesDistance(activities: GetStravaActivitiesModel?, selectedYear: Int): MutableList<MonthlyDistanceItem>? {
+        if(activities != null){
+            val parsedMonthlyDistances = MutableList(12) { MonthlyDistanceItem(0, null) }
+            for (i in 1..12) {
+                val monthActivities = activities.filter { activity ->
+                    val activityDate = LocalDate.parse(activity.start_date_local.substring(0, 10))
+                    activityDate.year == selectedYear && activityDate.monthValue == i
+                }
+                parsedMonthlyDistances[i-1].distance = (monthActivities.sumOf { it.distance } / 1000).toInt()
+                parsedMonthlyDistances[i-1].activities = GetStravaActivitiesModel().apply {
+                    addAll(monthActivities)
+                }
+            }
+            return parsedMonthlyDistances
+        }
+        return null
     }
 }
 

@@ -30,7 +30,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
+import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.utils.TokenManager
 import com.example.strovo.viewmodel.StravaViewModel
@@ -65,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Dashboard.route,
+                        startDestination = Screen.Progress.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Dashboard.route) {
@@ -76,6 +79,17 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.Progress.route) {
                             ProgressScreen(navController, stravaViewModel)
+                        }
+                        composable(
+                            route = Screen.MonthlyActivities.route,
+                            arguments = listOf(
+                                navArgument("monthIndex") {
+                                    type = NavType.IntType
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val monthIndex = backStackEntry.arguments?.getInt("monthIndex") ?: 0
+                            MonthlyActivitiesScreen(navController = navController, viewModel = stravaViewModel, monthIndex = monthIndex)
                         }
                     }
                 }
