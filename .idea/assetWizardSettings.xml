@@ -318,7 +318,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/settings/baseline_settings_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/trending_down/baseline_trending_down_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -328,8 +328,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="autoMirrored" value="true" />
-                            <entry key="outputName" value="baseline_settings_24" />
+                            <entry key="color" value="da4444" />
+                            <entry key="outputName" value="baseline_trending_down_24" />
                             <entry key="sourceFile" value="$PROJECT_DIR$/../trophy-cup-silhouette-svgrepo-com.svg" />
                           </map>
                         </option>
