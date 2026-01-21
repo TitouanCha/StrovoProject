@@ -255,7 +255,7 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                                                 dataFormatting.stravaDateToLocal(
                                                     activity.start_date_local
                                                 )
-                                            } a Yerres",
+                                            }",
                                             modifier = Modifier,
                                             fontSize = 10.sp,
                                             lineHeight = 12.sp

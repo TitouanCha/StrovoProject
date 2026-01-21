@@ -78,7 +78,6 @@ fun RowScope.AverageStatsDisplay(title: String, data: String){
 }
 
 fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Context){
-    Log.d("StravaViewModel", "Lunch fetching $selectedYear")
     val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
     val lastDayOfYear = LocalDate.of(selectedYear, 12, 31)
     val afterDate = firstDayOfYear
@@ -219,7 +218,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                         CircularProgressIndicator()
                     }
                 }
-                errorMessage.value != null && activities.value == null -> {
+                errorMessage.value != null || activities.value == null -> {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -38,6 +38,7 @@ import com.example.strovo.data.AverageMonthStatsModel
 import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.MonthlyDistanceItem
+import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.viewmodel.StravaViewModel
 import com.patrykandpatrick.vico.compose.common.fill
 import kotlin.text.toInt
@@ -59,7 +60,6 @@ fun getMonthAverageStats(activities: GetStravaActivitiesModel?): AverageMonthSta
 fun MonthAverageStatsDisplay(title: String, data: String, dif: Int){
     Column(
         modifier = Modifier
-            .padding(4.dp)
     ) {
         Text(
             text = title,
@@ -133,6 +133,7 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     )[monthIndex]
+    val dataFormatting = DataFormattingUtils()
 
     val allMonthlyActivities = viewModel.monthlyDistances.collectAsState()
     val selectedYear = viewModel.selectedYear.collectAsState()
@@ -174,7 +175,7 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
         }
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .fillMaxWidth()
         ) {
             val stats = averageStats.value
@@ -182,7 +183,7 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
             if (stats != null) {
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(vertical = 16.dp, horizontal = 8.dp)
                         .fillMaxWidth()
                 ){
                     val distanceDif = if (oldStats != null) {
@@ -218,7 +219,7 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
         }
         Text(
             text = "Liste des activitées : ",
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 18.dp),
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 18.dp),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -239,19 +240,38 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
-                            Text(
-                                text = activity.name,
-                                fontSize = 16.sp,
+                            var fontSize = 20.sp
+                            if(activity.name.length > 30){
+                                fontSize = 16.sp
+                            } else if(activity.name.length > 20){
+                                fontSize = 20.sp
+                            }
+                            Text(activity.name,
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+                                fontSize = fontSize,
+                                lineHeight = fontSize,
+                                maxLines = 2,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(
-                                text = "Distance: %.2f km".format(activity.distance / 1000),
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = "Durée: ${activity.moving_time / 60} min",
-                                fontSize = 14.sp
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                            ) {
+                                DataActivityDisplay(
+                                    "Distance",
+                                    "${"%.1f".format(activity.distance / 1000)}km"
+                                )
+                                DataActivityDisplay(
+                                    "Durée",
+                                    dataFormatting.secondsToHms(activity.moving_time)
+                                )
+                                DataActivityDisplay(
+                                    "Allure",
+                                    dataFormatting.speedToPaceMinPerKm(activity.average_speed)
+                                )
+                            }
                         }
                     }
                 }
