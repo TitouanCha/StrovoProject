@@ -185,6 +185,7 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
+                        .weight(8f)
                 ) {
                     Column(
                         modifier = Modifier.padding(8.dp)

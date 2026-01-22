@@ -112,9 +112,11 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
     var refreshScrollState = remember { mutableStateOf(false) }
 
 
-    LaunchedEffect(isInitialized.value, selectedYear.value) {
+    LaunchedEffect(selectedYear.value) {
         if(isInitialized.value){
-            getYearActivities(selectedYear.value, viewModel, context)
+            if(activities.value?.year != selectedYear.value){
+                getYearActivities(selectedYear.value, viewModel, context)
+            }
         }
     }
     LaunchedEffect(monthlyDistances.value) {

@@ -1,5 +1,6 @@
 package com.example.strovo.viewmodel
 
+import android.R
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -17,6 +18,7 @@ import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.MonthlyDistanceItem
 import com.example.strovo.data.MonthlyDistanceModel
 import com.example.strovo.data.OverallStats
+import com.example.strovo.data.YearStravaActivitiesModel
 import com.example.strovo.utils.TokenManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -102,12 +104,6 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         _selectedYear.value = year
     }
 
-    private val _monthActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
-    val monthActivities: StateFlow<GetStravaActivitiesModel?> = _monthActivities.asStateFlow()
-    private val _yearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
-    val yearActivities: StateFlow<GetStravaActivitiesModel?> = _yearActivities.asStateFlow()
-    private val _lastYearActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
-    val lastYearActivities: StateFlow<GetStravaActivitiesModel?> = _lastYearActivities.asStateFlow()
 
     private val _overallStats = MutableStateFlow<OverallStats?>(null)
     val overallStats: StateFlow<OverallStats?> = _overallStats.asStateFlow()
@@ -118,8 +114,12 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+
+    private val _monthActivities = MutableStateFlow<GetStravaActivitiesModel?>(null)
+    val monthActivities: StateFlow<GetStravaActivitiesModel?> = _monthActivities.asStateFlow()
     suspend fun getActivities(page: Int? = null, perPage: Int? = null, before: String? = null, after: String? = null): GetStravaActivitiesModel?{
         try {
+            Log.v("GetActivities", "Fetching activities")
             val activityResponse: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
                 authorization = "Bearer ${tokenManager.getAccessToken()}",
                 perPage = perPage,
@@ -132,6 +132,9 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             return null
         }
     }
+
+// --------------------------------------------------------------
+// Fetch Activities of the month
     fun getMonthActivities(before: String, after: String){
         viewModelScope.launch {
             _isLoading.value = true
@@ -156,10 +159,22 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+
+
+
+// --------------------------------------------------------------
+// Fetch Activities of the Year
+    private val _yearActivities = MutableStateFlow<YearStravaActivitiesModel?>(null)
+    val yearActivities: StateFlow<YearStravaActivitiesModel?> = _yearActivities.asStateFlow()
+    private val _lastYearActivities = MutableStateFlow<YearStravaActivitiesModel?>(null)
+    val lastYearActivities: StateFlow<YearStravaActivitiesModel?> = _lastYearActivities.asStateFlow()
+
     suspend fun fetchRunActivitiesParallel(
         before: String,
-        after: String
+        after: String,
+        index: Int
     ): GetStravaActivitiesModel {
+
         return coroutineScope {
             val page1 = async { getActivities(1, 200, before, after) }
             val page2 = async { getActivities(2, 200, before, after) }
@@ -177,22 +192,34 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                _yearActivities.value = fetchRunActivitiesParallel(before, after)
-                getAverageStats(_yearActivities.value, _selectedYear.value)
-                getMonthlyDistances(_yearActivities.value, _selectedYear.value)
+                var lastYearLoadedActivities = _lastYearActivities.value
+                var actualYearLoadedActivities = _yearActivities.value
+                if(lastYearLoadedActivities != null && lastYearLoadedActivities.year == _selectedYear.value){
+                    _yearActivities.value = lastYearLoadedActivities
+
+                }else {
+                    _yearActivities.value = YearStravaActivitiesModel(
+                        year = _selectedYear.value,
+                        allActivities = fetchRunActivitiesParallel(before, after, 0)
+                    )
+                }
+                getAverageStats(_yearActivities.value)
+                getMonthlyDistances(_yearActivities.value)
                 _isLoading.value = false
 
-                val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong())
-                    .minus(365, ChronoUnit.DAYS)
-                    .epochSecond
-                val afterOneYearAgo = Instant.ofEpochSecond(after.toLong())
-                    .minus(365, ChronoUnit.DAYS)
-                    .epochSecond
-                _lastYearActivities.value = fetchRunActivitiesParallel(
-                    beforeOneYearAgo.toString(),
-                    afterOneYearAgo.toString()
-                )
-                getLastYearMonthlyDistances(_lastYearActivities.value, _selectedYear.value)
+
+                val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong()).minus(365, ChronoUnit.DAYS).epochSecond
+                val afterOneYearAgo = Instant.ofEpochSecond(after.toLong()).minus(365, ChronoUnit.DAYS).epochSecond
+
+                if(actualYearLoadedActivities != null && actualYearLoadedActivities.year == _selectedYear.value - 1){
+                    _lastYearActivities.value = actualYearLoadedActivities
+                }else {
+                    _lastYearActivities.value = YearStravaActivitiesModel(
+                        year = _selectedYear.value - 1,
+                        allActivities = fetchRunActivitiesParallel(beforeOneYearAgo.toString(), afterOneYearAgo.toString(), 1)
+                    )
+                }
+                getLastYearMonthlyDistances(_lastYearActivities.value)
 
             } catch (e: Exception) {
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
@@ -204,15 +231,15 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _averageStats = MutableStateFlow<AverageStatsModel?>(null)
     val averageStats: StateFlow<AverageStatsModel?> = _averageStats.asStateFlow()
-    fun getAverageStats(activities: GetStravaActivitiesModel?, selectedYear: Int){
+    fun getAverageStats(activities: YearStravaActivitiesModel?){
         if(activities == null){
             _averageStats.value =  null
             return
         }
-        var distance = activities.sumOf { it.distance}
+        var distance = activities.allActivities.sumOf { it.distance}
         var monthlyAverage: Double
         var weeklyAverage: Double
-        if(selectedYear != LocalDate.now().year){
+        if(activities.year != LocalDate.now().year){
             monthlyAverage = distance / 12
             weeklyAverage = distance / 52
         }else{
@@ -221,7 +248,7 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             weeklyAverage = distance / (LocalDate.now().dayOfYear / 7)
         }
         _averageStats.value =  AverageStatsModel(
-            activities = activities.size.toString(),
+            activities = activities.allActivities.size.toString(),
             distance = "%.2f km".format(distance / 1000),
             monthly_average = "%.2f km".format(monthlyAverage / 1000),
             weekly_average = "%.2f km".format(weeklyAverage / 1000)
@@ -232,32 +259,30 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _monthlyDistances = MutableStateFlow<MonthlyDistanceModel>(MonthlyDistanceModel(null, null))
     val monthlyDistances: StateFlow<MonthlyDistanceModel> = _monthlyDistances.asStateFlow()
-    fun getMonthlyDistances(activities: GetStravaActivitiesModel?, selectedYear: Int) {
+    fun getMonthlyDistances(activities: YearStravaActivitiesModel?) {
         val current = _monthlyDistances.value
         _monthlyDistances.value = current.copy(
             selectedYear = parseMonthlyActivitiesDistance(
-                activities,
-                selectedYear
+                activities
             ),
             lastYear = null
         )
     }
-    fun getLastYearMonthlyDistances(activities: GetStravaActivitiesModel?, selectedYear: Int) {
+    fun getLastYearMonthlyDistances(activities: YearStravaActivitiesModel?) {
         val current = _monthlyDistances.value
         _monthlyDistances.value = current.copy(
             lastYear = parseMonthlyActivitiesDistance(
-                activities,
-                selectedYear - 1
+                activities
             )
         )
     }
-    fun parseMonthlyActivitiesDistance(activities: GetStravaActivitiesModel?, selectedYear: Int): MutableList<MonthlyDistanceItem>? {
+    fun parseMonthlyActivitiesDistance(activities: YearStravaActivitiesModel?): MutableList<MonthlyDistanceItem>? {
         if(activities != null){
             val parsedMonthlyDistances = MutableList(12) { MonthlyDistanceItem(0, null) }
             for (i in 1..12) {
-                val monthActivities = activities.filter { activity ->
+                val monthActivities = activities.allActivities.filter { activity ->
                     val activityDate = LocalDate.parse(activity.start_date_local.substring(0, 10))
-                    activityDate.year == selectedYear && activityDate.monthValue == i
+                    activityDate.year == activities.year && activityDate.monthValue == i
                 }
                 parsedMonthlyDistances[i-1].distance = (monthActivities.sumOf { it.distance } / 1000).toInt()
                 parsedMonthlyDistances[i-1].activities = GetStravaActivitiesModel().apply {
