@@ -17,5 +17,8 @@ sealed class Screen(val route: String) {
     object MonthlyActivities : Screen("monthly_activities/{monthIndex}") {
         fun createRoute(monthIndex: Int) = "monthly_activities/$monthIndex"
     }
+    object ActivityDetails : Screen("activity_details/{activityId}") {
+        fun createRoute(activityId: String) = "activity_details/$activityId"
+    }
 }
 

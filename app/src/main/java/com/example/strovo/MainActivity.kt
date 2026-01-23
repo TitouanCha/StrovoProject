@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.strovo.screen.ActivityDetails
 import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.utils.TokenManager
@@ -89,7 +90,26 @@ class MainActivity : ComponentActivity() {
                             )
                         ) { backStackEntry ->
                             val monthIndex = backStackEntry.arguments?.getInt("monthIndex") ?: 0
-                            MonthlyActivitiesScreen(navController = navController, viewModel = stravaViewModel, monthIndex = monthIndex)
+                            MonthlyActivitiesScreen(
+                                navController = navController,
+                                viewModel = stravaViewModel,
+                                monthIndex = monthIndex
+                            )
+                        }
+                        composable(
+                            route = Screen.ActivityDetails.route,
+                            arguments = listOf(
+                                navArgument("activityId") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val activityId = backStackEntry.arguments?.getString("activityId") ?: ""
+                            ActivityDetails(
+                                navController = navController,
+                                viewModel = stravaViewModel,
+                                activityId = activityId
+                            )
                         }
                     }
                 }

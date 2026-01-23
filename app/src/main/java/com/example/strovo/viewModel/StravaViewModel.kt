@@ -1,6 +1,5 @@
 package com.example.strovo.viewmodel
 
-import android.R
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -10,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import com.example.strovo.BuildConfig
+import com.example.strovo.data.ActivityDetailModel
 import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.services.RetrofitInstance
 import com.example.strovo.data.GetStravaTokenModel
@@ -292,6 +292,33 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             return parsedMonthlyDistances
         }
         return null
+    }
+
+// --------------------------------------------------------------
+// Fetch Activities details
+    private val _activityDetails = MutableStateFlow<ActivityDetailModel?>(null)
+    val activityDetails: StateFlow<ActivityDetailModel?> = _activityDetails.asStateFlow()
+
+    fun getActivityDetails(activityId: String){
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null;
+            try {
+                val activityDetailResponse: ActivityDetailModel = RetrofitInstance.activityApi.getActivityDetails(
+                    authorization = "Bearer ${tokenManager.getAccessToken()}",
+                    activityId = activityId
+                )
+                _activityDetails.value = activityDetailResponse
+                Log.e("StravaViewModel", "gg wp got activity details: ${activityDetailResponse.name}")
+            }catch (e: Exception){
+                Log.e("StravaViewModel", "Error getting activity details: ${e.message}")
+
+                _errorMessage.value = e.message.toString()
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }
 

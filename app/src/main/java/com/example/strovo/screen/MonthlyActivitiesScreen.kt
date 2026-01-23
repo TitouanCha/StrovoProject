@@ -235,30 +235,43 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
                     Card(
                         modifier = Modifier
                             .padding(vertical = 8.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        onClick = {
+                            navController.navigate("activity_details/${activity.id}")
+                        }
                     ) {
                         Column(
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
-                            var fontSize = 20.sp
-                            if(activity.name.length > 30){
+                            var fontSize = 18.sp
+                            if(activity.name.length > 25){
                                 fontSize = 16.sp
                             } else if(activity.name.length > 20){
-                                fontSize = 20.sp
+                                fontSize = 18.sp
                             }
                             Text(activity.name,
                                 modifier = Modifier
-                                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+                                    .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 2.dp),
                                 fontSize = fontSize,
                                 lineHeight = fontSize,
                                 maxLines = 2,
                                 fontWeight = FontWeight.Bold
                             )
+                            Text(
+                                text =
+                                    dataFormatting.stravaDateToLocal(
+                                        activity.start_date_local
+                                    ),
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
+                                fontSize = 14.sp,
+                                lineHeight = 12.sp
+                            )
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 6.dp),
                             ) {
                                 DataActivityDisplay(
                                     "Distance",

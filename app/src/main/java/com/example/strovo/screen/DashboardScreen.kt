@@ -8,13 +8,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,10 +29,14 @@ import com.example.strovo.R
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -68,6 +75,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
+import kotlin.compareTo
 import kotlin.isInitialized
 import kotlin.math.log
 import kotlin.rem
@@ -81,12 +89,14 @@ fun RowScope.DataActivityDisplay(title: String, data: String) {
         Text(
             text = title,
             modifier = Modifier,
-            fontSize = 10.sp
+            fontSize = 10.sp,
+            lineHeight = 12.sp
         )
         Text(
             text = data,
             modifier = Modifier,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            lineHeight = 22.sp,
         )
     }
 }
@@ -162,12 +172,26 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(2f),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            IconButton(onClick = {
+            Box( modifier = Modifier.weight(1f)){}
+            Text(
+                modifier = Modifier
+                    .weight(4f)
+                    .padding(8.dp),
+                textAlign = TextAlign.Center,
+                text = "Dashboard",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            IconButton(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp),
+                onClick = {
                 navController.navigate(Screen.Settings.route)
             }) {
                 Icon(
@@ -213,11 +237,15 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
-                            .weight(8f)
+                            .weight(7f),
+                        contentAlignment = Alignment.Center
                     ) {
                         Card(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            onClick = {
+                                navController.navigate(Screen.ActivityDetails.createRoute(activity.id.toString()))
+                            }
                         ) {
                             Column(
                                 modifier = Modifier
@@ -322,10 +350,10 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                                     )
                                 }
                             }
-                            CalendarDisplay(3, activitiesData)
-                            CalendarDisplay(2, activitiesData)
-                            CalendarDisplay(1, activitiesData)
-                            CalendarDisplay(0, activitiesData)
+                            CalendarDisplay(3, activitiesData, navController)
+                            CalendarDisplay(2, activitiesData, navController)
+                            CalendarDisplay(1, activitiesData, navController)
+                            CalendarDisplay(0, activitiesData, navController)
                         }
                     }
                     Box(
@@ -333,6 +361,7 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
                             .fillMaxWidth()
                             .padding(16.dp)
                             .weight(7f),
+                        contentAlignment = Alignment.Center
                     ) {
                         Card(
                             modifier = Modifier
@@ -378,8 +407,15 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
+fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>, navController: NavController) {
+    val dataFormatting = DataFormattingUtils()
+    var sheetState = rememberModalBottomSheetState()
+    var showSheet = remember { mutableStateOf(false) }
+    var selectedActivities = remember { mutableStateOf<getStravaActivitiesModelItem?>(null) }
+
+
     val today = remember { LocalDate.now().minusDays(week * 7L) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
     val startOfWeek = remember(today) {
@@ -390,7 +426,6 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
     val endOfWeek = remember(startOfWeek) {
         startOfWeek.plusDays(6)
     }
-
     val weekActivities = data.filter { activity ->
         val date = OffsetDateTime
             .parse(activity.start_date_local)
@@ -407,6 +442,79 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
         endDate = startOfWeek,
         firstDayOfWeek = firstDayOfWeek
     )
+
+    if(showSheet.value) {
+        ModalBottomSheet(
+            onDismissRequest = { showSheet.value = false },
+            sheetState = sheetState
+        ) {
+            selectedActivities.value?.let { activity ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        "Activité du ${DataFormattingUtils().stravaDateToLocal(activity.start_date_local)}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                    Text(
+                        "Type d'activitées : ${activity.type}",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    Text(
+                        activity.name,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
+                    )
+                    if (activity.type == "Run") {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 6.dp),
+                        ) {
+                            DataActivityDisplay(
+                                "Distance",
+                                "${"%.1f".format(activity.distance / 1000)}km"
+                            )
+                            DataActivityDisplay(
+                                "Durée",
+                                dataFormatting.secondsToHms(activity.moving_time)
+                            )
+                            DataActivityDisplay(
+                                "Allure",
+                                dataFormatting.speedToPaceMinPerKm(activity.average_speed)
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 24.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            Button(
+                                onClick = {
+                                    showSheet.value = false
+                                    navController.navigate(Screen.ActivityDetails.createRoute(activity.id.toString()))
+                                }
+                            ) {
+                                Text(
+                                    "Detail de l'activité",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
+    }
     Row{
         Box(
             modifier = Modifier.weight(7f)
@@ -421,7 +529,7 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
                             .padding(6.dp)
                             .size(35.dp)
                             .background(
-                                if (activityCount > 0)
+                                if (activityCount == 1)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     MaterialTheme.colorScheme.surfaceVariant,
@@ -435,7 +543,13 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
                                 else
                                    Color.Transparent,
                                 shape = RoundedCornerShape(4.dp)
-                            ),
+                            )
+                            .clickable {
+                                if (activityCount > 0) {
+                                    selectedActivities.value = activitiesForDay[0]
+                                    showSheet.value = true
+                                }
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         when {
@@ -481,7 +595,7 @@ fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>) {
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = weekActivities.sumOf { it.distance }
+                text = weekActivities.filter { it.type == "Run" }.sumOf { it.distance }
                     .let { "%.0f".format(it / 1000) },
                 textAlign = TextAlign.Center
             )

@@ -1,7 +1,9 @@
 package com.example.strovo.services
 
+import com.example.strovo.data.ActivityDetailModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.OverallStats
+import com.example.strovo.screen.Screen
 import org.intellij.lang.annotations.Pattern
 import retrofit2.http.Field
 import retrofit2.http.GET
@@ -25,5 +27,11 @@ interface StravaActivityServices {
         @Header("Authorization") authorization: String,
         @Path("athlete_id") athleteId: String
     ): OverallStats
+
+    @GET("https://www.strava.com/api/v3/activities/{activity_id}")
+    suspend fun getActivityDetails(
+        @Header("Authorization") authorization: String,
+        @Path("activity_id") activityId: String
+    ): ActivityDetailModel
 
 }
