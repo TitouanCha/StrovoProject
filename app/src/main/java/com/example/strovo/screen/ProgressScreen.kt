@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.strovo.component.DataActivityDisplay
+import com.example.strovo.component.ProgressScreenComponents.MonthlyAverageStatsComponents
 import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.MonthlyDistanceModel
 import com.example.strovo.data.GetStravaActivitiesModel
@@ -57,25 +59,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.collections.filter
 
-
-@Composable
-fun RowScope.AverageStatsDisplay(title: String, data: String){
-    Column(
-        modifier = Modifier
-            .weight(1f)
-    ){
-        Text(
-            text = title,
-            fontSize = 11.sp,
-            lineHeight = 15.sp
-        )
-        Text(
-            text = data,
-            fontSize = 22.sp,
-            lineHeight = 25.sp
-        )
-    }
-}
 
 fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Context){
     val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
@@ -274,26 +257,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                             .fillMaxWidth()
                             .padding(start = 8.dp, end = 16.dp, bottom = 16.dp)
                     )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ){
-                            AverageStatsDisplay("Distance Total", averageStats.value?.distance ?: "")
-                            AverageStatsDisplay("Activités totale", averageStats.value?.activities ?: "")
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ){
-                            AverageStatsDisplay("Moyenne hebdomadaire", averageStats.value?.weekly_average ?: "")
-                            AverageStatsDisplay("Moyenne Mensuelle", averageStats.value?.monthly_average ?: "")
-                        }
-                    }
+                    MonthlyAverageStatsComponents(averageStats.value)
                 }
             }
         }

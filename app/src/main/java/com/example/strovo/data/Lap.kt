@@ -1,5 +1,13 @@
 package com.example.strovo.data
 
+
+data class SortedLapsModel(
+    val index: Int,
+    val title: String,
+    val laps: List<Lap>
+)
+
+
 data class Lap(
     val activity: Activity,
     val athlete: AthleteX,

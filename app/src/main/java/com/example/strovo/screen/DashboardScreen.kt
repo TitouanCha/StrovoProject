@@ -48,13 +48,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.MainActivity
+import com.example.strovo.component.DashboardScreenComponents.AthleteStatsComponent
+import com.example.strovo.component.DashboardScreenComponents.BottomSheetComponent
+import com.example.strovo.component.DashboardScreenComponents.CalendarDisplay
+import com.example.strovo.component.DashboardScreenComponents.LastActivityCard
+import com.example.strovo.component.DataActivityDisplay
+import com.example.strovo.component.DataOverallStatsDisplay
 import com.example.strovo.data.AllRunTotals
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.OverallStats
 import com.example.strovo.data.getStravaActivitiesModelItem
-import com.example.strovo.utils.DataFormattingUtils
 import com.example.strovo.utils.PointerInputUtils
 import com.example.strovo.utils.TokenManager
+import com.example.strovo.utils.secondsToHms
+import com.example.strovo.utils.speedToPaceMinPerKm
+import com.example.strovo.utils.stravaDateToLocal
 import com.example.strovo.viewmodel.StravaViewModel
 import com.kizitonwose.calendar.compose.HeatMapCalendar
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -81,47 +89,6 @@ import kotlin.math.log
 import kotlin.rem
 import kotlin.text.toLong
 
-@Composable
-fun RowScope.DataActivityDisplay(title: String, data: String) {
-    Column(
-        modifier = Modifier.weight(1f)
-    ) {
-        Text(
-            text = title,
-            modifier = Modifier,
-            fontSize = 10.sp,
-            lineHeight = 12.sp
-        )
-        Text(
-            text = data,
-            modifier = Modifier,
-            fontSize = 20.sp,
-            lineHeight = 22.sp,
-        )
-    }
-}
-
-@Composable
-fun DataOverallStatsDisplay(title: String, data: String){
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title
-        )
-        Text(
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            text = ":"
-        )
-        Text(
-            modifier = Modifier.weight(2f),
-            text = data
-        )
-    }
-}
-
 fun getMonthActivities(viewModel: StravaViewModel, context: Context) {
     val todayDate = Instant.now()
     val beforeDate = todayDate.epochSecond.toString()
@@ -132,11 +99,11 @@ fun getMonthActivities(viewModel: StravaViewModel, context: Context) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
     val context = LocalContext.current
     val isInitialized = viewModel.isInitialized.collectAsState()
-    val dataFormatting = DataFormattingUtils()
     val pointerUtils = PointerInputUtils()
 
     val activities = viewModel.monthActivities.collectAsState()
@@ -145,6 +112,10 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
     val errorMessage = viewModel.errorMessage.collectAsState()
 
     var refreshScrollState = remember { mutableStateOf(false) }
+
+    var sheetState = rememberModalBottomSheetState()
+    var showSheet = remember { mutableStateOf(false) }
+    var selectedActivities = remember { mutableStateOf<getStravaActivitiesModelItem?>(null) }
 
     LaunchedEffect(isInitialized.value) {
         if (isInitialized.value && activities.value == null) {
@@ -168,6 +139,21 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if(showSheet.value) {
+            ModalBottomSheet(
+                onDismissRequest = { showSheet.value = false },
+                sheetState = sheetState
+            ) {
+                BottomSheetComponent(selectedActivities.value) {
+                    showSheet.value = false
+                        navController.navigate(
+                            Screen.ActivityDetails.createRoute(
+                                selectedActivities.value?.id.toString()
+                            )
+                        )
+                }
+            }
+        }
         Row(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
@@ -229,376 +215,57 @@ fun DashboardScreen(navController: NavController, viewModel: StravaViewModel = v
             }
             activities.value != null -> {
                 var filteredActivity = activities.value?.filter { it.type == "Run" }
+                if (refreshScrollState.value) {
+                    CircularProgressIndicator()
+                }
                 filteredActivity?.firstOrNull()?.let { activity ->
-                    if (refreshScrollState.value) {
-                        CircularProgressIndicator()
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .weight(7f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            onClick = {
-                                navController.navigate(Screen.ActivityDetails.createRoute(activity.id.toString()))
-                            }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        painter =
-                                            if(activity.name.contains("Finisher", ignoreCase = true))
-                                                painterResource(id = R.drawable.trophy_cup_silhouette_svgrepo_com)
-                                            else
-                                                painterResource(id = R.drawable.running_man_icon),
-                                        contentDescription = "Activities Icon",
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .padding(end = 8.dp),
-                                        tint =
-                                            if(activity.name.contains("Finisher", ignoreCase = true))
-                                                MaterialTheme.colorScheme.tertiary
-                                            else
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Column(
-                                        modifier = Modifier
-                                    ) {
-                                        Text(
-                                            text = "Dernieres Activités",
-                                            modifier = Modifier,
-                                            fontSize = 16.sp,
-                                            lineHeight = 18.sp
-                                        )
-                                        Text(
-                                            text = "Course du ${
-                                                dataFormatting.stravaDateToLocal(
-                                                    activity.start_date_local
-                                                )
-                                            }",
-                                            modifier = Modifier,
-                                            fontSize = 10.sp,
-                                            lineHeight = 12.sp
-                                        )
-                                    }
-
-                                }
-                                var fontSize = 20.sp
-                                if(activity.name.length > 30){
-                                    fontSize = 16.sp
-                                } else if(activity.name.length > 20){
-                                    fontSize = 20.sp
-                                }
-                                Text(activity.name,
-                                    modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
-                                    fontSize = fontSize,
-                                    lineHeight = fontSize,
-                                    maxLines = 2,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                                ) {
-                                    DataActivityDisplay(
-                                        "Distance",
-                                        "${"%.1f".format(activity.distance / 1000)}km"
-                                    )
-                                    DataActivityDisplay(
-                                        "Durée",
-                                        dataFormatting.secondsToHms(activity.moving_time)
-                                    )
-                                    DataActivityDisplay(
-                                        "Allure",
-                                        dataFormatting.speedToPaceMinPerKm(activity.average_speed)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    var activitiesData = activities.value ?: emptyList()
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .weight(10f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column {
-                            val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                days.forEach { day ->
-                                    Text(
-                                        text = day,
-                                        modifier = Modifier.weight(1f),
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
-                            }
-                            CalendarDisplay(3, activitiesData, navController)
-                            CalendarDisplay(2, activitiesData, navController)
-                            CalendarDisplay(1, activitiesData, navController)
-                            CalendarDisplay(0, activitiesData, navController)
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .weight(7f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            overallAthleteStat.value?.all_run_totals?.let { stats ->
-                                Column(
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .padding(8.dp),
-                                            painter = painterResource(R.drawable.progress_svgrepo_com),
-                                            contentDescription = "Stats Icon",
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            modifier = Modifier.padding(8.dp),
-                                            text = "Stats générales",
-                                            fontSize = 18.sp,
-                                            lineHeight = 20.sp
-                                        )
-                                    }
-                                    DataOverallStatsDisplay("Activités", stats.count.toString())
-                                    DataOverallStatsDisplay(
-                                        "Distance",
-                                        "${"%.0f".format(stats.distance / 1000)} km"
-                                    )
-                                    DataOverallStatsDisplay(
-                                        "Temps",
-                                        dataFormatting.secondsToHms(stats.moving_time)
-                                    )
-                                }
-                            }
-
-                        }
+                    LastActivityCard(activity) {
+                        navController.navigate(Screen.ActivityDetails.createRoute(activity.id.toString()))
                     }
                 }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>, navController: NavController) {
-    val dataFormatting = DataFormattingUtils()
-    var sheetState = rememberModalBottomSheetState()
-    var showSheet = remember { mutableStateOf(false) }
-    var selectedActivities = remember { mutableStateOf<getStravaActivitiesModelItem?>(null) }
-
-
-    val today = remember { LocalDate.now().minusDays(week * 7L) }
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
-    val startOfWeek = remember(today) {
-        today.minusDays(
-            ((today.dayOfWeek.value - firstDayOfWeek.value + 7) % 7).toLong()
-        )
-    }
-    val endOfWeek = remember(startOfWeek) {
-        startOfWeek.plusDays(6)
-    }
-    val weekActivities = data.filter { activity ->
-        val date = OffsetDateTime
-            .parse(activity.start_date_local)
-            .toLocalDate()
-        date >= startOfWeek && date <= endOfWeek
-    }
-    val activitiesByDate = remember(weekActivities) {
-        weekActivities.groupBy { activity ->
-            OffsetDateTime.parse(activity.start_date_local).toLocalDate()
-        }
-    }
-    val state = rememberWeekCalendarState(
-        startDate = startOfWeek,
-        endDate = startOfWeek,
-        firstDayOfWeek = firstDayOfWeek
-    )
-
-    if(showSheet.value) {
-        ModalBottomSheet(
-            onDismissRequest = { showSheet.value = false },
-            sheetState = sheetState
-        ) {
-            selectedActivities.value?.let { activity ->
-                Column(
+                var activitiesData = activities.value ?: emptyList()
+                Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .weight(10f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        "Activité du ${DataFormattingUtils().stravaDateToLocal(activity.start_date_local)}",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                    Text(
-                        "Type d'activitées : ${activity.type}",
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-
-                    Text(
-                        activity.name,
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
-                    )
-                    if (activity.type == "Run") {
+                    Column {
+                        val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 6.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            DataActivityDisplay(
-                                "Distance",
-                                "${"%.1f".format(activity.distance / 1000)}km"
-                            )
-                            DataActivityDisplay(
-                                "Durée",
-                                dataFormatting.secondsToHms(activity.moving_time)
-                            )
-                            DataActivityDisplay(
-                                "Allure",
-                                dataFormatting.speedToPaceMinPerKm(activity.average_speed)
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 24.dp),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Button(
-                                onClick = {
-                                    showSheet.value = false
-                                    navController.navigate(Screen.ActivityDetails.createRoute(activity.id.toString()))
-                                }
-                            ) {
+                            days.forEach { day ->
                                 Text(
-                                    "Detail de l'activité",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = day,
+                                    modifier = Modifier.weight(1f),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
                         }
+                        CalendarDisplay(3, activitiesData){ activity ->
+                            selectedActivities.value = activity
+                            showSheet.value = true
+                        }
+                        CalendarDisplay(2, activitiesData){ activity ->
+                            selectedActivities.value = activity
+                            showSheet.value = true
+                        }
+                        CalendarDisplay(1, activitiesData){ activity ->
+                            selectedActivities.value = activity
+                            showSheet.value = true}
+                        CalendarDisplay(0, activitiesData){ activity ->
+                            selectedActivities.value = activity
+                            showSheet.value = true}
                     }
-
-
                 }
+                AthleteStatsComponent(overallAthleteStat.value)
             }
         }
     }
-    Row{
-        Box(
-            modifier = Modifier.weight(7f)
-        ) {
-            WeekCalendar(
-                state = state,
-                dayContent = { day ->
-                    val activitiesForDay = activitiesByDate[day.date].orEmpty().reversed()
-                    val activityCount = activitiesForDay.size
-                    Box(
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .size(35.dp)
-                            .background(
-                                if (activityCount == 1)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = if (activitiesForDay.isNotEmpty() &&
-                                   activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
-                                      MaterialTheme.colorScheme.tertiary
-                                else
-                                   Color.Transparent,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .clickable {
-                                if (activityCount > 0) {
-                                    selectedActivities.value = activitiesForDay[0]
-                                    showSheet.value = true
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when {
-                            activityCount > 0 -> {
-                                val iconRes = when (activitiesForDay[0].type) {
-                                    "Run" -> R.drawable.running_svgrepo_com
-                                    "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
-                                    "Ride" -> R.drawable.biking_svgrepo_com
-                                    "Hike" -> R.drawable.man_in_hike_svgrepo_com
-                                    else -> R.drawable.man_doing_exercises_svgrepo_com
-                                }
-                                Icon(
-                                    painter =
-                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
-                                            painterResource(id = R.drawable.trophy_cup_silhouette_svgrepo_com)
-                                        else
-                                            painterResource(id = iconRes),
-                                    contentDescription = "Activity Icon",
-                                    modifier = Modifier.size(20.dp),
-                                    tint =
-                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
-                                            MaterialTheme.colorScheme.tertiary
-                                        else
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            else -> {
-                                Text(
-                                    text = day.date.dayOfMonth.toString(),
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                    }
-                }
-            )
-        }
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(6.dp)
-                .size(40.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = weekActivities.filter { it.type == "Run" }.sumOf { it.distance }
-                    .let { "%.0f".format(it / 1000) },
-                textAlign = TextAlign.Center
-            )
-        }
-    }
 }
+
+

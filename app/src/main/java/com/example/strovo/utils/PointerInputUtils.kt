@@ -15,7 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import android.util.Log
 import android.content.Context
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.detectTapGestures
 import com.example.strovo.screen.getMonthActivities
+import kotlinx.coroutines.launch
 
 class PointerInputUtils {
 

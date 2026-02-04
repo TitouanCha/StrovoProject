@@ -35,11 +35,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.strovo.R
+import com.example.strovo.component.DataActivityDisplay
 import com.example.strovo.data.AverageMonthStatsModel
 import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.MonthlyDistanceItem
-import com.example.strovo.utils.DataFormattingUtils
+import com.example.strovo.utils.secondsToHms
+import com.example.strovo.utils.speedToPaceMinPerKm
+import com.example.strovo.utils.stravaDateToLocal
 import com.example.strovo.viewmodel.StravaViewModel
 import com.patrykandpatrick.vico.compose.common.fill
 import kotlin.text.toInt
@@ -134,7 +137,6 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     )[monthIndex]
-    val dataFormatting = DataFormattingUtils()
 
     val allMonthlyActivities = viewModel.monthlyDistances.collectAsState()
     val selectedYear = viewModel.selectedYear.collectAsState()
@@ -260,7 +262,7 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
                             )
                             Text(
                                 text =
-                                    dataFormatting.stravaDateToLocal(
+                                    stravaDateToLocal(
                                         activity.start_date_local
                                     ),
                                 modifier = Modifier
@@ -275,15 +277,18 @@ private fun MonthlyActivitiesContent(navController: NavController, viewModel: St
                             ) {
                                 DataActivityDisplay(
                                     "Distance",
-                                    "${"%.1f".format(activity.distance / 1000)}km"
+                                    "${"%.1f".format(activity.distance / 1000)}km",
+                                    20
                                 )
                                 DataActivityDisplay(
                                     "Durée",
-                                    dataFormatting.secondsToHms(activity.moving_time)
+                                    secondsToHms(activity.moving_time),
+                                    20
                                 )
                                 DataActivityDisplay(
                                     "Allure",
-                                    dataFormatting.speedToPaceMinPerKm(activity.average_speed)
+                                    speedToPaceMinPerKm(activity.average_speed),
+                                    20
                                 )
                             }
                         }

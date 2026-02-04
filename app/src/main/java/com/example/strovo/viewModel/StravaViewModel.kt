@@ -172,7 +172,6 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
     suspend fun fetchRunActivitiesParallel(
         before: String,
         after: String,
-        index: Int
     ): GetStravaActivitiesModel {
 
         return coroutineScope {
@@ -192,6 +191,7 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
             _isLoading.value = true
             _errorMessage.value = null
             try {
+                Log.v("StravaViewModel", "Fetching year activities for year ")
                 var lastYearLoadedActivities = _lastYearActivities.value
                 var actualYearLoadedActivities = _yearActivities.value
                 if(lastYearLoadedActivities != null && lastYearLoadedActivities.year == _selectedYear.value){
@@ -200,27 +200,24 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                 }else {
                     _yearActivities.value = YearStravaActivitiesModel(
                         year = _selectedYear.value,
-                        allActivities = fetchRunActivitiesParallel(before, after, 0)
+                        allActivities = fetchRunActivitiesParallel(before, after)
                     )
                 }
                 getAverageStats(_yearActivities.value)
                 getMonthlyDistances(_yearActivities.value)
                 _isLoading.value = false
 
-
                 val beforeOneYearAgo = Instant.ofEpochSecond(before.toLong()).minus(365, ChronoUnit.DAYS).epochSecond
                 val afterOneYearAgo = Instant.ofEpochSecond(after.toLong()).minus(365, ChronoUnit.DAYS).epochSecond
-
                 if(actualYearLoadedActivities != null && actualYearLoadedActivities.year == _selectedYear.value - 1){
                     _lastYearActivities.value = actualYearLoadedActivities
                 }else {
                     _lastYearActivities.value = YearStravaActivitiesModel(
                         year = _selectedYear.value - 1,
-                        allActivities = fetchRunActivitiesParallel(beforeOneYearAgo.toString(), afterOneYearAgo.toString(), 1)
+                        allActivities = fetchRunActivitiesParallel(beforeOneYearAgo.toString(), afterOneYearAgo.toString())
                     )
                 }
                 getLastYearMonthlyDistances(_lastYearActivities.value)
-
             } catch (e: Exception) {
                 Log.e("StravaViewModel", "Error getting activities: ${e.message}")
                 _errorMessage.value = e.message.toString()
@@ -309,7 +306,6 @@ class StravaViewModel(application: Application) : AndroidViewModel(application) 
                     activityId = activityId
                 )
                 _activityDetails.value = activityDetailResponse
-                Log.e("StravaViewModel", "gg wp got activity details: ${activityDetailResponse.name}")
             }catch (e: Exception){
                 Log.e("StravaViewModel", "Error getting activity details: ${e.message}")
 
