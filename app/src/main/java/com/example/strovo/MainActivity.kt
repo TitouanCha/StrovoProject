@@ -1,11 +1,11 @@
 package com.example.strovo
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,10 +37,11 @@ import com.example.strovo.screen.ActivityDetails
 import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.utils.TokenManager
-import com.example.strovo.viewmodel.StravaViewModel
+import com.example.strovo.viewModel.DashboardViewModel
+import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.viewModel.StravaViewModel
 
 class MainActivity : ComponentActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +51,22 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val tokenManager = TokenManager(LocalContext.current)
                 val stravaViewModel: StravaViewModel = viewModel()
+                val dashboardViewModel: DashboardViewModel = viewModel()
+                val progressViewModel: ProgressViewModel = viewModel()
                 val context = LocalContext.current
 
-                LaunchedEffect(Unit){
-                    if(tokenManager.hasTokens()){
-                        stravaViewModel.refreshAccessToken( tokenManager.getRefreshToken()!!, context )
-                    }else{
-                        Toast.makeText(context, "Veuillez vous connecter à Strava via le profil", Toast.LENGTH_LONG).show()
+                LaunchedEffect(Unit) {
+                    if (tokenManager.hasTokens()) {
+                        stravaViewModel.refreshAccessToken(
+                            tokenManager.getRefreshToken()!!,
+                            context
+                        )
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Veuillez vous connecter à Strava via le profil",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
 
@@ -73,13 +83,13 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Dashboard.route) {
-                            DashboardScreen(navController, stravaViewModel)
+                            DashboardScreen(navController, stravaViewModel, dashboardViewModel)
                         }
                         composable(Screen.Settings.route) {
                             SettingsScreen(navController)
                         }
                         composable(Screen.Progress.route) {
-                            ProgressScreen(navController, stravaViewModel)
+                            ProgressScreen(navController, stravaViewModel, progressViewModel)
                         }
                         composable(
                             route = Screen.MonthlyActivities.route,
@@ -92,8 +102,8 @@ class MainActivity : ComponentActivity() {
                             val monthIndex = backStackEntry.arguments?.getInt("monthIndex") ?: 0
                             MonthlyActivitiesScreen(
                                 navController = navController,
-                                viewModel = stravaViewModel,
-                                monthIndex = monthIndex
+                                monthIndex = monthIndex,
+                                viewModel = progressViewModel
                             )
                         }
                         composable(
@@ -104,10 +114,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
-                            val activityId = backStackEntry.arguments?.getString("activityId") ?: ""
+                            val activityId =
+                                backStackEntry.arguments?.getString("activityId") ?: ""
                             ActivityDetails(
                                 navController = navController,
-                                viewModel = stravaViewModel,
                                 activityId = activityId
                             )
                         }
@@ -116,49 +126,48 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
 
+    @Composable
+    fun BottomNavBar(navController: NavController) {
+        val currentBackStackEntry = navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry.value?.destination?.route
 
-@Composable
-fun BottomNavBar(navController: NavController) {
-    val currentBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry.value?.destination?.route
-
-    NavigationBar{
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.progress_svgrepo_com),
-                    contentDescription = "Progress Icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            label = { Text("Progrés") },
-            selected = currentRoute == Screen.Progress.route,
-            onClick = {
-                if(currentRoute != Screen.Progress.route) {
-                    navController.navigate(Screen.Progress.route)
+        NavigationBar {
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.progress_svgrepo_com),
+                        contentDescription = "Progress Icon",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                label = { Text("Progrés") },
+                selected = currentRoute == Screen.Progress.route,
+                onClick = {
+                    if (currentRoute != Screen.Progress.route) {
+                        navController.navigate(Screen.Progress.route)
+                    }
                 }
-            }
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
-                    contentDescription = "Dashboard Icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            label = { Text("Dashboard") },
-            selected = currentRoute == Screen.Dashboard.route,
-            onClick = {
-                if(currentRoute != Screen.Dashboard.route) {
-                    navController.navigate(Screen.Dashboard.route)
+            )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
+                        contentDescription = "Dashboard Icon",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                label = { Text("Dashboard") },
+                selected = currentRoute == Screen.Dashboard.route,
+                onClick = {
+                    if (currentRoute != Screen.Dashboard.route) {
+                        navController.navigate(Screen.Dashboard.route)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }

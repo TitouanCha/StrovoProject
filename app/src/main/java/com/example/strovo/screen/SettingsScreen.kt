@@ -1,9 +1,7 @@
 package com.example.strovo.screen
 
-import android.R.attr.background
 import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
@@ -22,7 +20,7 @@ import com.example.strovo.BuildConfig
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.utils.TokenManager
-import com.example.strovo.viewmodel.StravaViewModel
+import com.example.strovo.viewModel.StravaViewModel
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {

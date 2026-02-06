@@ -2,9 +2,7 @@ package com.example.strovo.screen
 
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,16 +33,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
+import com.example.strovo.component.MonthAverageStatsDisplay
 import com.example.strovo.data.AverageMonthStatsModel
-import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.MonthlyDistanceItem
 import com.example.strovo.utils.secondsToHms
 import com.example.strovo.utils.speedToPaceMinPerKm
 import com.example.strovo.utils.stravaDateToLocal
-import com.example.strovo.viewmodel.StravaViewModel
-import com.patrykandpatrick.vico.compose.common.fill
-import kotlin.text.toInt
+import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.viewModel.StravaViewModel
 
 fun getMonthAverageStats(activities: GetStravaActivitiesModel?): AverageMonthStatsModel? {
     if(activities == null){
@@ -61,59 +57,7 @@ fun getMonthAverageStats(activities: GetStravaActivitiesModel?): AverageMonthSta
 }
 
 @Composable
-fun MonthAverageStatsDisplay(title: String, data: String, dif: Int){
-    Column(
-        modifier = Modifier
-    ) {
-        Text(
-            text = title,
-            fontSize = 12.sp,
-            lineHeight = 12.sp,
-        )
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = data,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .weight(3f)
-                    .padding(4.dp)
-            )
-            Row( modifier = Modifier.weight(1f) ){
-                if(dif != 0) {
-                    Icon(
-                        painter =
-                            if (dif < 0) painterResource(id = R.drawable.baseline_trending_down_24)
-                            else painterResource(id = R.drawable.baseline_trending_up_24),
-                        contentDescription = "Trending Up",
-                        modifier = Modifier.size(30.dp),
-                        tint =
-                            if (dif < 0) Color.Red
-                            else Color.Green
-                    )
-                    Text(
-                        text = if (dif > 0) "+$dif" else "$dif",
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .align(Alignment.CenterVertically),
-                        color =
-                            if (dif < 0) Color.Red
-                            else Color.Green
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MonthlyActivitiesScreen(navController: NavController, viewModel: StravaViewModel = viewModel(), monthIndex: Int) {
+fun MonthlyActivitiesScreen(navController: NavController, viewModel: ProgressViewModel, monthIndex: Int) {
     val pagerState = rememberPagerState(
         initialPage = monthIndex,
         pageCount = { 12 }
@@ -132,7 +76,7 @@ fun MonthlyActivitiesScreen(navController: NavController, viewModel: StravaViewM
 }
 
 @Composable
-private fun MonthlyActivitiesContent(navController: NavController, viewModel: StravaViewModel, monthIndex: Int){
+private fun MonthlyActivitiesContent(navController: NavController, viewModel: ProgressViewModel, monthIndex: Int){
     val monthName = listOf(
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"

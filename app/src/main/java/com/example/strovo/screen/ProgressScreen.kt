@@ -2,12 +2,9 @@ package com.example.strovo.screen
 
 import com.example.strovo.R
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,15 +28,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.strovo.component.DataActivityDisplay
 import com.example.strovo.component.ProgressScreenComponents.MonthlyAverageStatsComponents
-import com.example.strovo.data.AverageStatsModel
-import com.example.strovo.data.MonthlyDistanceModel
-import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.utils.PointerInputUtils
-import com.example.strovo.viewmodel.StravaViewModel
+import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.viewModel.StravaViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -57,10 +50,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.collections.filter
 
 
-fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Context){
+fun getYearActivities(selectedYear: Int, viewModel: ProgressViewModel, context: Context){
     val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
     val lastDayOfYear = LocalDate.of(selectedYear, 12, 31)
     val afterDate = firstDayOfYear
@@ -76,29 +68,30 @@ fun getYearActivities(selectedYear: Int, viewModel: StravaViewModel, context: Co
 }
 
 @Composable
-fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = viewModel()) {
+fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewModel, progressViewModel: ProgressViewModel) {
+
     val pointerUtils = PointerInputUtils()
     val activitiesModelProducer = remember { CartesianChartModelProducer() }
     val context = LocalContext.current
-    val isInitialized = viewModel.isInitialized.collectAsState()
+    val isInitialized = stravaViewModel.isInitialized.collectAsState()
 
-    val activities = viewModel.yearActivities.collectAsState()
+    val activities = progressViewModel.yearActivities.collectAsState()
 
-    val isLoading = viewModel.isLoading.collectAsState()
-    val errorMessage = viewModel.errorMessage.collectAsState()
+    val isLoading = progressViewModel.isLoading.collectAsState()
+    val errorMessage = progressViewModel.errorMessage.collectAsState()
 
-    val monthlyDistances = viewModel.monthlyDistances.collectAsState()
-    val averageStats = viewModel.averageStats.collectAsState()
+    val monthlyDistances = progressViewModel.monthlyDistances.collectAsState()
+    val averageStats = progressViewModel.averageStats.collectAsState()
 
 
-    val selectedYear = viewModel.selectedYear.collectAsState()
+    val selectedYear = progressViewModel.selectedYear.collectAsState()
     var refreshScrollState = remember { mutableStateOf(false) }
 
 
     LaunchedEffect(selectedYear.value) {
         if(isInitialized.value){
             if(activities.value?.year != selectedYear.value){
-                getYearActivities(selectedYear.value, viewModel, context)
+                getYearActivities(selectedYear.value, progressViewModel, context)
             }
         }
     }
@@ -136,7 +129,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                             refreshScrollState = refreshScrollState,
                             isInitialized = isInitialized.value
                         ) {
-                            viewModel.setYear(LocalDate.now().year)
+                            progressViewModel.setYear(LocalDate.now().year)
                         }
                     }
                 },
@@ -150,7 +143,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                 IconButton(
                     onClick = {
                         if(!isLoading.value) {
-                            viewModel.decrementYear()
+                            progressViewModel.decrementYear()
                         }
                     },
                     modifier = Modifier
@@ -175,7 +168,7 @@ fun ProgressScreen(navController: NavController, viewModel: StravaViewModel = vi
                     IconButton(
                         onClick = {
                             if(!isLoading.value){
-                                viewModel.incrementYear()
+                                progressViewModel.incrementYear()
                             }
                         },
                         modifier = Modifier

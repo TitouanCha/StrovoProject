@@ -21,14 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.strovo.component.activityDetailsComponents.ActivityData
-import com.example.strovo.viewmodel.StravaViewModel
+import com.example.strovo.data.ActivityDetailModel
+import com.example.strovo.viewModel.ActivityDetailViewModel
+import com.example.strovo.viewModel.DashboardViewModel
+import com.example.strovo.viewModel.StravaViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun ActivityDetails(navController: NavController, viewModel: StravaViewModel, activityId: String) {
+fun ActivityDetails(navController: NavController, activityId: String) {
+    val viewModel: ActivityDetailViewModel = viewModel()
+
     val activityDetails = viewModel.activityDetails.collectAsState()
     val isLoading = viewModel.isLoading.collectAsState()
 
