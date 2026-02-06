@@ -5,8 +5,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.strovo.component.BottomNavBar
 import com.example.strovo.screen.ActivityDetails
 import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
@@ -124,50 +128,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-
-    @Composable
-    fun BottomNavBar(navController: NavController) {
-        val currentBackStackEntry = navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry.value?.destination?.route
-
-        NavigationBar {
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.progress_svgrepo_com),
-                        contentDescription = "Progress Icon",
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = { Text("Progrés") },
-                selected = currentRoute == Screen.Progress.route,
-                onClick = {
-                    if (currentRoute != Screen.Progress.route) {
-                        navController.navigate(Screen.Progress.route)
-                    }
-                }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
-                        contentDescription = "Dashboard Icon",
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = { Text("Dashboard") },
-                selected = currentRoute == Screen.Dashboard.route,
-                onClick = {
-                    if (currentRoute != Screen.Dashboard.route) {
-                        navController.navigate(Screen.Dashboard.route)
-                    }
-                }
-            )
         }
     }
 }
