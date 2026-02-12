@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.ProgressScreenComponents.MonthlyAverageStatsComponents
+import com.example.strovo.component.ProgressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.utils.PointerInputUtils
 import com.example.strovo.viewModel.ProgressViewModel
 import com.example.strovo.viewModel.StravaViewModel
@@ -69,6 +70,8 @@ fun getYearActivities(selectedYear: Int, viewModel: ProgressViewModel, context: 
 
 @Composable
 fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewModel, progressViewModel: ProgressViewModel) {
+    val months = listOf("Jan", "Fév", "Mar", "Avr", "Mai", "Jun",
+        "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc")
 
     val pointerUtils = PointerInputUtils()
     val activitiesModelProducer = remember { CartesianChartModelProducer() }
@@ -122,7 +125,7 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp)
                 .run {
                     with(pointerUtils) {
                         verticalDragToRefresh(
@@ -235,8 +238,6 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
                             ),
                             bottomAxis = HorizontalAxis.rememberBottom(
                                 valueFormatter = { x, chartValues, _ ->
-                                    val months = listOf("Jan", "Fév", "Mar", "Avr", "Mai", "Jun",
-                                        "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc")
                                     months.getOrNull(chartValues.toInt()) ?: ""
                                 }
                             ),
@@ -248,7 +249,7 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp, end = 16.dp, bottom = 16.dp)
+                            .padding(start = 8.dp, end = 16.dp, bottom = 12.dp)
                     )
                     MonthlyAverageStatsComponents(averageStats.value)
                 }
@@ -258,43 +259,12 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
             isLoading.value -> {
             }
             monthlyDistances.value.selectedYear != null -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ){
-                    var currentYearData = monthlyDistances.value.selectedYear
-                    currentYearData?.forEachIndexed { index, monthData ->
-                        val monthName = listOf(
-                            "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-                            "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-                        )[index]
-                        item {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
-                                onClick = {navController.navigate(Screen.MonthlyActivities.createRoute(index))}
-                            ){
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ){
-                                    Text(
-                                        modifier = Modifier.weight(2f),
-                                        text = monthName,
-                                    )
-                                    Text(
-                                        modifier = Modifier.weight(1f),
-                                        text = "${monthData.distance} km",
-                                        textAlign = TextAlign.End,
-                                    )
-                                }
-                            }
-                        }
+                MonthlyDistanceListComponent(
+                    monthlyDistances.value,
+                    onMonthClick = { monthIndex ->
+                        navController.navigate(Screen.MonthlyActivities.createRoute(monthIndex))
                     }
-                }
+                )
             }
         }
     }

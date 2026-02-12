@@ -29,6 +29,10 @@ fun ActivityStats(
     activity: ActivityDetailModel
 ) {
     var dataFontSize = 22
+    var titleFontSize = 25.sp
+    if(activity.name.length > 30){
+        titleFontSize = 18.sp
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +65,7 @@ fun ActivityStats(
             }
             Text(
                 text = activity.name,
-                fontSize = 25.sp,
+                fontSize = titleFontSize,
                 fontWeight = FontWeight.Bold
             )
         }

@@ -27,10 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.CustomBottomSheet
-import com.example.strovo.component.DashboardScreenComponents.AthleteStatsComponent
-import com.example.strovo.component.DashboardScreenComponents.BottomSheetComponent
-import com.example.strovo.component.DashboardScreenComponents.CalendarDisplay
-import com.example.strovo.component.DashboardScreenComponents.LastActivityCard
+import com.example.strovo.component.dashboardScreenComponents.AthleteStatsComponent
+import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
+import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
+import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
 import com.example.strovo.data.getStravaActivitiesModelItem
 import com.example.strovo.utils.PointerInputUtils
 import com.example.strovo.viewModel.DashboardViewModel
@@ -168,7 +168,7 @@ fun DashboardScreen(navController: NavController, stravaViewModel: StravaViewMod
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
-                            .weight(10f),
+                            .weight(8f),
                         contentAlignment = Alignment.Center
                     ) {
                         Column {
