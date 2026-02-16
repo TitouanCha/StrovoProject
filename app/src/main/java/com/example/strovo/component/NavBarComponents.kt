@@ -88,8 +88,19 @@ fun BottomNavBar(navController: NavController) {
             },
             selected = false, //currentRoute == Screen.Dashboard.route,
             onClick = {
-
-            }
+                if (currentRoute != Screen.Map.route) {
+                    navController.navigate(Screen.Map.route)
+                }
+            },
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .then(
+                    if (currentRoute == Screen.Map.route) {
+                        Modifier.background(MaterialTheme.colorScheme.primary)
+                    } else {
+                        Modifier
+                    }
+                )
         )
     }
 }

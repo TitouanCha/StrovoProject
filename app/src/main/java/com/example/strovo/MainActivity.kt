@@ -37,6 +37,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.strovo.component.BottomNavBar
+import com.example.strovo.screen.ActivitiesMapScreen
 import com.example.strovo.screen.ActivityDetails
 import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
@@ -94,6 +95,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.Progress.route) {
                             ProgressScreen(navController, stravaViewModel, progressViewModel)
+                        }
+                        composable(Screen.Map.route) {
+                            ActivitiesMapScreen(stravaViewModel, progressViewModel)
                         }
                         composable(
                             route = Screen.MonthlyActivities.route,

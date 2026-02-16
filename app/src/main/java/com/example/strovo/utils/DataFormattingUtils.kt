@@ -2,6 +2,7 @@ package com.example.strovo.utils
 
 import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.GetStravaActivitiesModel
+import com.google.maps.android.PolyUtil
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -32,3 +33,5 @@ fun stravaDateToLocal(date: String): String {
     val formattedDate = localDateTime.format(formatter)
     return formattedDate
 }
+
+

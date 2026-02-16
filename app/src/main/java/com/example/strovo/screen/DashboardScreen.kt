@@ -1,6 +1,7 @@
 package com.example.strovo.screen
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -74,7 +75,8 @@ fun DashboardScreen(navController: NavController, stravaViewModel: StravaViewMod
 
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(

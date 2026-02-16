@@ -1,5 +1,6 @@
 package com.example.strovo.component.activityDetailsComponents
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,8 @@ import com.example.strovo.utils.speedToPaceMinPerKm
 
 @Composable
 fun ActivityLap(
-    activityLaps: List<Lap>
+    activityLaps: List<Lap>,
+    onClick: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -33,14 +35,27 @@ fun ActivityLap(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
+                        .clickable {
+                            onClick(lap.lap_index)
+                        }
                 ) {
-                    Text(
-                        text = "Lap ${lap.lap_index}",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row() {
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            thickness = 2.dp
+                        )
+                        Text(
+                            text = "Lap ${lap.lap_index}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            thickness = 2.dp
+                        )
+                    }
                     Row(
                         modifier = Modifier
                             .padding()

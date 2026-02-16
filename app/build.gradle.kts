@@ -95,7 +95,18 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose:2.0.0")
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0")
 
+    implementation("org.maplibre.gl:android-sdk:11.0.0")
 
+    implementation("com.google.maps.android:android-maps-utils:3.8.2")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-geojson:6.15.0")
+
+    //implementation("org.osmdroid:osmdroid-android:6.1.18")
+    //implementation("org.maplibre.compose:maplibre-compose-android:0.12.1")
+    //implementation("com.mapbox.maps:android:11.1.0")
+    //implementation("com.google.maps.android:maps-compose:4.3.3")
+    //implementation("com.google.android.gms:play-services-maps:18.2.0")
+    //implementation("org.maplibre.compose:maplibre-compose:0.12.1")
+    //implementation("org.osmdroid:osmdroid-android:6.1.18")
 }
 
 secrets {
