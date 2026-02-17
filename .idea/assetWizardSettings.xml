@@ -328,9 +328,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="1d2d80" />
-                            <entry key="outputName" value="baseline_fullscreen_24" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/../map-location-pin-svgrepo-com.svg" />
+                            <entry key="outputName" value="time_planning_svgrepo_com" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/../time-planning-svgrepo-com.svg" />
                           </map>
                         </option>
                       </PersistentState>

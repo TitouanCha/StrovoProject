@@ -1,20 +1,18 @@
 package com.example.strovo.screen
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,27 +23,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.strovo.R
 import com.example.strovo.component.activityDetailsComponents.ActivityData
 import com.example.strovo.component.activityDetailsComponents.MapComponent
-import com.example.strovo.data.ActivityDetailModel
-import com.example.strovo.utils.decodePolyline
 import com.example.strovo.viewModel.ActivityDetailViewModel
-import com.example.strovo.viewModel.DashboardViewModel
-import com.example.strovo.viewModel.StravaViewModel
 import kotlinx.coroutines.launch
-import kotlin.times
 
 
 @Composable
-fun ActivityDetails(navController: NavController, activityId: String) {
+fun ActivityDetails(activityId: String, context: Context) {
     val viewModel: ActivityDetailViewModel = viewModel()
 
     val activityDetails = viewModel.activityDetails.collectAsState()
@@ -84,6 +72,7 @@ fun ActivityDetails(navController: NavController, activityId: String) {
                         .align(Alignment.TopCenter)
                 ){
                     MapComponent(
+                        context,
                         trackPoints.value,
                         lapPoints.value,
                         selectedLap.value

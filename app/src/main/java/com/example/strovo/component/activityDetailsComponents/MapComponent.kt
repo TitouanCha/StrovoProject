@@ -1,42 +1,31 @@
 package com.example.strovo.component.activityDetailsComponents
 
-import android.graphics.Camera
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.strovo.utils.decodePolyline
-import com.example.strovo.utils.mapGeoSource
-import com.example.strovo.utils.mapPointSources
-import com.example.strovo.utils.mapPointStyle
-import com.example.strovo.utils.mapTraceLayer
-import org.maplibre.android.camera.CameraPosition
+import com.example.strovo.utils.mapUtils.mapGeoSource
+import com.example.strovo.utils.mapUtils.mapPointSources
+import com.example.strovo.utils.mapUtils.mapPointStyle
+import com.example.strovo.utils.mapUtils.mapTraceLayer
+import com.example.strovo.utils.mapUtils.mapZoomPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
-import org.maplibre.android.maps.Style
-import org.maplibre.android.style.layers.CircleLayer
-import org.maplibre.android.style.layers.LineLayer
-import org.maplibre.android.style.sources.GeoJsonSource
-import kotlin.collections.addAll
-import org.maplibre.geojson.Feature
-import org.maplibre.geojson.FeatureCollection
-import org.maplibre.geojson.LineString
 import org.maplibre.geojson.Point
 
 @Composable
 fun MapComponent(
+    context: Context,
     trackPoints: List<Pair<Double, Double>>,
     lapPoints: List<Point>,
     selectedLapIndex: Int?
 ) {
-    val context = LocalContext.current
     val mapView = remember { MapView(context) }
     val mapRef = remember { mutableStateOf<MapLibreMap?>(null) }
 
@@ -59,11 +48,8 @@ fun MapComponent(
                     )
                 } else {
                     val points = trackPoints.map { LatLng(it.first, it.second) }
-                    val boundsBuilder = LatLngBounds.Builder()
-                    points.forEach { boundsBuilder.include(it) }
-                    val bounds = boundsBuilder.build()
                     map.easeCamera(
-                        CameraUpdateFactory.newLatLngBounds(bounds, 100, 100, 100, 100),
+                        CameraUpdateFactory.newLatLngBounds(mapZoomPosition(points), 100, 100, 100, 100),
                         500
                     )
                 }
@@ -95,11 +81,8 @@ fun MapComponent(
                             map.style?.addSource(mapPointSources(listOf(finish), "finish"))
                             map.style?.addLayer(mapPointStyle("finish", 8f, 2f, 0xFFFF0000.toInt(), 0xFF199ED2.toInt()))
 
-                            val boundsBuilder = LatLngBounds.Builder()
-                            points.forEach { boundsBuilder.include(it) }
-                            val bounds = boundsBuilder.build()
                             map.easeCamera(
-                                CameraUpdateFactory.newLatLngBounds(bounds, 100, 100, 100, 100),
+                                CameraUpdateFactory.newLatLngBounds(mapZoomPosition(points), 100, 100, 100, 100),
                                 500
                             )
                         }

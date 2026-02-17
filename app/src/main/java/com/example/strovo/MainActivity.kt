@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
                             ProgressScreen(navController, stravaViewModel, progressViewModel)
                         }
                         composable(Screen.Map.route) {
-                            ActivitiesMapScreen(stravaViewModel, progressViewModel)
+                            ActivitiesMapScreen(progressViewModel, context)
                         }
                         composable(
                             route = Screen.MonthlyActivities.route,
@@ -125,8 +125,8 @@ class MainActivity : ComponentActivity() {
                             val activityId =
                                 backStackEntry.arguments?.getString("activityId") ?: ""
                             ActivityDetails(
-                                navController = navController,
-                                activityId = activityId
+                                activityId = activityId,
+                                context = context
                             )
                         }
                     }

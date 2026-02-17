@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.CustomBottomSheet
+import com.example.strovo.component.HeaderComponent
 import com.example.strovo.component.dashboardScreenComponents.AthleteStatsComponent
 import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
@@ -95,38 +96,13 @@ fun DashboardScreen(navController: NavController, stravaViewModel: StravaViewMod
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
                     .fillMaxWidth()
                     .weight(2f),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-
-            ) {
-                Box(modifier = Modifier.weight(1f)) {}
-                Text(
-                    modifier = Modifier
-                        .weight(4f)
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center,
-                    text = "Dashboard",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                IconButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    onClick = {
-                        navController.navigate(Screen.Settings.route)
-                    }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_settings_24),
-                        contentDescription = "Settings Icon",
-                        modifier = Modifier.size(50.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            ){
+                HeaderComponent("Dashboard", R.drawable.baseline_settings_24) {
+                    navController.navigate(Screen.Settings.route)
                 }
             }
             when {
@@ -154,7 +130,6 @@ fun DashboardScreen(navController: NavController, stravaViewModel: StravaViewMod
                         }
                     }
                 }
-
                 activities.value != null -> {
                     var filteredActivity = activities.value?.filter { it.type == "Run" }
                     if (refreshScrollState.value) {

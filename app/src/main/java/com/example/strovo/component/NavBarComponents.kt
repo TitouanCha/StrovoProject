@@ -80,27 +80,26 @@ fun BottomNavBar(navController: NavController) {
         NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.map_location_pin_svgrepo_com),
+                    painter = painterResource(id = R.drawable.time_planning_svgrepo_com),
                     contentDescription = "Dashboard Icon",
-                    //modifier = Modifier.size(30.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            selected = false, //currentRoute == Screen.Dashboard.route,
+            selected = false,
             onClick = {
-                if (currentRoute != Screen.Map.route) {
-                    navController.navigate(Screen.Map.route)
-                }
+//                if (currentRoute != Screen.Map.route) {
+//                    navController.navigate(Screen.Map.route)
+//                }
             },
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .then(
-                    if (currentRoute == Screen.Map.route) {
-                        Modifier.background(MaterialTheme.colorScheme.primary)
-                    } else {
-                        Modifier
-                    }
-                )
+//            modifier = Modifier
+//                .padding(end = 16.dp)
+//                .then(
+//                    if (currentRoute == Screen.Map.route) {
+//                        Modifier.background(MaterialTheme.colorScheme.primary)
+//                    } else {
+//                        Modifier
+//                    }
+//                )
         )
     }
 }

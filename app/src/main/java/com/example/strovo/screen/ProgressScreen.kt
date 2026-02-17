@@ -2,13 +2,13 @@ package com.example.strovo.screen
 
 import com.example.strovo.R
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,9 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.strovo.component.ProgressScreenComponents.MonthlyAverageStatsComponents
-import com.example.strovo.component.ProgressScreenComponents.MonthlyDistanceListComponent
+import com.example.strovo.component.HeaderComponent
+import com.example.strovo.component.progressScreenComponents.MonthlyAverageStatsComponents
+import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
+import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.utils.PointerInputUtils
+import com.example.strovo.utils.viewModelUtils.getYearActivities
 import com.example.strovo.viewModel.ProgressViewModel
 import com.example.strovo.viewModel.StravaViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -53,21 +57,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 
-fun getYearActivities(selectedYear: Int, viewModel: ProgressViewModel, context: Context){
-    val firstDayOfYear = LocalDate.of(selectedYear, 1, 1)
-    val lastDayOfYear = LocalDate.of(selectedYear, 12, 31)
-    val afterDate = firstDayOfYear
-        .atStartOfDay(ZoneId.systemDefault())
-        .toEpochSecond().toString()
-    val beforeDate = lastDayOfYear
-        .atStartOfDay(ZoneId.systemDefault())
-        .toEpochSecond().toString()
-    viewModel.getYearActivities(
-        after = afterDate,
-        before = beforeDate,
-    )
-}
-
 @Composable
 fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewModel, progressViewModel: ProgressViewModel) {
     val months = listOf("Jan", "Fév", "Mar", "Avr", "Mai", "Jun",
@@ -78,7 +67,7 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
     val context = LocalContext.current
     val isInitialized = stravaViewModel.isInitialized.collectAsState()
 
-    val activities = progressViewModel.yearActivities.collectAsState()
+    val activities = progressViewModel.selectedYearActivities.collectAsState()
 
     val isLoading = progressViewModel.isLoading.collectAsState()
     val errorMessage = progressViewModel.errorMessage.collectAsState()
@@ -94,7 +83,7 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
     LaunchedEffect(selectedYear.value) {
         if(isInitialized.value){
             if(activities.value?.year != selectedYear.value){
-                getYearActivities(selectedYear.value, progressViewModel, context)
+                getYearActivities(selectedYear.value, progressViewModel)
             }
         }
     }
@@ -115,17 +104,29 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(),
+            contentAlignment = Alignment.Center
+        ) {
+            HeaderComponent("Progrès", R.drawable.map_location_pin_svgrepo_com) {
+                navController.navigate(Screen.Map.route)
+            }
+        }
+
         if (refreshScrollState.value) {
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
                 .run {
                     with(pointerUtils) {
                         verticalDragToRefresh(
@@ -137,57 +138,19 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
                     }
                 },
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = {
-                        if(!isLoading.value) {
-                            progressViewModel.decrementYear()
-                        }
-                    },
-                    modifier = Modifier
-                        .weight(1f),
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_left_24),
-                        contentDescription = "Previous Year",
-                        modifier = Modifier.size(40.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Text(
-                    text = "Donnée de ${selectedYear.value}",
-                    modifier = Modifier
-                        .weight(3f),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-                if(selectedYear.value != LocalDate.now().year){
-                    IconButton(
-                        onClick = {
-                            if(!isLoading.value){
-                                progressViewModel.incrementYear()
-                            }
-                        },
-                        modifier = Modifier
-                            .weight(1f),
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_right_24),
-                            contentDescription = "Previous Year",
-                            modifier = Modifier.size(40.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+            YearSelectionComponent(
+                incrementYear = {
+                    if(!isLoading.value){
+                        progressViewModel.incrementYear()
                     }
-                }else {
-                    Box(modifier = Modifier.weight(1f)) {}
-                }
-            }
+                },
+                decrementYear = {
+                    if(!isLoading.value) {
+                        progressViewModel.decrementYear()
+                    }
+                },
+                selectedYear = selectedYear.value
+            )
             when{
                 isLoading.value -> {
                     Box(
