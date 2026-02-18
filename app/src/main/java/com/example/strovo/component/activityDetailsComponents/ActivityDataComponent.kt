@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ import com.example.strovo.data.Lap
 @Composable
 fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit) {
     val headerTitle = listOf<String>("Statistic", "Laps", "Graphs")
-    val selectedHeaderIndex = remember { mutableStateOf(0) }
+    val selectedHeaderIndex = remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -37,7 +38,7 @@ fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             HorizontalDivider(
@@ -50,7 +51,7 @@ fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit)
         }
         Row(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
                 .fillMaxWidth()
         ) {
             for (i in headerTitle.indices) {
@@ -59,7 +60,7 @@ fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit)
                         .weight(1f)
                         .padding(vertical = 8.dp)
                         .clickable(onClick = {
-                            selectedHeaderIndex.value = i
+                            selectedHeaderIndex.intValue = i
                         }),
                     verticalArrangement = Arrangement.Center,
                 ) {
@@ -68,7 +69,7 @@ fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit)
                         fontSize = 16.sp,
                         modifier = Modifier
                     )
-                    if (selectedHeaderIndex.value == i) {
+                    if (selectedHeaderIndex.intValue == i) {
                         HorizontalDivider(
                             modifier = Modifier.padding(end = 8.dp),
                             thickness = 2.dp,
@@ -78,7 +79,7 @@ fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit)
                 }
             }
         }
-        when (selectedHeaderIndex.value) {
+        when (selectedHeaderIndex.intValue) {
             0 -> ActivityStats(activityDetail)
             1 -> ActivityLap(activityDetail.laps){ index ->
                 lapOnClick(index)

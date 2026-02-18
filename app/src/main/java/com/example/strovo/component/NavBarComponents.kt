@@ -37,7 +37,10 @@ fun BottomNavBar(navController: NavController) {
             selected = false,//currentRoute == Screen.Progress.route,
             onClick = {
                 if (currentRoute != Screen.Progress.route) {
-                    navController.navigate(Screen.Progress.route)
+                    navController.navigate(Screen.Progress.route){
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             modifier = Modifier
@@ -62,7 +65,10 @@ fun BottomNavBar(navController: NavController) {
             selected = false, //currentRoute == Screen.Dashboard.route,
             onClick = {
                 if (currentRoute != Screen.Dashboard.route) {
-                    navController.navigate(Screen.Dashboard.route)
+                    navController.navigate(Screen.Dashboard.route){
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             modifier = Modifier

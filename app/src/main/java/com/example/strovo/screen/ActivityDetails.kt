@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,13 +26,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.strovo.R
 import com.example.strovo.component.activityDetailsComponents.ActivityData
 import com.example.strovo.component.activityDetailsComponents.MapComponent
 import com.example.strovo.viewModel.ActivityDetailViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -60,10 +70,10 @@ fun ActivityDetails(activityId: String, context: Context) {
         }
         activityDetails.value != null -> {
             val details = activityDetails.value!!
-            Text("Atcivity: ${details.name}")
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                contentAlignment = Alignment.TopEnd
             ) {
                 Box(
                     modifier = Modifier
@@ -76,6 +86,35 @@ fun ActivityDetails(activityId: String, context: Context) {
                         trackPoints.value,
                         lapPoints.value,
                         selectedLap.value
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clickable( onClick = {
+                                scope.launch {
+                                    coroutineScope {
+                                        if(mapHeight.value == 1f){
+                                            launch { mapHeight.animateTo(0.5f, tween(500)) }
+                                            launch { dataHeight.animateTo(0.5f, tween(500))}
+                                        } else {
+                                            launch { mapHeight.animateTo(1f, tween(500)) }
+                                            launch { dataHeight.animateTo(0.1f, tween(500)) }
+                                        }
+                                    }
+                                }
+                            })
+                ){
+                    Icon(
+                        painter = painterResource(
+                            id = if (mapHeight.value == 0.5f) {
+                                R.drawable.baseline_fullscreen_24
+                            } else {
+                                R.drawable.baseline_fullscreen_exit_24
+                            }),
+                        contentDescription = "Fullscreen Icon",
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
                 Box(
@@ -94,6 +133,12 @@ fun ActivityDetails(activityId: String, context: Context) {
                                         when (dataHeight.value) {
                                             0.9f -> dataHeight.animateTo(0.5f, tween(500))
                                             0.5f -> dataHeight.animateTo(0.9f, tween(500))
+                                            else -> {
+                                                coroutineScope {
+                                                    launch{ dataHeight.animateTo(0.5f, tween(500))}
+                                                    launch{mapHeight.animateTo(0.5f, tween(500))}
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -107,15 +152,16 @@ fun ActivityDetails(activityId: String, context: Context) {
                                     totalDrag += dragAmount
                                     scope.launch {
                                         when {
-                                            totalDrag > 200 -> dataHeight.animateTo(
-                                                0.5f,
-                                                tween(500)
-                                            )
-
-                                            totalDrag < -200f -> dataHeight.animateTo(
-                                                0.9f,
-                                                tween(500)
-                                            )
+                                            totalDrag > 200 -> dataHeight.animateTo(0.5f, tween(500))
+                                            totalDrag < -200f ->
+                                                if(mapHeight.value == 0.5f) {
+                                                    dataHeight.animateTo(0.9f, tween(500))
+                                                }else{
+                                                    coroutineScope {
+                                                        launch{ dataHeight.animateTo(0.5f, tween(500)) }
+                                                        launch{ mapHeight.animateTo(0.5f, tween(500)) }
+                                                    }
+                                                }
                                         }
                                     }
                                 }

@@ -1,5 +1,6 @@
 package com.example.strovo.utils.viewModelUtils
 
+import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.data.GetStravaActivitiesModel
 import com.example.strovo.data.MonthlyDistanceItem
 import com.example.strovo.data.YearStravaActivitiesModel
@@ -39,4 +40,27 @@ fun parseMonthlyActivitiesDistance(activities: YearStravaActivitiesModel?): Muta
         return parsedMonthlyDistances
     }
     return null
+}
+
+fun getAverageStats(activities: YearStravaActivitiesModel?): AverageStatsModel? {
+    if(activities == null){
+        return null
+    }
+    var distance = activities.allActivities.sumOf { it.distance}
+    var monthlyAverage: Double
+    var weeklyAverage: Double
+    if(activities.year != LocalDate.now().year){
+        monthlyAverage = distance / 12
+        weeklyAverage = distance / 52
+    }else{
+        val currentMonth = LocalDate.now().monthValue
+        monthlyAverage = distance / currentMonth
+        weeklyAverage = distance / (LocalDate.now().dayOfYear / 7)
+    }
+    return  AverageStatsModel(
+        activities = activities.allActivities.size.toString(),
+        distance = "%.2f km".format(distance / 1000),
+        monthly_average = "%.2f km".format(monthlyAverage / 1000),
+        weekly_average = "%.2f km".format(weeklyAverage / 1000)
+    )
 }

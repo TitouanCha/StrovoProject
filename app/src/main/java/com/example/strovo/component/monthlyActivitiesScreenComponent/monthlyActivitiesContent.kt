@@ -1,5 +1,6 @@
 package com.example.strovo.component.monthlyActivitiesScreenComponent
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,25 +45,21 @@ fun MonthlyActivitiesContent(
     Column(
         modifier = Modifier.fillMaxWidth()
     ){
-        Card(
+        Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Activités de $month $selectedYear",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
+            Text(
+                text = "Activités de $month $selectedYear",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
         }
         AverageStatsDisplayCard(averageStats, lastYearAverageStats)
         Text(

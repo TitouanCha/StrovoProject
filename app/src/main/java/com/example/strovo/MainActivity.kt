@@ -31,6 +31,7 @@ import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -54,11 +55,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             StrovoTheme {
                 val navController = rememberNavController()
-                val tokenManager = TokenManager(LocalContext.current)
+                val context = LocalContext.current
+                val tokenManager = remember { TokenManager(context) }
                 val stravaViewModel: StravaViewModel = viewModel()
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 val progressViewModel: ProgressViewModel = viewModel()
-                val context = LocalContext.current
 
                 LaunchedEffect(Unit) {
                     if (tokenManager.hasTokens()) {

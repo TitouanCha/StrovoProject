@@ -26,10 +26,13 @@ fun MapComponent(
     lapPoints: List<Point>,
     selectedLapIndex: Int?
 ) {
+    val isDisposing = remember { mutableStateOf(false) }
     val mapView = remember { MapView(context) }
     val mapRef = remember { mutableStateOf<MapLibreMap?>(null) }
 
-    LaunchedEffect(selectedLapIndex) {
+    LaunchedEffect(selectedLapIndex, isDisposing.value) {
+        if (isDisposing.value) return@LaunchedEffect
+
         mapRef.value?.let { map ->
             map.style?.let { style ->
                 style.getLayer("selected-lap-layer")?.let { style.removeLayer(it) }
@@ -89,6 +92,12 @@ fun MapComponent(
                     }
                 }
             }
+        },
+        onRelease = { view ->
+            isDisposing.value = true
+            view.onPause()
+            view.onStop()
+            view.onDestroy()
         }
     )
 }
