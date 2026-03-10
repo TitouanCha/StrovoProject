@@ -35,8 +35,14 @@ class StravaAuthViewModel(application: Application): AndroidViewModel(applicatio
         }
     }
 
-    fun refreshStravaToken(refreshToken: String) {
+    fun refreshStravaToken() {
+        val refreshToken = tokenManager.getRefreshToken()
+        if(refreshToken == null){
+            _stravaUiState.value = StravaAuthUiState.Initial
+            return
+        }
         viewModelScope.launch {
+            _stravaUiState.value = StravaAuthUiState.Loading
             stravaRepository.refreshAccessToken(refreshToken).onSuccess { tokenResponse ->
                 tokenManager.saveTokens(
                     accessToken = tokenResponse.access_token,

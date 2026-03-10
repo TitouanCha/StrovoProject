@@ -122,7 +122,7 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
                     with(pointerUtils) {
                         verticalDragToRefresh(
                             refreshScrollState = refreshScrollState,
-                            isInitialized = isInitialized.value
+                            //isInitialized = isInitialized.value
                         ) {
                             progressViewModel.setYear(LocalDate.now().year)
                         }

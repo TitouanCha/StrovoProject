@@ -1,7 +1,6 @@
 package com.example.strovo
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,11 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.strovo.screen.DashboardScreen
+import com.example.strovo.presentation.dashboard.DashboardScreen
 import com.example.strovo.screen.ProgressScreen
 import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +28,7 @@ import com.example.strovo.screen.ActivityDetails
 import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.util.TokenManager
-import com.example.strovo.viewModel.DashboardViewModel
+import com.example.strovo.presentation.dashboard.DashboardViewModel
 import com.example.strovo.viewModel.ProgressViewModel
 import com.example.strovo.viewModel.StravaViewModel
 import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
@@ -49,6 +47,7 @@ class MainActivity : ComponentActivity() {
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
+
 
                 val stravaAuthViewModel: StravaAuthViewModel = viewModel()
                 val stravaViewModel: StravaViewModel = viewModel()
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                             StravaAuthScreen(viewModel = stravaAuthViewModel, navController = navController)
                         }
                         composable(Screen.Dashboard.route) {
-                            DashboardScreen(navController, stravaViewModel, dashboardViewModel)
+                            DashboardScreen(navController, dashboardViewModel)
                         }
                         composable(Screen.Settings.route) {
                             SettingsScreen(navController)

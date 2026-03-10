@@ -2,7 +2,7 @@ package com.example.strovo.services
 
 import com.example.strovo.model.ActivityDetailModel
 import com.example.strovo.model.GetStravaActivitiesModel
-import com.example.strovo.model.OverallStats
+import com.example.strovo.model.GetOverallStatsModel
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -23,7 +23,7 @@ interface StravaActivityServices {
     suspend fun getAthleteStats(
         @Header("Authorization") authorization: String,
         @Path("athlete_id") athleteId: String
-    ): OverallStats
+    ): GetOverallStatsModel
 
     @GET("https://www.strava.com/api/v3/activities/{activity_id}")
     suspend fun getActivityDetails(

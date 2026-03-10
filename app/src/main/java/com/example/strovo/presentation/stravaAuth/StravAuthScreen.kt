@@ -45,6 +45,10 @@ fun StravaAuthScreen( viewModel: StravaAuthViewModel, navController: NavControll
     val stravaAuthUiState by viewModel.stravaUiState.collectAsState()
     var stravaCode by remember { mutableStateOf("") }
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshStravaToken()
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
