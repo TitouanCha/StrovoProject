@@ -7,14 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -23,14 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.component.MonthAverageStatsDisplay
-import com.example.strovo.data.AverageMonthStatsModel
-import com.example.strovo.data.MonthlyDistanceItem
-import com.example.strovo.screen.getMonthAverageStats
-import com.example.strovo.utils.secondsToHms
-import com.example.strovo.utils.speedToPaceMinPerKm
-import com.example.strovo.utils.stravaDateToLocal
-import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.model.AverageMonthStatsModel
+import com.example.strovo.model.MonthlyDistanceItem
+import com.example.strovo.util.secondsToHms
+import com.example.strovo.util.speedToPaceMinPerKm
+import com.example.strovo.util.stravaDateToLocal
 
 @Composable
 fun MonthlyActivitiesContent(

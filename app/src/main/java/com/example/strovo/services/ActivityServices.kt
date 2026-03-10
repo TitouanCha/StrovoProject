@@ -1,11 +1,8 @@
 package com.example.strovo.services
 
-import com.example.strovo.data.ActivityDetailModel
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.data.OverallStats
-import com.example.strovo.screen.Screen
-import org.intellij.lang.annotations.Pattern
-import retrofit2.http.Field
+import com.example.strovo.model.ActivityDetailModel
+import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.model.OverallStats
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path

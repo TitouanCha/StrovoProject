@@ -3,10 +3,10 @@ package com.example.strovo.viewModel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.data.ActivityDetailModel
+import com.example.strovo.model.ActivityDetailModel
 import com.example.strovo.services.RetrofitInstance
-import com.example.strovo.utils.mapUtils.decodePolyline
-import com.example.strovo.utils.getPointsForLaps
+import com.example.strovo.util.mapUtils.decodePolyline
+import com.example.strovo.util.getPointsForLaps
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

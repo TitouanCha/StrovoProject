@@ -4,19 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.utils.mapUtils.decodePolyline
-import com.example.strovo.utils.mapUtils.mapGeoSource
-import com.example.strovo.utils.mapUtils.mapPointSources
-import com.example.strovo.utils.mapUtils.mapPointStyle
-import com.example.strovo.utils.mapUtils.mapTraceLayer
+import com.example.strovo.util.mapUtils.mapGeoSource
+import com.example.strovo.util.mapUtils.mapPointSources
+import com.example.strovo.util.mapUtils.mapPointStyle
+import com.example.strovo.util.mapUtils.mapTraceLayer
 import com.example.strovo.viewModel.ProgressViewModel
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -25,10 +22,6 @@ import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.Style
 import org.maplibre.android.maps.MapView
 import org.maplibre.geojson.Point
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 
 
 fun loadActivityOnMap(mapRef: MapLibreMap? ,trackPoints: List<List<Pair<Double, Double>>>): Style? {

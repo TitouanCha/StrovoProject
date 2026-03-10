@@ -1,11 +1,10 @@
 package com.example.strovo.services
 
-import com.example.strovo.data.GetStravaTokenModel
-import com.example.strovo.data.RefreshStravaTokenModel
+import com.example.strovo.model.GetStravaTokenModel
+import com.example.strovo.model.RefreshStravaTokenModel
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
-import java.sql.Ref
 
 
 interface StravaAuthServices {

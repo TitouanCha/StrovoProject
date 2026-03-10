@@ -3,14 +3,13 @@ package com.example.strovo.viewModel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.data.AverageStatsModel
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.data.MonthlyDistanceItem
-import com.example.strovo.data.MonthlyDistanceModel
-import com.example.strovo.data.YearStravaActivitiesModel
-import com.example.strovo.utils.mapUtils.decodePolyline
-import com.example.strovo.utils.viewModelUtils.getAverageStats
-import com.example.strovo.utils.viewModelUtils.parseMonthlyActivitiesDistance
+import com.example.strovo.model.AverageStatsModel
+import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.model.MonthlyDistanceModel
+import com.example.strovo.model.YearStravaActivitiesModel
+import com.example.strovo.util.mapUtils.decodePolyline
+import com.example.strovo.util.viewModelUtils.getAverageStats
+import com.example.strovo.util.viewModelUtils.parseMonthlyActivitiesDistance
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 

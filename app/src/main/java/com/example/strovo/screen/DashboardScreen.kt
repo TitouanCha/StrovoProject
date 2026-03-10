@@ -8,15 +8,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.strovo.R
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.CustomBottomSheet
@@ -33,8 +29,8 @@ import com.example.strovo.component.dashboardScreenComponents.AthleteStatsCompon
 import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
-import com.example.strovo.data.getStravaActivitiesModelItem
-import com.example.strovo.utils.PointerInputUtils
+import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.util.PointerInputUtils
 import com.example.strovo.viewModel.DashboardViewModel
 import com.example.strovo.viewModel.StravaViewModel
 import java.time.Instant

@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataOverallStatsDisplay
-import com.example.strovo.data.OverallStats
-import com.example.strovo.utils.secondsToHms
+import com.example.strovo.model.OverallStats
+import com.example.strovo.util.secondsToHms
 
 @Composable
 fun ColumnScope.AthleteStatsComponent(athleteStats: OverallStats?) {

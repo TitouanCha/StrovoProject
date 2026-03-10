@@ -1,0 +1,32 @@
+package com.example.strovo.util
+
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+
+fun secondsToHms(seconds: Int): String {
+    val h = seconds / 3600
+    val m = (seconds % 3600) / 60
+    val s = seconds % 60
+    if(h>0){ return "%02dh%02d".format(h, m) }
+    return  "%02d:%02d".format(m, s)
+}
+
+fun speedToPaceMinPerKm(speed: Double): String {
+    val totalSecondsPerKm = 1000 / speed
+    val minutes = (totalSecondsPerKm / 60).toInt()
+    val seconds = (totalSecondsPerKm % 60).toInt()
+    return "%d:%02d/km".format(minutes, seconds)
+}
+
+fun stravaDateToLocal(date: String): String {
+    val instant = Instant.parse(date)
+    val localDateTime = instant.atZone(ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH)
+    val formattedDate = localDateTime.format(formatter)
+    return formattedDate
+}
+
+

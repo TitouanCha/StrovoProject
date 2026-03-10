@@ -7,28 +7,15 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.BuildConfig
-import com.example.strovo.data.ActivityDetailModel
-import com.example.strovo.data.AverageStatsModel
 import com.example.strovo.services.RetrofitInstance
-import com.example.strovo.data.GetStravaTokenModel
-import com.example.strovo.data.RefreshStravaTokenModel
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.data.MonthlyDistanceItem
-import com.example.strovo.data.MonthlyDistanceModel
-import com.example.strovo.data.OverallStats
-import com.example.strovo.data.YearStravaActivitiesModel
-import com.example.strovo.utils.TokenManager
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import com.example.strovo.model.GetStravaTokenModel
+import com.example.strovo.model.RefreshStravaTokenModel
+import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.util.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import kotlin.collections.MutableList
 
 open class StravaViewModel(application: Application) : AndroidViewModel(application) {
     val tokenManager = TokenManager(application)
@@ -68,11 +55,7 @@ open class StravaViewModel(application: Application) : AndroidViewModel(applicat
                     clientSecret = BuildConfig.STRAVA_CLIENT_SECRET,
                     code = codeStrava
                 )
-                val accessToken = response.access_token
-                val refreshToken = response.refresh_token
-                val athleteId = response.athlete.id
 
-                tokenManager.saveTokens(accessToken, refreshToken, athleteId)
                 Toast.makeText(context, "Token Strava enregistré", Toast.LENGTH_SHORT).show()
 
             } catch (e: Exception) {

@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.Image
 
 sealed class Screen(val route: String) {
+    object StravaAuth : Screen("strava_auth")
     object Progress : Screen("progress")
     object Dashboard : Screen("dashboard")
     object Map : Screen("map")

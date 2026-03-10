@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.MonthAverageStatsDisplay
-import com.example.strovo.data.AverageMonthStatsModel
+import com.example.strovo.model.AverageMonthStatsModel
 
 @Composable
 fun AverageStatsDisplayCard(averageStats: AverageMonthStatsModel?, lastYearAverageStats: AverageMonthStatsModel?){

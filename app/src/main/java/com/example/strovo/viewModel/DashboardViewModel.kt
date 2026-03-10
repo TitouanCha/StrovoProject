@@ -3,8 +3,8 @@ package com.example.strovo.viewModel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.data.OverallStats
+import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.model.OverallStats
 import com.example.strovo.services.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

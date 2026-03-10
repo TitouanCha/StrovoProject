@@ -1,19 +1,14 @@
 package com.example.strovo.screen
 
 import com.example.strovo.R
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,11 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -35,8 +26,8 @@ import com.example.strovo.component.HeaderComponent
 import com.example.strovo.component.progressScreenComponents.MonthlyAverageStatsComponents
 import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
-import com.example.strovo.utils.PointerInputUtils
-import com.example.strovo.utils.viewModelUtils.getYearActivities
+import com.example.strovo.util.PointerInputUtils
+import com.example.strovo.util.viewModelUtils.getYearActivities
 import com.example.strovo.viewModel.ProgressViewModel
 import com.example.strovo.viewModel.StravaViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -55,7 +46,6 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.LocalDate
-import java.time.ZoneId
 
 
 @Composable

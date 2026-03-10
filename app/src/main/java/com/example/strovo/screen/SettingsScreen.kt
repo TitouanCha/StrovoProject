@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 import com.example.strovo.BuildConfig
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.strovo.utils.TokenManager
+import com.example.strovo.util.TokenManager
 import com.example.strovo.viewModel.StravaViewModel
 
 @Composable
@@ -104,7 +104,7 @@ fun SettingsScreen(navController: NavController, viewModel: StravaViewModel = vi
             Button(
                 onClick = {
                     viewModel.getAccessToken(textValue, context)
-                    //navController.navigate(Screen.Dashboard)
+                    navController.navigate(Screen.Dashboard.route)
                 },
                 modifier = Modifier
                     .weight(1f)

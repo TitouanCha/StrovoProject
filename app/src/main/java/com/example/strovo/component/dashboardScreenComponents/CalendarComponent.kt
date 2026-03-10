@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
-import com.example.strovo.data.getStravaActivitiesModelItem
+import com.example.strovo.model.getStravaActivitiesModelItem
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale

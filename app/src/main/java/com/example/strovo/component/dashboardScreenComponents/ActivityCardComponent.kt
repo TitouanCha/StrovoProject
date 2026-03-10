@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.data.getStravaActivitiesModelItem
-import com.example.strovo.utils.secondsToHms
-import com.example.strovo.utils.speedToPaceMinPerKm
-import com.example.strovo.utils.stravaDateToLocal
+import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.util.secondsToHms
+import com.example.strovo.util.speedToPaceMinPerKm
+import com.example.strovo.util.stravaDateToLocal
 
 
 @Composable

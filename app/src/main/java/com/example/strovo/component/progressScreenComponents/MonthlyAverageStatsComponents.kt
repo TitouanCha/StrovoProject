@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.data.AverageStatsModel
+import com.example.strovo.model.AverageStatsModel
 
 @Composable
 fun MonthlyAverageStatsComponents(stats: AverageStatsModel?) {

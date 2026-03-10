@@ -11,13 +11,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
-import com.example.strovo.data.AverageMonthStatsModel
-import com.example.strovo.data.GetStravaActivitiesModel
-import com.example.strovo.data.MonthlyDistanceItem
+import com.example.strovo.model.AverageMonthStatsModel
+import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.model.MonthlyDistanceItem
 import com.example.strovo.viewModel.ProgressViewModel
 
 fun getMonthAverageStats(activities: GetStravaActivitiesModel?): AverageMonthStatsModel? {
