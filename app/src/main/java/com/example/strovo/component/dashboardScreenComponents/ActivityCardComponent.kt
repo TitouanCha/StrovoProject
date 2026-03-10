@@ -20,20 +20,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.util.secondsToHms
 import com.example.strovo.util.speedToPaceMinPerKm
 import com.example.strovo.util.stravaDateToLocal
 
 
 @Composable
-fun ColumnScope.LastActivityCard(activity: getStravaActivitiesModelItem, onclick: () -> Unit){
+fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem, modifier: Modifier, onclick: () -> Unit){
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .weight(7f),
-        contentAlignment = Alignment.Center
+        modifier = modifier,
+        contentAlignment = Alignment.TopCenter
     ) {
         Card(
             modifier = Modifier

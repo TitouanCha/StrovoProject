@@ -16,13 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.util.secondsToHms
 import com.example.strovo.util.speedToPaceMinPerKm
 import com.example.strovo.util.stravaDateToLocal
 
 @Composable
-fun BottomSheetContent(selectedActivities: List<getStravaActivitiesModelItem>?, onclick: () -> Unit) {
+fun BottomSheetContent(selectedActivities: List<GetStravaActivitiesModelItem>?, onclick: () -> Unit) {
 
     selectedActivities?.get(0)?.let { activity ->
         Column(

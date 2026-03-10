@@ -19,17 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataOverallStatsDisplay
-import com.example.strovo.model.GetOverallStatsModel
+import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.util.secondsToHms
 
 @Composable
-fun ColumnScope.AthleteStatsComponent(athleteStats: GetOverallStatsModel?) {
+fun ColumnScope.AthleteStatsComponent(athleteStats: GetOverallStatsModel?, modifier: Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .weight(7f),
-        contentAlignment = Alignment.Center
+        modifier = modifier,
+        contentAlignment = Alignment.BottomCenter
     ) {
         Card(
             modifier = Modifier

@@ -1,13 +1,11 @@
 package com.example.strovo.presentation.dashboard
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.repository.DashboardRepositoryImpl
 import com.example.strovo.domain.model.DashboardModel
-import com.example.strovo.model.GetOverallStatsModel
-import com.example.strovo.model.GetStravaActivitiesModel
-import com.example.strovo.services.RetrofitInstance
+import com.example.strovo.data.model.GetOverallStatsModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.viewModel.StravaViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,8 +36,7 @@ class DashboardViewModel(application: Application) : StravaViewModel(application
             }.onFailure {
                 _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
             }
-                var filteredActivities = monthData.filter { it.type == "Run" }
-                _dashboardUiState.value = DashboardUiState.Success( DashboardModel(filteredActivities, overallStats) )
+                _dashboardUiState.value = DashboardUiState.Success( DashboardModel(monthData, overallStats) )
         }
     }
 }

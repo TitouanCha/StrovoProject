@@ -14,9 +14,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
-import com.example.strovo.model.AverageMonthStatsModel
-import com.example.strovo.model.GetStravaActivitiesModel
-import com.example.strovo.model.MonthlyDistanceItem
+import com.example.strovo.domain.model.AverageMonthStatsModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.domain.model.MonthlyDistanceItem
 import com.example.strovo.viewModel.ProgressViewModel
 
 fun getMonthAverageStats(activities: GetStravaActivitiesModel?): AverageMonthStatsModel? {

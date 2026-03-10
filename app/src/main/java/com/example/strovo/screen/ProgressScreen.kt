@@ -106,7 +106,12 @@ fun ProgressScreen(navController: NavController, stravaViewModel: StravaViewMode
                 .padding(),
             contentAlignment = Alignment.Center
         ) {
-            HeaderComponent("Progrès", R.drawable.map_location_pin_svgrepo_com) {
+            HeaderComponent(
+                "Progrès", R.drawable.map_location_pin_svgrepo_com,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
                 navController.navigate(Screen.Map.route)
             }
         }

@@ -21,15 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.screen.Screen
+import okhttp3.internal.notify
 
 @Composable
-fun HeaderComponent(title: String, icon: Int, onclick: () -> Unit) {
+fun HeaderComponent(title: String, icon: Int?, modifier: Modifier, onclick: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Box(modifier = Modifier.weight(1f)) {}
         Text(
@@ -38,7 +36,7 @@ fun HeaderComponent(title: String, icon: Int, onclick: () -> Unit) {
                 .padding(8.dp),
             textAlign = TextAlign.Center,
             text = title,
-            fontSize = 24.sp,
+            fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
         IconButton(
@@ -48,12 +46,15 @@ fun HeaderComponent(title: String, icon: Int, onclick: () -> Unit) {
             onClick = {
                 onclick()
             }) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = "Settings Icon",
-                modifier = Modifier.size(50.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            icon?.let { it ->
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "Settings Icon",
+                    modifier = Modifier.size(50.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
         }
     }
 }

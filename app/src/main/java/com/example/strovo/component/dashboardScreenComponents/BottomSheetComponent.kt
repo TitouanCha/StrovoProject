@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 
 
 @Composable
 fun BottomSheetComponent(
-    selectedActivities: List<getStravaActivitiesModelItem>?,
+    selectedActivities: List<GetStravaActivitiesModelItem>?,
     onclick: (Int) -> Unit
 ) {
     val activityCount = selectedActivities?.size ?: 0

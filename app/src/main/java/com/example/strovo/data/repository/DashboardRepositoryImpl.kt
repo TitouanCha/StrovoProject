@@ -2,11 +2,9 @@ package com.example.strovo.data.repository
 
 
 import android.content.Context
-import androidx.navigation.internal.NavContext
-import com.example.strovo.domain.model.DashboardModel
 import com.example.strovo.domain.repository.DashboardRepository
-import com.example.strovo.model.GetOverallStatsModel
-import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.GetOverallStatsModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.services.RetrofitInstance
 import com.example.strovo.util.TokenManager
 

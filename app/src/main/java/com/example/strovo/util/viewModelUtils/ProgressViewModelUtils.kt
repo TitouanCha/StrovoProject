@@ -1,9 +1,9 @@
 package com.example.strovo.util.viewModelUtils
 
-import com.example.strovo.model.AverageStatsModel
-import com.example.strovo.model.GetStravaActivitiesModel
-import com.example.strovo.model.MonthlyDistanceItem
-import com.example.strovo.model.YearStravaActivitiesModel
+import com.example.strovo.domain.model.AverageStatsModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.domain.model.MonthlyDistanceItem
+import com.example.strovo.data.model.YearStravaActivitiesModel
 import com.example.strovo.viewModel.ProgressViewModel
 import java.time.LocalDate
 import java.time.ZoneId

@@ -3,10 +3,10 @@ package com.example.strovo.viewModel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.model.AverageStatsModel
-import com.example.strovo.model.GetStravaActivitiesModel
-import com.example.strovo.model.MonthlyDistanceModel
-import com.example.strovo.model.YearStravaActivitiesModel
+import com.example.strovo.domain.model.AverageStatsModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.domain.model.MonthlyDistanceModel
+import com.example.strovo.data.model.YearStravaActivitiesModel
 import com.example.strovo.util.mapUtils.decodePolyline
 import com.example.strovo.util.viewModelUtils.getAverageStats
 import com.example.strovo.util.viewModelUtils.parseMonthlyActivitiesDistance

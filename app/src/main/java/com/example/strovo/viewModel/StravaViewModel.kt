@@ -8,9 +8,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.BuildConfig
 import com.example.strovo.services.RetrofitInstance
-import com.example.strovo.model.GetStravaTokenModel
-import com.example.strovo.model.RefreshStravaTokenModel
-import com.example.strovo.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.GetStravaTokenModel
+import com.example.strovo.data.model.RefreshStravaTokenModel
+import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.util.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

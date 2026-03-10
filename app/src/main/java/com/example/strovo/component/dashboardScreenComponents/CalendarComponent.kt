@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
-import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -31,7 +31,7 @@ import kotlin.collections.orEmpty
 
 
 @Composable
-fun CalendarDisplay(week: Long, data: List<getStravaActivitiesModelItem>, onclick: (List<getStravaActivitiesModelItem>) -> Unit) {
+fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, onclick: (List<GetStravaActivitiesModelItem>) -> Unit) {
     val today = remember { LocalDate.now().minusDays(week * 7L) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
     val startOfWeek = remember(today) {

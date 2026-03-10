@@ -1,6 +1,5 @@
 package com.example.strovo.presentation.dashboard
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -31,10 +29,9 @@ import com.example.strovo.component.dashboardScreenComponents.AthleteStatsCompon
 import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
-import com.example.strovo.model.getStravaActivitiesModelItem
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.util.PointerInputUtils
 import com.example.strovo.screen.Screen
-import com.example.strovo.viewModel.StravaViewModel
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -49,7 +46,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
 
     var refreshScrollState = remember { mutableStateOf(false) }
     var sheetState = remember { mutableStateOf(false) }
-    var selectedActivities = remember { mutableStateOf<List<getStravaActivitiesModelItem>?>(null) }
+    var selectedActivities = remember { mutableStateOf<List<GetStravaActivitiesModelItem>?>(null) }
 
     val todayDate = Instant.now()
     val beforeDate = todayDate.epochSecond.toString()
@@ -83,107 +80,141 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(2f),
+                    .weight(1f),
+                contentAlignment = Alignment.Center
             ){
-                HeaderComponent("Dashboard", R.drawable.baseline_settings_24) {
-                    navController.navigate(Screen.Settings.route)
+                HeaderComponent(
+                    "Dashboard", null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                ) {
+                    //navController.navigate(Screen.Settings.route)
                 }
             }
-            when(dashboardUiState){
-                is DashboardUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.weight(25f))
-                }
-                is DashboardUiState.Error -> {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .weight(8f)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(
-                                text = "Erreur lors du chargement des activités",
-                                modifier = Modifier.padding(8.dp),
-                                fontSize = 20.sp
-                            )
-                            Text(
-                                text = "Verrifier votre connexion a Strava.",
-                                modifier = Modifier.padding(8.dp),
-                                fontSize = 14.sp
-                            )
-                        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(9f),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                when (dashboardUiState) {
+                    is DashboardUiState.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier)
                     }
-                }
-                is DashboardUiState.Success -> {
-                    val activitiesData = dashboardUiState.dashboardData.monthActivity
-                    val overallStat = dashboardUiState.dashboardData.overallStats
-                    if(activitiesData.isNotEmpty()) {
-                        LastActivityCard(activitiesData[0]) {
-                            navController.navigate(Screen.ActivityDetails.createRoute(activitiesData[0].id.toString()))
-                        }
-                        Box(
+
+                    is DashboardUiState.Error -> {
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .weight(8f),
-                            contentAlignment = Alignment.Center
+                                .padding(16.dp)
                         ) {
-                            Column {
-                                val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    days.forEach { day ->
-                                        Text(
-                                            text = day,
-                                            modifier = Modifier.weight(1f),
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
-                                    }
-                                }
-                                CalendarDisplay(3, activitiesData) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(2, activitiesData) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(1, activitiesData) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(0, activitiesData) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "Erreur lors du chargement des activités",
+                                    modifier = Modifier.padding(8.dp),
+                                    fontSize = 20.sp
+                                )
+                                Text(
+                                    text = "Verrifier votre connexion a Strava.",
+                                    modifier = Modifier.padding(8.dp),
+                                    fontSize = 14.sp
+                                )
                             }
                         }
                     }
-                    AthleteStatsComponent(overallStat)
-                }
-            }
-        }
-        if (refreshScrollState.value) {
-            Spacer(modifier = Modifier.height(100.dp))
-            Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(50)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(8.dp)
 
-                )
+                    is DashboardUiState.Success -> {
+                        val activitiesData = dashboardUiState.dashboardData.monthActivity
+                        val overallStat = dashboardUiState.dashboardData.overallStats
+                        if (activitiesData.isNotEmpty()) {
+                            Column(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                LastActivityCard(
+                                    activitiesData.filter { it.type == "Run" }[0],
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .weight(1.5f),
+                                ) {
+                                    navController.navigate(
+                                        Screen.ActivityDetails.createRoute(
+                                            activitiesData[0].id.toString()
+                                        )
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .weight(2.5f),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column {
+                                        val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            days.forEach { day ->
+                                                Text(
+                                                    text = day,
+                                                    modifier = Modifier.weight(1f),
+                                                    textAlign = TextAlign.Center,
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
+                                            }
+                                        }
+                                        CalendarDisplay(3, activitiesData) { activity ->
+                                            selectedActivities.value = activity
+                                            sheetState.value = true
+                                        }
+                                        CalendarDisplay(2, activitiesData) { activity ->
+                                            selectedActivities.value = activity
+                                            sheetState.value = true
+                                        }
+                                        CalendarDisplay(1, activitiesData) { activity ->
+                                            selectedActivities.value = activity
+                                            sheetState.value = true
+                                        }
+                                        CalendarDisplay(0, activitiesData) { activity ->
+                                            selectedActivities.value = activity
+                                            sheetState.value = true
+                                        }
+                                    }
+                                }
+
+                                AthleteStatsComponent(
+                                    overallStat,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                                        .weight(1.5f),
+                                )
+                            }
+                        }
+                    }
+                }
+                if (refreshScrollState.value) {
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(50)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(8.dp)
+
+                        )
+                    }
+                }
             }
         }
         if (sheetState.value) {
