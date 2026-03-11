@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.data.repository.ProgressRepositoryImpl
 import com.example.strovo.domain.model.ProgressModel
 import com.example.strovo.model.AverageStatsModel
@@ -85,7 +86,7 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun getMonthlyDistances(activities: YearStravaActivitiesModel): MutableList<MonthlyDistanceModel> {
-        val parsedMonthlyDistances = MutableList(12) { MonthlyDistanceModel(0, null) }
+        val parsedMonthlyDistances = MutableList(12) { MonthlyDistanceModel(0, ArrayList()) }
         for (i in 1..12) {
             val monthActivities = activities.allActivities.filter { activity ->
                 val activityDate = LocalDate.parse(activity.start_date_local.substring(0, 10))

@@ -96,7 +96,6 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                 navController.navigate(Screen.Map.route)
             }
         }
-
         if (refreshScrollState.value) {
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         }
