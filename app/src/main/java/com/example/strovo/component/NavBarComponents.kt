@@ -44,7 +44,7 @@ fun BottomNavBar(navController: NavController) {
                 }
             },
             modifier = Modifier
-                .padding(end = 16.dp)
+                //.padding(end = 16.dp)
                 .then(
                 if (currentRoute == Screen.Progress.route) {
                     Modifier.background(MaterialTheme.colorScheme.primary)

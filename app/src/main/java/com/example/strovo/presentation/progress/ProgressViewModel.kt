@@ -12,6 +12,7 @@ import com.example.strovo.model.AverageStatsModel
 import com.example.strovo.model.CachedProgressModel
 import com.example.strovo.model.MonthlyDistanceModel
 import com.example.strovo.model.YearStravaActivitiesModel
+import com.example.strovo.util.mapUtils.decodePolyline
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -73,8 +74,12 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                 lastYear = mutableListOf(lastYearActivities),
                 averageStats = getAverageStats(selectedYearActivities),
                 selectedYearDistances = getMonthlyDistances(selectedYearActivities),
-                lastYearDistances = getMonthlyDistances(lastYearActivities)
+                lastYearDistances = getMonthlyDistances(lastYearActivities),
+                activitiesTrackPoints = selectedYearActivities.allActivities.map{ activity ->
+                    activity.map.summary_polyline.let { decodePolyline(it) }
+                }
             )
+
             _progressUiState.value = ProgressUiState.Success(progressData)
             if(year == currentYear){
                 currentYearActivities = selectedYearActivities
