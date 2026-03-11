@@ -1,5 +1,4 @@
-package com.example.strovo.screen
-
+package com.example.strovo.presentation.monthlyActivities
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
 import com.example.strovo.model.AverageMonthStatsModel
-import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.model.MonthlyDistanceModel
 import com.example.strovo.presentation.progress.ProgressUiState

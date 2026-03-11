@@ -72,31 +72,31 @@ fun BottomNavBar(navController: NavController) {
                 }
             },
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                //.padding(horizontal = 16.dp)
                 .then(
                 if (currentRoute == Screen.Dashboard.route) {
                     Modifier
                         .background(MaterialTheme.colorScheme.primary)
-                        .padding(horizontal = 16.dp)
+                        //.padding(horizontal = 16.dp)
                 } else {
                     Modifier
                 }
             )
         )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.time_planning_svgrepo_com),
-                    contentDescription = "Dashboard Icon",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            selected = false,
-            onClick = {
+//        NavigationBarItem(
+//            icon = {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.time_planning_svgrepo_com),
+//                    contentDescription = "Dashboard Icon",
+//                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//            },
+//            selected = false,
+//            onClick = {
 //                if (currentRoute != Screen.Map.route) {
 //                    navController.navigate(Screen.Map.route)
 //                }
-            },
+//            },
 //            modifier = Modifier
 //                .padding(end = 16.dp)
 //                .then(
@@ -106,6 +106,6 @@ fun BottomNavBar(navController: NavController) {
 //                        Modifier
 //                    }
 //                )
-        )
+//        )
     }
 }

@@ -39,7 +39,6 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardViewModel) {
-    val context = LocalContext.current
     val pointerUtils = PointerInputUtils()
 
     val dashboardUiState = dashBoardViewModel.dashboardUiState.collectAsState().value
@@ -53,6 +52,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
 
     LaunchedEffect(Unit) {
+        if(dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
         dashBoardViewModel.getDashBoardData(beforeDate, afterDate)
     }
 
@@ -88,9 +88,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                ) {
-                    //navController.navigate(Screen.Settings.route)
-                }
+                ) { }
             }
             Box(
                 modifier = Modifier
@@ -102,7 +100,6 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                     is DashboardUiState.Loading -> {
                         CircularProgressIndicator(modifier = Modifier)
                     }
-
                     is DashboardUiState.Error -> {
                         Card(
                             modifier = Modifier
@@ -125,7 +122,6 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                             }
                         }
                     }
-
                     is DashboardUiState.Success -> {
                         val activitiesData = dashboardUiState.dashboardData.monthActivity
                         val overallStat = dashboardUiState.dashboardData.overallStats

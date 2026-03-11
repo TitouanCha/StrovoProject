@@ -1,9 +1,14 @@
 package com.example.strovo.component.progressScreenComponents
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -24,38 +29,41 @@ fun RowScope.DistanceCardDisplayComponent( title: String, data: String, index: I
             onClick(index)
         }
     ){
-        Row(
+        Column(
             modifier = Modifier
+                .padding(horizontal = 18.dp, vertical = 10.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                modifier = Modifier.weight(2f),
-                text = title,
-                fontSize = 20.sp,
-                lineHeight = 20.sp,
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.End
-            ){
+                .height(70.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+            ) {
                 Text(
-                    modifier = Modifier,
-                    text = data,
-                    fontSize = 15.sp,
-                    lineHeight = 15.sp,
-                    textAlign = TextAlign.End,
-                )
-                Text(
-                    modifier = Modifier,
-                    text = "km",
-                    fontSize = 8.sp,
-                    lineHeight = 8.sp,
-                    //textAlign = TextAlign.End,
+                    text = title,
+                    fontSize = 22.sp,
+                    //lineHeight = 20.sp,
                 )
             }
-
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = data,
+                    fontSize = 18.sp,
+                    //lineHeight = 15.sp,
+                )
+                Text(
+                    text = "km",
+                    fontSize = 18.sp,
+                    //lineHeight = 15.sp,
+                )
+            }
         }
     }
 }

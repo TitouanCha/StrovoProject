@@ -16,7 +16,6 @@ import com.example.strovo.presentation.progress.ProgressScreen
 import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -25,12 +24,10 @@ import androidx.navigation.navArgument
 import com.example.strovo.component.BottomNavBar
 import com.example.strovo.screen.ActivitiesMapScreen
 import com.example.strovo.screen.ActivityDetails
-import com.example.strovo.screen.MonthlyActivitiesScreen
+import com.example.strovo.presentation.monthlyActivities.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
-import com.example.strovo.util.TokenManager
 import com.example.strovo.presentation.dashboard.DashboardViewModel
 import com.example.strovo.presentation.progress.ProgressViewModel
-import com.example.strovo.viewModel.StravaViewModel
 import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
 import com.example.strovo.presentation.stravaAuth.StravaAuthViewModel
 

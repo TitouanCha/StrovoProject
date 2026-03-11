@@ -10,14 +10,13 @@ import androidx.compose.ui.unit.dp
 import com.example.strovo.model.MonthlyDistanceModel
 
 @Composable
-fun MonthlyDistanceListComponent(monthlyDistancesList: MutableList<MonthlyDistanceModel>, onMonthClick: (Int) -> Unit) {
+fun MonthlyDistanceListComponent(modifier: Modifier,monthlyDistancesList: MutableList<MonthlyDistanceModel>, onMonthClick: (Int) -> Unit) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
     ){
         val monthName = listOf(
-            "Jan", "Fev", "Mar", "Avr", "Mai", "Juin",
-            "Jul", "Août", "Sept", "Oct", "Nov", "Dec"
+            "Janvier", "Fevriver", "Mars", "Avril", "Mai", "Juin",
+            "Julillet", "Août", "Septpembre", "Octobre", "Novembre", "Decembre"
         )
         for(i in 0..11 step 2){
             item {
