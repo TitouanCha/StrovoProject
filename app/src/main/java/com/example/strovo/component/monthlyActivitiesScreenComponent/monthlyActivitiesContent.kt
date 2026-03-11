@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.domain.model.AverageMonthStatsModel
-import com.example.strovo.domain.model.MonthlyDistanceItem
+import com.example.strovo.model.AverageMonthStatsModel
+import com.example.strovo.model.MonthlyDistanceModel
 import com.example.strovo.util.secondsToHms
 import com.example.strovo.util.speedToPaceMinPerKm
 import com.example.strovo.util.stravaDateToLocal
@@ -28,7 +28,7 @@ fun MonthlyActivitiesContent(
     navController: NavController,
     selectedYear: Int,
     month: String,
-    activities: MonthlyDistanceItem?,
+    activities: MonthlyDistanceModel?,
     averageStats: AverageMonthStatsModel?,
     lastYearAverageStats: AverageMonthStatsModel?
 ){

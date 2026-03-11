@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.strovo.presentation.dashboard.DashboardScreen
-import com.example.strovo.screen.ProgressScreen
+import com.example.strovo.presentation.progress.ProgressScreen
 import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
 import androidx.compose.runtime.getValue
@@ -29,7 +29,7 @@ import com.example.strovo.screen.MonthlyActivitiesScreen
 import com.example.strovo.screen.SettingsScreen
 import com.example.strovo.util.TokenManager
 import com.example.strovo.presentation.dashboard.DashboardViewModel
-import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.presentation.progress.ProgressViewModel
 import com.example.strovo.viewModel.StravaViewModel
 import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
 import com.example.strovo.presentation.stravaAuth.StravaAuthViewModel
@@ -43,14 +43,11 @@ class MainActivity : ComponentActivity() {
             StrovoTheme {
                 val navController = rememberNavController()
                 val context = LocalContext.current
-                val tokenManager = remember { TokenManager(context) }
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
 
-
                 val stravaAuthViewModel: StravaAuthViewModel = viewModel()
-                val stravaViewModel: StravaViewModel = viewModel()
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 val progressViewModel: ProgressViewModel = viewModel()
 
@@ -80,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             SettingsScreen(navController)
                         }
                         composable(Screen.Progress.route) {
-                            ProgressScreen(navController, stravaViewModel, progressViewModel)
+                            ProgressScreen(navController, progressViewModel)
                         }
                         composable(Screen.Map.route) {
                             ActivitiesMapScreen(progressViewModel, context)

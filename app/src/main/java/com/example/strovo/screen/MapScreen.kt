@@ -19,61 +19,60 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.mapScreenComponents.MapYearComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
-import com.example.strovo.util.viewModelUtils.getYearActivities
-import com.example.strovo.viewModel.ProgressViewModel
+import com.example.strovo.presentation.progress.ProgressViewModel
 
 @Composable
-fun ActivitiesMapScreen(progressViewModel: ProgressViewModel, context: Context) {
-    val selectedYearActivities = progressViewModel.selectedYearActivities.collectAsState()
-    val isLoading = progressViewModel.isLoading.collectAsState()
-    val selectedYear = progressViewModel.selectedYear.collectAsState()
-
-    LaunchedEffect(selectedYear.value) {
-        Log.d("MapDebug", "Selected year changed")
-        getYearActivities(selectedYear.value, progressViewModel)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-
-    ) {
-        YearSelectionComponent(
-            incrementYear = {
-                if(!isLoading.value){
-                    progressViewModel.incrementYear()
-                }
-            },
-            decrementYear = {
-                if(!isLoading.value) {
-                    progressViewModel.decrementYear()
-                }
-            },
-            selectedYear = selectedYear.value
-        )
-        Box {
-            selectedYearActivities.value?.let{ activities ->
-                MapYearComponent(progressViewModel, context)
-            }
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
-                    text =
-                        if (!isLoading.value) "Vos traces de l'année"
-                        else "Chargement des traces...",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
+fun ActivitiesMapScreen(holdProgressViewModel: ProgressViewModel, context: Context) {
+//    val selectedYearActivities = holdProgressViewModel.selectedYearActivities.collectAsState()
+//    val isLoading = holdProgressViewModel.isLoading.collectAsState()
+//    val selectedYear = holdProgressViewModel.selectedYear.collectAsState()
+//
+//    LaunchedEffect(selectedYear.value) {
+//        Log.d("MapDebug", "Selected year changed")
+//        getYearActivities(selectedYear.value, holdProgressViewModel)
+//    }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//
+//    ) {
+//        YearSelectionComponent(
+//            incrementYear = {
+//                if(!isLoading.value){
+//                    holdProgressViewModel.incrementYear()
+//                }
+//            },
+//            decrementYear = {
+//                if(!isLoading.value) {
+//                    holdProgressViewModel.decrementYear()
+//                }
+//            },
+//            selectedYear = selectedYear.value
+//        )
+//        Box {
+//            selectedYearActivities.value?.let{ activities ->
+//                MapYearComponent(holdProgressViewModel, context)
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .background(
+//                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+//                        shape = RoundedCornerShape(8.dp)
+//                    ),
+//            ) {
+//                Text(
+//                    modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
+//                    text =
+//                        if (!isLoading.value) "Vos traces de l'année"
+//                        else "Chargement des traces...",
+//                    fontWeight = FontWeight.Bold,
+//                    fontSize = 20.sp,
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//            }
+//        }
+//    }
 
 }

@@ -1,6 +1,8 @@
 package com.example.strovo.presentation.dashboard
 
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.repository.DashboardRepositoryImpl
 import com.example.strovo.domain.model.DashboardModel
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class DashboardViewModel(application: Application) : StravaViewModel(application) {
+class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
     private val dashboardRepository = DashboardRepositoryImpl(application)
 
@@ -36,7 +38,7 @@ class DashboardViewModel(application: Application) : StravaViewModel(application
             }.onFailure {
                 _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
             }
-                _dashboardUiState.value = DashboardUiState.Success( DashboardModel(monthData, overallStats) )
+            _dashboardUiState.value = DashboardUiState.Success( DashboardModel(monthData, overallStats) )
         }
     }
 }
