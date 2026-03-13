@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.debug
+import org.gradle.kotlin.dsl.release
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,7 +25,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders["appName"] = "Strovo Dev"
+        }
         release {
+            manifestPlaceholders["appName"] = "Strovo"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

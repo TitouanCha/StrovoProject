@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.example.strovo.BuildConfig
 import androidx.core.net.toUri
 import com.example.strovo.R
+import com.example.strovo.component.HeaderComponent
 import com.example.strovo.data.utils.TokenManager
 
 @Composable
@@ -33,85 +34,36 @@ fun SettingsScreen(navController: NavController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        HeaderComponent(
+            title = "Paramètres", null,
+            modifier = Modifier.weight(1f)
+        ) { }
+        Box(
+            modifier = Modifier.weight(9f)
         ) {
-            Text(
-                text = "Statut de la connexion Strava",
-                fontSize = 18.sp,
-                modifier = Modifier.weight(3f)
-            )
-            Image(
-                painter = painterResource(id =
-                    if(tokenManager.hasTokens())
-                        R.drawable.baseline_check_circle
-                    else
-                        R.drawable.outline_dangerous_24),
-                contentDescription = "Connection ok Icon",
-                modifier = Modifier
-                    .size(45.dp)
-                    .weight(1f)
-            )
-
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = {
-                val clientId = BuildConfig.STRAVA_CLIENT_ID
-                val url = "https://www.strava.com/oauth/authorize?client_id=$clientId&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read,activity:read"
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                context.startActivity(intent)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text(
-                text = "Autorisation strava",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.open_outline_svgrepo_com),
-                contentDescription = "Strava Icon",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Row(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth()
-                .padding(4.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center
-
-        ) {
-            OutlinedTextField(
-                value = textValue,
-                onValueChange = { textValue = it },
-                label = {
-                    Text(
-                        text = "Entrer le code Strava",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(horizontal = 4.dp)
-            )
-            Button(
-                onClick = {
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 4.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Valider",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Statut de la connexion Strava",
+                    fontSize = 18.sp,
+                    modifier = Modifier.weight(3f)
                 )
+                Image(
+                    painter = painterResource(
+                        id =
+                            if (tokenManager.hasTokens())
+                                R.drawable.baseline_check_circle
+                            else
+                                R.drawable.outline_dangerous_24
+                    ),
+                    contentDescription = "Connection ok Icon",
+                    modifier = Modifier
+                        .size(45.dp)
+                        .weight(1f)
+                )
+
             }
         }
     }

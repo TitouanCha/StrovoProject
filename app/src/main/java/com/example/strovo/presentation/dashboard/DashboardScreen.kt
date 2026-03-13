@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.example.strovo.R
 import com.example.strovo.component.CustomBottomSheet
 import com.example.strovo.component.HeaderComponent
 import com.example.strovo.component.dashboardScreenComponents.AthleteStatsComponent
@@ -82,11 +83,13 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                 contentAlignment = Alignment.Center
             ){
                 HeaderComponent(
-                    "Dashboard", null,
+                    "Dashboard", R.drawable.baseline_settings_24,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                ) { }
+                ) {
+                    navController.navigate(Screen.Settings.route)
+                }
             }
             Box(
                 modifier = Modifier
