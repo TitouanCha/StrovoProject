@@ -8,7 +8,6 @@ import com.example.strovo.data.repository.DashboardRepositoryImpl
 import com.example.strovo.domain.model.DashboardModel
 import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.data.model.GetStravaActivitiesModel
-import com.example.strovo.viewModel.StravaViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

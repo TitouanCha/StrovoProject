@@ -1,11 +1,10 @@
 package com.example.strovo.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.example.strovo.domain.repository.ProgressRepository
 import com.example.strovo.model.YearStravaActivitiesModel
 import com.example.strovo.services.RetrofitInstance
-import com.example.strovo.util.TokenManager
+import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime

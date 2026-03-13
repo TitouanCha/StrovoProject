@@ -19,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.ActivityDetailModel
-import com.example.strovo.util.secondsToHms
-import com.example.strovo.util.speedToPaceMinPerKm
-import com.example.strovo.util.stravaDateToLocal
+import com.example.strovo.model.StravaActivityDetailModel
+import com.example.strovo.data.utils.secondsToHms
+import com.example.strovo.data.utils.speedToPaceMinPerKm
+import com.example.strovo.data.utils.stravaDateToLocal
 
 @Composable
 fun ActivityStats(
-    activity: ActivityDetailModel
+    activity: StravaActivityDetailModel
 ) {
     var dataFontSize = 22
     var titleFontSize = 25.sp

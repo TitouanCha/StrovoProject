@@ -8,11 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.strovo.util.mapUtils.mapGeoSource
-import com.example.strovo.util.mapUtils.mapPointSources
-import com.example.strovo.util.mapUtils.mapPointStyle
-import com.example.strovo.util.mapUtils.mapTraceLayer
-import com.example.strovo.util.mapUtils.mapZoomPosition
+import com.example.strovo.data.utils.mapUtils.mapGeoSource
+import com.example.strovo.data.utils.mapUtils.mapPointSources
+import com.example.strovo.data.utils.mapUtils.mapPointStyle
+import com.example.strovo.data.utils.mapUtils.mapTraceLayer
+import com.example.strovo.data.utils.mapUtils.mapZoomPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap

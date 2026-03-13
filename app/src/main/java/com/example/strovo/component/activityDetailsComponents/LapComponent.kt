@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.model.Lap
-import com.example.strovo.util.secondsToHms
-import com.example.strovo.util.speedToPaceMinPerKm
+import com.example.strovo.data.utils.secondsToHms
+import com.example.strovo.data.utils.speedToPaceMinPerKm
 
 @Composable
 fun ActivityLap(

@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.model.ActivityDetailModel
+import com.example.strovo.model.StravaActivityDetailModel
 
 @Composable
-fun ActivityData(activityDetail: ActivityDetailModel, lapOnClick: (Int) -> Unit) {
+fun ActivityData(activityDetail: StravaActivityDetailModel, lapOnClick: (Int) -> Unit) {
     val headerTitle = listOf<String>("Statistic", "Laps", "Graphs")
     val selectedHeaderIndex = remember { mutableIntStateOf(0) }
 

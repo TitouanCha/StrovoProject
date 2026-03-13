@@ -1,6 +1,6 @@
 package com.example.strovo.services
 
-import com.example.strovo.model.ActivityDetailModel
+import com.example.strovo.model.StravaActivityDetailModel
 import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.data.model.GetOverallStatsModel
 import retrofit2.http.GET
@@ -29,6 +29,6 @@ interface StravaActivityServices {
     suspend fun getActivityDetails(
         @Header("Authorization") authorization: String,
         @Path("activity_id") activityId: String
-    ): ActivityDetailModel
+    ): StravaActivityDetailModel
 
 }

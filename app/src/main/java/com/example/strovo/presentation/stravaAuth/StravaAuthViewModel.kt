@@ -3,12 +3,10 @@ package com.example.strovo.presentation.stravaAuth
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.strovo.data.repository.StravaAuthRepositoryImpl
-import com.example.strovo.util.TokenManager
+import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 

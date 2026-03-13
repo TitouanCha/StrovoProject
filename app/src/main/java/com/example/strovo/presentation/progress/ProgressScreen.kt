@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,10 +27,8 @@ import com.example.strovo.component.HeaderComponent
 import com.example.strovo.component.progressScreenComponents.MonthlyAverageStatsComponents
 import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
-import com.example.strovo.domain.model.ProgressModel
-import com.example.strovo.util.PointerInputUtils
-import com.example.strovo.screen.Screen
-import com.example.strovo.viewModel.StravaViewModel
+import com.example.strovo.data.utils.PointerInputUtils
+import com.example.strovo.Screen
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart

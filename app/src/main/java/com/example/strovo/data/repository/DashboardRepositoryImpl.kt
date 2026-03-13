@@ -6,7 +6,7 @@ import com.example.strovo.domain.repository.DashboardRepository
 import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.services.RetrofitInstance
-import com.example.strovo.util.TokenManager
+import com.example.strovo.data.utils.TokenManager
 
 class DashboardRepositoryImpl(context: Context): DashboardRepository {
     val tokenManager: TokenManager = TokenManager(context)

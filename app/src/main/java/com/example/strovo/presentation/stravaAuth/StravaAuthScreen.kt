@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.strovo.BuildConfig
-import com.example.strovo.screen.Screen
+import com.example.strovo.Screen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext

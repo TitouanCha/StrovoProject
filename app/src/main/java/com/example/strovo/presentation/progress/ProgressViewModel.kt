@@ -2,17 +2,14 @@ package com.example.strovo.presentation.progress
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.GetStravaActivitiesModel
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.data.repository.ProgressRepositoryImpl
 import com.example.strovo.domain.model.ProgressModel
 import com.example.strovo.model.AverageStatsModel
-import com.example.strovo.model.CachedProgressModel
 import com.example.strovo.model.MonthlyDistanceModel
 import com.example.strovo.model.YearStravaActivitiesModel
-import com.example.strovo.util.mapUtils.decodePolyline
+import com.example.strovo.data.utils.mapUtils.decodePolyline
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

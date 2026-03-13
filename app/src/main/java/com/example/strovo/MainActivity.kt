@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.strovo.presentation.dashboard.DashboardScreen
 import com.example.strovo.presentation.progress.ProgressScreen
-import com.example.strovo.screen.Screen
 import com.example.strovo.ui.theme.StrovoTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -23,9 +22,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.strovo.component.BottomNavBar
 import com.example.strovo.presentation.map.ActivitiesMapScreen
-import com.example.strovo.screen.ActivityDetails
+import com.example.strovo.presentation.activityDetails.ActivityDetails
 import com.example.strovo.presentation.monthlyActivities.MonthlyActivitiesScreen
-import com.example.strovo.screen.SettingsScreen
+import com.example.strovo.presentation.Settings.SettingsScreen
 import com.example.strovo.presentation.dashboard.DashboardViewModel
 import com.example.strovo.presentation.progress.ProgressViewModel
 import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
@@ -47,8 +46,6 @@ class MainActivity : ComponentActivity() {
                 val stravaAuthViewModel: StravaAuthViewModel = viewModel()
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 val progressViewModel: ProgressViewModel = viewModel()
-
-
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),

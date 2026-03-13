@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.DataActivityDisplay
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
-import com.example.strovo.util.secondsToHms
-import com.example.strovo.util.speedToPaceMinPerKm
-import com.example.strovo.util.stravaDateToLocal
+import com.example.strovo.data.utils.secondsToHms
+import com.example.strovo.data.utils.speedToPaceMinPerKm
+import com.example.strovo.data.utils.stravaDateToLocal
 
 @Composable
 fun BottomSheetContent(selectedActivities: List<GetStravaActivitiesModelItem>?, onclick: () -> Unit) {
