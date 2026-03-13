@@ -215,6 +215,7 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                                 .fillMaxWidth()
                                 .padding(top = 12.dp),
                             progressUiState.progressData.selectedYearDistances,
+                            selectedYear,
                             onMonthClick = { monthIndex ->
                                 navController.navigate(Screen.MonthlyActivities.createRoute(monthIndex))
                             }

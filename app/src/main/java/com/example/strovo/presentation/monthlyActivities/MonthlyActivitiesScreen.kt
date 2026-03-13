@@ -16,6 +16,7 @@ import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.model.MonthlyDistanceModel
 import com.example.strovo.presentation.progress.ProgressUiState
 import com.example.strovo.presentation.progress.ProgressViewModel
+import java.util.Calendar
 
 fun getMonthAverageStats(activities: ArrayList<GetStravaActivitiesModelItem>): AverageMonthStatsModel {
     val distance = activities.sumOf { it.distance }
@@ -33,9 +34,10 @@ fun MonthlyActivitiesScreen(navController: NavController, viewModel: ProgressVie
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     )
+    val actualMonthNumber = Calendar.getInstance().get(Calendar.MONTH)
     val pagerState = rememberPagerState(
         initialPage = monthIndex,
-        pageCount = { 12 }
+        pageCount = { actualMonthNumber }
     )
 
     val progressUiState = viewModel.progressUiState.collectAsState().value

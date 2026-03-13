@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RowScope.DistanceCardDisplayComponent( title: String, data: String, index: Int, onClick: (Int) -> Unit) {
+fun RowScope.DistanceCardDisplayComponent( title: String, activityNumber: String, distance: String, index: Int, onClick: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .weight(1f)
@@ -46,6 +47,7 @@ fun RowScope.DistanceCardDisplayComponent( title: String, data: String, index: I
                     //lineHeight = 20.sp,
                 )
             }
+            Spacer(modifier = Modifier.weight(0.5f))
             Row(
                 modifier = Modifier
                     .weight(1f)
@@ -54,13 +56,33 @@ fun RowScope.DistanceCardDisplayComponent( title: String, data: String, index: I
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = data,
+                    text = distance,
                     fontSize = 18.sp,
+                    modifier = Modifier.padding(end = 4.dp)
                     //lineHeight = 15.sp,
                 )
                 Text(
                     text = "km",
                     fontSize = 18.sp,
+                    //lineHeight = 15.sp,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = activityNumber,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(end = 4.dp)
+                    //lineHeight = 15.sp,
+                )
+                Text(
+                    text = "Seances",
+                    fontSize = 14.sp,
                     //lineHeight = 15.sp,
                 )
             }
