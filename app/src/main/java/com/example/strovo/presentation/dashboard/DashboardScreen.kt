@@ -29,7 +29,7 @@ import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.Screen
+import com.example.strovo.presentation.Screen
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

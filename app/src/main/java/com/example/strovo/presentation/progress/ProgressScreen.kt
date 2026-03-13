@@ -28,7 +28,7 @@ import com.example.strovo.component.progressScreenComponents.MonthlyAverageStats
 import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.Screen
+import com.example.strovo.presentation.Screen
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart

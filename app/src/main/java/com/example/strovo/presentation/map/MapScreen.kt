@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,8 +26,8 @@ import com.example.strovo.presentation.progress.ProgressUiState
 import com.example.strovo.presentation.progress.ProgressViewModel
 
 @Composable
-fun ActivitiesMapScreen(progressViewModel: ProgressViewModel, context: Context) {
-
+fun ActivitiesMapScreen(progressViewModel: ProgressViewModel) {
+    val context = LocalContext.current
     val progressUiState = progressViewModel.progressUiState.collectAsState().value
     val selectedYear = progressViewModel.selectedYear.collectAsState().value
 

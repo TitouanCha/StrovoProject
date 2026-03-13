@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.example.strovo.BuildConfig
-import com.example.strovo.Screen
+import com.example.strovo.presentation.Screen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -54,7 +54,7 @@ fun StravaAuthScreen( viewModel: StravaAuthViewModel, navController: NavControll
     ) {
         when (stravaAuthUiState) {
             is StravaAuthUiState.Success -> {
-                navController.navigate(Screen.Dashboard.route) {
+                navController.navigate(Screen.MainPager.route) {
                     popUpTo(0) { inclusive = true }
                 }
             }
