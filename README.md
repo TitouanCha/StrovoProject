@@ -3,8 +3,8 @@ Application Android qui permet l'analyse et la visualisation de vos activités s
 
 Roadmap :
  - Rendre accessible pour les cyclistes, marcheurs, etc.
- - Rendre possible la modification des activités.
  - Ajouter une section de graphiques dans le détail des activités.
+ - Rendre possible la modification des activités.
  - Rendre possible de comparer les activités entre elles.
  - Intégrer l’API de planning.
   

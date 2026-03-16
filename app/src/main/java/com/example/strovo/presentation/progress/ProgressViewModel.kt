@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.GetStravaActivitiesModel
 import com.example.strovo.data.repository.ProgressRepositoryImpl
+import com.example.strovo.data.repository.StravaAuthRepositoryImpl
+import com.example.strovo.data.utils.TokenManager
 import com.example.strovo.domain.model.ProgressModel
 import com.example.strovo.model.AverageStatsModel
 import com.example.strovo.model.MonthlyDistanceModel
@@ -19,7 +21,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 class ProgressViewModel(application: Application): AndroidViewModel(application) {
+    private val tokenManager = TokenManager(application)
     private val progressRepository = ProgressRepositoryImpl(application)
+    private val authRepository = StravaAuthRepositoryImpl(application)
+
     private val currentYear = Instant.now().atZone(ZoneId.systemDefault()).year
 
     private val _progressUiState = MutableStateFlow<ProgressUiState>(ProgressUiState.Loading)
@@ -52,6 +57,7 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                     }.onFailure { error ->
                         _progressUiState.value =
                             ProgressUiState.Error(error.message ?: "Unknown error")
+                        selectedYearActivities = YearStravaActivitiesModel(year, mutableListOf())
                     }
                 }
             }
@@ -63,27 +69,44 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                     lastYearActivities = yearActivities
                 }.onFailure { error ->
                     _progressUiState.value = ProgressUiState.Error(error.message ?: "Unknown error")
+                    lastYearActivities = YearStravaActivitiesModel(year - 1, mutableListOf())
                 }
             }
+            if(_progressUiState.value !is ProgressUiState.Error) {
+                val progressData = ProgressModel(
+                    selectedYear = mutableListOf(selectedYearActivities),
+                    lastYear = mutableListOf(lastYearActivities),
+                    averageStats = getAverageStats(selectedYearActivities),
+                    selectedYearDistances = getMonthlyDistances(selectedYearActivities),
+                    lastYearDistances = getMonthlyDistances(lastYearActivities),
+                    activitiesTrackPoints = selectedYearActivities.allActivities.map { activity ->
+                        activity.map.summary_polyline.let { decodePolyline(it) }
+                    }
+                )
 
-            val progressData = ProgressModel(
-                selectedYear = mutableListOf(selectedYearActivities),
-                lastYear = mutableListOf(lastYearActivities),
-                averageStats = getAverageStats(selectedYearActivities),
-                selectedYearDistances = getMonthlyDistances(selectedYearActivities),
-                lastYearDistances = getMonthlyDistances(lastYearActivities),
-                activitiesTrackPoints = selectedYearActivities.allActivities.map{ activity ->
-                    activity.map.summary_polyline.let { decodePolyline(it) }
+                _progressUiState.value = ProgressUiState.Success(progressData)
+                if (year == currentYear) {
+                    currentYearActivities = selectedYearActivities
                 }
-            )
-
-            _progressUiState.value = ProgressUiState.Success(progressData)
-            if(year == currentYear){
-                currentYearActivities = selectedYearActivities
+                cachedActivities = selectedYearActivities
+                lastYearCachedActivities = lastYearActivities
             }
-            cachedActivities = selectedYearActivities
-            lastYearCachedActivities = lastYearActivities
 
+        }
+    }
+
+    fun refreshTokenAndRetry(year: Int) {
+        viewModelScope.launch {
+            authRepository.refreshAccessToken().onSuccess{ tokenResponse ->
+                tokenManager.saveTokens(
+                    accessToken = tokenResponse.access_token,
+                    refreshToken = tokenResponse.refresh_token,
+                    athleteId = tokenManager.getAthleteId() ?: ""
+                )
+                loadProgressData(year)
+            }.onFailure {
+                _progressUiState.value = ProgressUiState.Error("Failed to refresh token: ${it.message}")
+            }
         }
     }
 

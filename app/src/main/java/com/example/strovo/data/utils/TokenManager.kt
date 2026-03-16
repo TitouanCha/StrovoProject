@@ -45,7 +45,6 @@ class TokenManager(context: Context) {
     }
 
     fun hasTokens(): Boolean {
-
         return !getAccessToken().isNullOrEmpty() && !getRefreshToken().isNullOrEmpty()
     }
 }

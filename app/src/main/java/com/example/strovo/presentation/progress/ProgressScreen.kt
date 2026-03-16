@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,6 +30,7 @@ import com.example.strovo.component.progressScreenComponents.MonthlyAverageStats
 import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.data.utils.PointerInputUtils
+import com.example.strovo.data.utils.TokenManager
 import com.example.strovo.presentation.Screen
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -151,13 +154,33 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                                 Text(
                                     text = "Erreur lors du chargement des activités",
                                     modifier = Modifier.padding(8.dp),
-                                    fontSize = 20.sp
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = "Verrifier votre connexion a Strava.",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 14.sp
+                                    modifier = Modifier.padding(top = 8.dp, bottom = 2.dp, start = 8.dp, end = 8.dp),
+                                    fontSize = 16.sp
                                 )
+                                Text(
+                                    text = progressUiState.message,
+                                    modifier = Modifier.padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+                                    fontSize = 16.sp
+                                )
+                                Button(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    onClick = {
+                                        progressViewModel.refreshTokenAndRetry(selectedYear)
+                                    }
+                                ) {
+                                    Text(
+                                        text = "Actualiser les données",
+                                        fontSize = 16.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
                         }
                     }

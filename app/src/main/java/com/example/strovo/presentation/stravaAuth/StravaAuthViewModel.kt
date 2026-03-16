@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class StravaAuthViewModel(application: Application): AndroidViewModel(application) {
     private val tokenManager = TokenManager(application)
-    private val stravaRepository = StravaAuthRepositoryImpl()
+    private val stravaRepository = StravaAuthRepositoryImpl(application)
 
     private val _stravaUiState = MutableStateFlow<StravaAuthUiState>(StravaAuthUiState.Initial)
     val stravaUiState: StateFlow<StravaAuthUiState> = _stravaUiState.asStateFlow()
@@ -41,7 +41,7 @@ class StravaAuthViewModel(application: Application): AndroidViewModel(applicatio
         }
         viewModelScope.launch {
             _stravaUiState.value = StravaAuthUiState.Loading
-            stravaRepository.refreshAccessToken(refreshToken).onSuccess { tokenResponse ->
+            stravaRepository.refreshAccessToken().onSuccess { tokenResponse ->
                 tokenManager.saveTokens(
                     accessToken = tokenResponse.access_token,
                     refreshToken = tokenResponse.refresh_token,
