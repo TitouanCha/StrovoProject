@@ -1,7 +1,6 @@
 package com.example.strovo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,9 +23,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import com.example.strovo.presentation.BottomNavBar
-import com.example.strovo.presentation.MainPagerScreen
-import com.example.strovo.presentation.Screen
+import com.example.strovo.component.BottomNavBar
+import com.example.strovo.component.MainPagerScreen
+import com.example.strovo.component.Screen
 import com.example.strovo.presentation.map.ActivitiesMapScreen
 import com.example.strovo.presentation.activityDetails.ActivityDetails
 import com.example.strovo.presentation.monthlyActivities.MonthlyActivitiesScreen
