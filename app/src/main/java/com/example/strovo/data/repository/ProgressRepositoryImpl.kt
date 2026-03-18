@@ -1,9 +1,12 @@
 package com.example.strovo.data.repository
 
 import android.content.Context
+import com.example.strovo.data.model.Discipline
+import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.domain.repository.ProgressRepository
 import com.example.strovo.model.YearStravaActivitiesModel
 import com.example.strovo.data.services.RetrofitInstance
+import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -12,11 +15,14 @@ import java.time.ZoneOffset
 
 class ProgressRepositoryImpl(context: Context): ProgressRepository {
     private val tokenManager = TokenManager(context)
+    private val disciplineManager = DisciplineManager(context)
 
     override suspend fun getYearActivities(year: Int): Result<YearStravaActivitiesModel> {
         var before = LocalDateTime.of(year, 12, 31, 23, 59, 59).toEpochSecond(ZoneOffset.UTC)
         var after = LocalDateTime.of(year, 1, 1, 0, 0, 0).toEpochSecond(ZoneOffset.UTC)
         val token = tokenManager.getAccessToken()
+
+        val disciplines: List<Discipline> = disciplineManager.getSelectedDisciplines()
         return try {
             coroutineScope {
                 val page1 = async {
@@ -41,7 +47,10 @@ class ProgressRepositoryImpl(context: Context): ProgressRepository {
                 allActivities.addAll(page2.await())
                 Result.success(YearStravaActivitiesModel(
                     year = year,
-                    allActivities = allActivities.filter { it.type == "Run" }.toMutableList()
+                    allActivities = allActivities.filter {
+                        val activityDiscipline = it.type.toDiscipline()
+                        activityDiscipline != null && disciplines.contains(activityDiscipline)
+                    }.toMutableList()
                 ))
             }
         } catch (e: Exception) {

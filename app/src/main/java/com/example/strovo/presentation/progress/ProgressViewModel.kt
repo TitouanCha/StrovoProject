@@ -1,6 +1,7 @@
 package com.example.strovo.presentation.progress
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.GetStravaActivitiesModel
@@ -42,14 +43,15 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
 
     lateinit var selectedYearActivities: YearStravaActivitiesModel
     lateinit var lastYearActivities: YearStravaActivitiesModel
-    fun loadProgressData(year: Int) {
+    fun loadProgressData(year: Int, isRestart: Boolean = false) {
+        _selectedYear.value = year
         _progressUiState.value = ProgressUiState.Loading
         viewModelScope.launch {
 
-            if (lastYearCachedActivities.year == _selectedYear.value) {
+            if (lastYearCachedActivities.year == _selectedYear.value && !isRestart) {
                 selectedYearActivities = lastYearCachedActivities
             } else {
-                if(currentYearActivities.year == year){
+                if(currentYearActivities.year == year && !isRestart){
                     selectedYearActivities = currentYearActivities
                 } else {
                     progressRepository.getYearActivities(year).onSuccess { yearActivities ->
@@ -62,7 +64,7 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                 }
             }
 
-            if(cachedActivities.year == year-1){
+            if(cachedActivities.year == year-1 && !isRestart){
                 lastYearActivities = cachedActivities
             } else {
                 progressRepository.getYearActivities(year - 1).onSuccess { yearActivities ->

@@ -43,7 +43,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 
 @Composable
@@ -61,10 +63,10 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
     LaunchedEffect(Unit) {
 //        val tokenManager = TokenManager(navController.context)
 //        tokenManager.saveTokens("123", tokenManager.getRefreshToken()?:"", tokenManager.getAthleteId()?:"")
-
         if(progressUiState is ProgressUiState.Success) return@LaunchedEffect
         progressViewModel.loadProgressData(LocalDate.now().year)
     }
+
     LaunchedEffect(progressUiState) {
         if (progressUiState is ProgressUiState.Success) {
             val currentYearData = progressUiState.progressData.selectedYearDistances
@@ -106,7 +108,10 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                         verticalDragToRefresh(
                             refreshScrollState = refreshScrollState,
                         ) {
-                            progressViewModel.loadProgressData(selectedYear)
+                            progressViewModel.loadProgressData(
+                                Instant.now().atZone(ZoneId.systemDefault()).year,
+                                true
+                            )
                         }
                     }
                 },
