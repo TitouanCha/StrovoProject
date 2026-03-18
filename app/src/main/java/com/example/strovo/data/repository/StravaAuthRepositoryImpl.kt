@@ -3,7 +3,7 @@ package com.example.strovo.data.repository
 import android.content.Context
 import com.example.strovo.domain.repository.StravaAuthRepository
 import com.example.strovo.data.model.GetStravaTokenModel
-import com.example.strovo.services.RetrofitInstance
+import com.example.strovo.data.services.RetrofitInstance
 import com.example.strovo.BuildConfig
 import com.example.strovo.data.model.RefreshStravaTokenModel
 import com.example.strovo.data.utils.TokenManager

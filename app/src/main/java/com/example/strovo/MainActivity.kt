@@ -29,9 +29,10 @@ import com.example.strovo.component.Screen
 import com.example.strovo.presentation.map.ActivitiesMapScreen
 import com.example.strovo.presentation.activityDetails.ActivityDetails
 import com.example.strovo.presentation.monthlyActivities.MonthlyActivitiesScreen
-import com.example.strovo.presentation.Settings.SettingsScreen
+import com.example.strovo.presentation.settings.SettingsScreen
 import com.example.strovo.presentation.dashboard.DashboardViewModel
 import com.example.strovo.presentation.progress.ProgressViewModel
+import com.example.strovo.presentation.settings.SettingsViewModel
 import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
 import com.example.strovo.presentation.stravaAuth.StravaAuthViewModel
 import kotlinx.coroutines.launch
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
                 val stravaAuthViewModel: StravaAuthViewModel = viewModel()
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 val progressViewModel: ProgressViewModel = viewModel()
+                val settingsViewModel: SettingsViewModel = viewModel()
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -114,7 +116,7 @@ class MainActivity : ComponentActivity() {
                             StravaAuthScreen(viewModel = stravaAuthViewModel, navController = navController)
                         }
                         composable(Screen.Settings.route) {
-                            SettingsScreen(navController)
+                            SettingsScreen(navController, settingsViewModel)
                         }
                         composable(Screen.MainPager.route) {
                             MainPagerScreen(
