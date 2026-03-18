@@ -30,6 +30,8 @@ import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
 import com.example.strovo.component.Screen
+import com.example.strovo.data.model.toDiscipline
+import com.example.strovo.data.utils.DisciplineManager
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -114,12 +116,13 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                     is DashboardUiState.Success -> {
                         val activitiesData = dashboardUiState.dashboardData.monthActivity
                         val overallStat = dashboardUiState.dashboardData.overallStats
+                        val lastActivity = dashboardUiState.dashboardData.lastActivity
                         if (activitiesData.isNotEmpty()) {
                             Column(
                                 modifier = Modifier.fillMaxSize()
                             ) {
                                 LastActivityCard(
-                                    activitiesData.filter { it.type == "Run" }[0],
+                                    lastActivity,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 16.dp, vertical = 8.dp)

@@ -8,7 +8,9 @@ import com.example.strovo.data.repository.DashboardRepositoryImpl
 import com.example.strovo.domain.model.DashboardModel
 import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.data.repository.StravaAuthRepositoryImpl
+import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
 import com.example.strovo.presentation.progress.ProgressUiState
 import kotlinx.coroutines.awaitAll
@@ -25,9 +27,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val _dashboardUiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading)
     val dashboardUiState: StateFlow<DashboardUiState> = _dashboardUiState.asStateFlow()
 
+    val disciplineManager = DisciplineManager(application)
+
     fun getDashBoardData(before: String, after: String){
         _dashboardUiState.value = DashboardUiState.Loading
         viewModelScope.launch {
+            val selectedDiscipline = disciplineManager.getSelectedDisciplines()
             val monthData = dashboardRepository.getMonthData(before, after).getOrElse {
                 _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
                 return@launch
@@ -37,8 +42,18 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
                 return@launch
             }
+            val lastActivity = monthData.firstOrNull{
+                var activityDiscipline = it.type.toDiscipline()
+                activityDiscipline != null && selectedDiscipline.contains(activityDiscipline)
+            }
 
-            _dashboardUiState.value = DashboardUiState.Success(DashboardModel(monthData, overallStats))
+            _dashboardUiState.value = DashboardUiState.Success(
+                DashboardModel(
+                    lastActivity = lastActivity,
+                    monthActivity =  monthData,
+                    overallStats = overallStats
+                )
+            )
         }
     }
 

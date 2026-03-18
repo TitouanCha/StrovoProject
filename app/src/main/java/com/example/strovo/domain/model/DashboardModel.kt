@@ -4,6 +4,7 @@ import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
 
 data class DashboardModel(
+    val lastActivity: GetStravaActivitiesModelItem?,
     val monthActivity: List<GetStravaActivitiesModelItem>,
     val overallStats: GetOverallStatsModel
 )
