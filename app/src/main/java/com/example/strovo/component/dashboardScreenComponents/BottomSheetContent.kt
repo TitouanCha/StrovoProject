@@ -16,7 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.component.DataActivityDisplay
+import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal
@@ -79,7 +81,7 @@ fun BottomSheetContent(selectedActivities: List<GetStravaActivitiesModelItem>?, 
                 }
             }
             //Spacer(modifier = Modifier.weight(1f))
-            if(activity.type == "Run") {
+            if(activity.type.toDiscipline() != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

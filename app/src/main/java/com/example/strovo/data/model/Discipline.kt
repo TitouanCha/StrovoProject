@@ -5,11 +5,9 @@ enum class Discipline {
     CYCLING,        // vélo
     WALKING,        // marche
     HIKING,         // randonnée
-    CLIMBING,       // escalade
-    SWIMMING,       // natation
-    SURFING,        // surf
-    WORKOUT,        // fitness général
-    OTHER           // autre
+//    CLIMBING,       // escalade
+//    SWIMMING,       // natation
+//    WORKOUT,        // fitness général
 }
 
 fun String.toDiscipline(): Discipline? = when (this) {
@@ -17,9 +15,8 @@ fun String.toDiscipline(): Discipline? = when (this) {
     "Ride" -> Discipline.CYCLING
     "Walk" -> Discipline.WALKING
     "Hike" -> Discipline.HIKING
-    "Swim" -> Discipline.SWIMMING
-    "Workout" -> Discipline.WORKOUT
-    "RockClimbing" -> Discipline.CLIMBING
-    "Surfing" -> Discipline.SURFING
-    else -> Discipline.OTHER
+//    "Swim" -> Discipline.SWIMMING
+//    "Workout" -> Discipline.WORKOUT
+//    "RockClimbing" -> Discipline.CLIMBING
+    else -> null
 }
