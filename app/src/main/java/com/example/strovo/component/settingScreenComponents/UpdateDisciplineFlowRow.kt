@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableInferredTarget
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,7 +28,8 @@ fun UpdateDisciplineFlowRow(
     userDiscipline: List<Discipline>,
     disciplines: List<Discipline>,
     onAddClick: (Discipline) -> Unit = {},
-    onDeleteClick: (Discipline) -> Unit = {}
+    onDeleteClick: (Discipline) -> Unit = {},
+    cardColor: Color = MaterialTheme.colorScheme.surfaceVariant
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth()
@@ -34,7 +37,8 @@ fun UpdateDisciplineFlowRow(
         disciplines.forEach { discipline ->
             Card(
                 modifier = Modifier
-                    .padding(end = 8.dp, bottom = 6.dp)
+                    .padding(end = 8.dp, bottom = 6.dp),
+                colors = CardDefaults.cardColors(containerColor = cardColor)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

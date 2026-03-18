@@ -8,10 +8,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
+import com.example.strovo.data.model.Discipline
+import com.example.strovo.data.utils.DisciplineManager
+import com.example.strovo.data.utils.FirstLaunchManager
 import kotlinx.coroutines.launch
 
 class StravaAuthViewModel(application: Application): AndroidViewModel(application) {
     private val tokenManager = TokenManager(application)
+    private val disciplineManager = DisciplineManager(application)
+    private val firstLaunchManager = FirstLaunchManager(application)
     private val stravaRepository = StravaAuthRepositoryImpl(application)
 
     private val _stravaUiState = MutableStateFlow<StravaAuthUiState>(StravaAuthUiState.Initial)
@@ -27,6 +32,7 @@ class StravaAuthViewModel(application: Application): AndroidViewModel(applicatio
                     athleteId = tokenResponse.athlete.id.toString()
                 )
                 _stravaUiState.value = StravaAuthUiState.Success(tokenResponse.access_token)
+                firstLaunchManager.setFirstLaunch(false)
             }.onFailure { exception ->
                 _stravaUiState.value = StravaAuthUiState.Error(exception.message ?: "Unknown error")
             }
@@ -51,6 +57,12 @@ class StravaAuthViewModel(application: Application): AndroidViewModel(applicatio
             }.onFailure { exception ->
                 _stravaUiState.value = StravaAuthUiState.Error(exception.message ?: "Unknown error")
             }
+        }
+    }
+
+    fun saveUserDisciplines(disciplines: List<Discipline>) {
+        viewModelScope.launch {
+            disciplineManager.saveSelectedDisciplines(disciplines)
         }
     }
 

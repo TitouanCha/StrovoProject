@@ -34,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import com.example.strovo.component.OnboardingComponent
+import com.example.strovo.data.utils.FirstLaunchManager
 
 @Composable
 fun StravaAuthScreen( viewModel: StravaAuthViewModel, navController: NavController ) {
@@ -41,6 +43,7 @@ fun StravaAuthScreen( viewModel: StravaAuthViewModel, navController: NavControll
     val stravaAuthUiState by viewModel.stravaUiState.collectAsState()
     var stravaCode by remember { mutableStateOf("") }
 
+    val isFirstLaunch = remember { mutableStateOf<Boolean>(FirstLaunchManager(context).isFirstLaunch()) }
     LaunchedEffect(Unit) {
         viewModel.refreshStravaToken()
     }
@@ -150,5 +153,14 @@ fun StravaAuthScreen( viewModel: StravaAuthViewModel, navController: NavControll
                 viewModel.resetUiState()
             }
         }
+    }
+    if(isFirstLaunch.value) {
+        OnboardingComponent(
+            context,
+            onClick = { disciplines ->
+                 viewModel.saveUserDisciplines(disciplines)
+                isFirstLaunch.value = false
+            }
+        )
     }
 }
