@@ -30,12 +30,14 @@ android {
             manifestPlaceholders["appName"] = "Strovo Dev"
         }
         release {
+            manifestPlaceholders += mapOf()
             manifestPlaceholders["appName"] = "Strovo"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

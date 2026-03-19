@@ -122,6 +122,7 @@ fun SettingsScreen(navController: NavController, settingsViewModel: SettingsView
                         modifier = Modifier,
                         onClick = {
                             tokenManager.clearTokens()
+
                             navController.navigate("strava_auth") {
                                 popUpTo("settings_screen") { inclusive = true }
                             }

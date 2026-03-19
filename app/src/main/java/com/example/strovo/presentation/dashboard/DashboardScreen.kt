@@ -42,6 +42,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val pointerUtils = PointerInputUtils()
 
     val dashboardUiState = dashBoardViewModel.dashboardUiState.collectAsState().value
+    //val selectedDiscipline = DisciplineManager(navController.context).getSelectedDisciplines()
 
     var refreshScrollState = remember { mutableStateOf(false) }
     var sheetState = remember { mutableStateOf(false) }
@@ -117,6 +118,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                         val activitiesData = dashboardUiState.dashboardData.monthActivity
                         val overallStat = dashboardUiState.dashboardData.overallStats
                         val lastActivity = dashboardUiState.dashboardData.lastActivity
+                        val selectedDiscipline = dashboardUiState.dashboardData.selectedDiscipline
                         if (activitiesData.isNotEmpty()) {
                             Column(
                                 modifier = Modifier.fillMaxSize()
@@ -156,19 +158,19 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                                 )
                                             }
                                         }
-                                        CalendarDisplay(3, activitiesData) { activity ->
+                                        CalendarDisplay(3, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(2, activitiesData) { activity ->
+                                        CalendarDisplay(2, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(1, activitiesData) { activity ->
+                                        CalendarDisplay(1, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(0, activitiesData) { activity ->
+                                        CalendarDisplay(0, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }

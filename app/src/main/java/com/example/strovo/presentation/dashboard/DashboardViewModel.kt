@@ -21,13 +21,13 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
     private val tokenManager = TokenManager(application)
+    private val disciplineManager = DisciplineManager(application)
     private val dashboardRepository = DashboardRepositoryImpl(application)
     private val authRepository = StravaAuthRepositoryImpl(application)
 
     private val _dashboardUiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading)
     val dashboardUiState: StateFlow<DashboardUiState> = _dashboardUiState.asStateFlow()
 
-    val disciplineManager = DisciplineManager(application)
 
     fun getDashBoardData(before: String, after: String){
         _dashboardUiState.value = DashboardUiState.Loading
@@ -51,7 +51,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 DashboardModel(
                     lastActivity = lastActivity,
                     monthActivity =  monthData,
-                    overallStats = overallStats
+                    overallStats = overallStats,
+                    selectedDiscipline = selectedDiscipline
                 )
             )
         }
