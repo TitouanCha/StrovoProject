@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.debug
+import org.gradle.kotlin.dsl.release
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -12,8 +15,8 @@ android {
         applicationId = "com.example.strovo"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         buildConfigField("String", "STRAVA_CLIENT_ID", "\"${project.findProperty("STRAVA_CLIENT_ID") ?: ""}\"")
         buildConfigField("String", "STRAVA_CLIENT_SECRET", "\"${project.findProperty("STRAVA_CLIENT_SECRET") ?: ""}\"")
@@ -22,12 +25,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders["appName"] = "Strovo Dev"
+        }
         release {
+            manifestPlaceholders += mapOf()
+            manifestPlaceholders["appName"] = "Strovo"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -66,6 +76,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation("androidx.browser:browser:1.8.0")
 

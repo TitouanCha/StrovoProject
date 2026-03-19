@@ -11,13 +11,24 @@ class TokenManager(context: Context) {
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        context,
-        "secure_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    private val sharedPreferences = try {
+        EncryptedSharedPreferences.create(
+            context,
+            "secure_prefs",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }catch (e: Exception) {
+        context.deleteSharedPreferences("secure_prefs")
+        EncryptedSharedPreferences.create(
+            context,
+            "secure_prefs",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }
 
     fun saveTokens(accessToken: String, refreshToken: String, athleteId: String) {
         sharedPreferences.edit().apply {
@@ -45,7 +56,6 @@ class TokenManager(context: Context) {
     }
 
     fun hasTokens(): Boolean {
-
         return !getAccessToken().isNullOrEmpty() && !getRefreshToken().isNullOrEmpty()
     }
 }

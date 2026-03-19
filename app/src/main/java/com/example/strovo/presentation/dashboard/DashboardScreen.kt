@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -20,16 +19,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
+import com.example.strovo.R
 import com.example.strovo.component.CustomBottomSheet
 import com.example.strovo.component.HeaderComponent
+import com.example.strovo.component.OnErrorComponent
 import com.example.strovo.component.dashboardScreenComponents.AthleteStatsComponent
 import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.presentation.Screen
+import com.example.strovo.component.Screen
+import com.example.strovo.data.model.toDiscipline
+import com.example.strovo.data.utils.DisciplineManager
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -40,6 +42,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val pointerUtils = PointerInputUtils()
 
     val dashboardUiState = dashBoardViewModel.dashboardUiState.collectAsState().value
+    //val selectedDiscipline = DisciplineManager(navController.context).getSelectedDisciplines()
 
     var refreshScrollState = remember { mutableStateOf(false) }
     var sheetState = remember { mutableStateOf(false) }
@@ -50,6 +53,9 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
 
     LaunchedEffect(Unit) {
+//        val tokenManager = TokenManager(navController.context)
+//        tokenManager.saveTokens("123", tokenManager.getRefreshToken()?:"", tokenManager.getAthleteId()?:"")
+
         if(dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
         dashBoardViewModel.getDashBoardData(beforeDate, afterDate)
     }
@@ -82,11 +88,13 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                 contentAlignment = Alignment.Center
             ){
                 HeaderComponent(
-                    "Dashboard", null,
+                    "Dashboard", R.drawable.baseline_settings_24,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                ) { }
+                ) {
+                    navController.navigate(Screen.Settings.route)
+                }
             }
             Box(
                 modifier = Modifier
@@ -99,36 +107,24 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                         CircularProgressIndicator(modifier = Modifier)
                     }
                     is DashboardUiState.Error -> {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    text = "Erreur lors du chargement des activités",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 20.sp
-                                )
-                                Text(
-                                    text = "Verrifier votre connexion a Strava.",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 14.sp
-                                )
+                        OnErrorComponent(
+                            errorMessage = dashboardUiState.message,
+                            onRetry = {
+                                dashBoardViewModel.refreshToken(beforeDate, afterDate)
                             }
-                        }
+                        )
                     }
                     is DashboardUiState.Success -> {
                         val activitiesData = dashboardUiState.dashboardData.monthActivity
                         val overallStat = dashboardUiState.dashboardData.overallStats
+                        val lastActivity = dashboardUiState.dashboardData.lastActivity
+                        val selectedDiscipline = dashboardUiState.dashboardData.selectedDiscipline
                         if (activitiesData.isNotEmpty()) {
                             Column(
                                 modifier = Modifier.fillMaxSize()
                             ) {
                                 LastActivityCard(
-                                    activitiesData.filter { it.type == "Run" }[0],
+                                    lastActivity,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -162,19 +158,19 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                                 )
                                             }
                                         }
-                                        CalendarDisplay(3, activitiesData) { activity ->
+                                        CalendarDisplay(3, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(2, activitiesData) { activity ->
+                                        CalendarDisplay(2, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(1, activitiesData) { activity ->
+                                        CalendarDisplay(1, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }
-                                        CalendarDisplay(0, activitiesData) { activity ->
+                                        CalendarDisplay(0, activitiesData, selectedDiscipline) { activity ->
                                             selectedActivities.value = activity
                                             sheetState.value = true
                                         }

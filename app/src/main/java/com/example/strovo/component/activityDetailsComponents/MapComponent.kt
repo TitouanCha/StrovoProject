@@ -11,6 +11,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.example.strovo.data.utils.mapUtils.mapGeoSource
 import com.example.strovo.data.utils.mapUtils.mapPointSources
 import com.example.strovo.data.utils.mapUtils.mapPointStyle
+import com.example.strovo.data.utils.mapUtils.mapTextLayer
+import com.example.strovo.data.utils.mapUtils.mapTextSource
 import com.example.strovo.data.utils.mapUtils.mapTraceLayer
 import com.example.strovo.data.utils.mapUtils.mapZoomPosition
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -23,6 +25,7 @@ import org.maplibre.geojson.Point
 fun MapComponent(
     context: Context,
     trackPoints: List<Pair<Double, Double>>,
+    kmPoint: List<Point>,
     lapPoints: List<Point>,
     selectedLapIndex: Int?
 ) {
@@ -38,7 +41,7 @@ fun MapComponent(
                 style.getLayer("selected-lap-layer")?.let { style.removeLayer(it) }
                 style.getSource("selected-lap-source")?.let { style.removeSource(it) }
 
-                if (selectedLapIndex != null && selectedLapIndex >= 0 && selectedLapIndex < lapPoints.size) {
+                if (selectedLapIndex != null && selectedLapIndex in lapPoints.indices) {
                     val lapPoint = lapPoints[selectedLapIndex]
                     val lapLatLng = LatLng(lapPoint.latitude(), lapPoint.longitude())
 
@@ -46,7 +49,7 @@ fun MapComponent(
                     style.addLayer(mapPointStyle("selected-lap", 10f, 2f, 0xFFFFFF00.toInt(), 0xFFFF9800.toInt()))
 
                     map.easeCamera(
-                        CameraUpdateFactory.newLatLngZoom(lapLatLng, 13.0),
+                        CameraUpdateFactory.newLatLngZoom(lapLatLng, 14.0),
                         500
                     )
                 } else {
@@ -76,7 +79,10 @@ fun MapComponent(
                             map.style?.addLayer(mapTraceLayer(0xFF199ED2.toInt(), 5f))
 
                             map.style?.addSource(mapPointSources(lapPoints, "lap"))
-                            map.style?.addLayer(mapPointStyle("lap", 4f, 1f, 0xFFFF9800.toInt(), 0xFFFFFFFF.toInt()))
+                            map.style?.addLayer(mapPointStyle("lap", 3f, 1f, 0xFF199ED2.toInt(), 0xFFFFFFFF.toInt()))
+
+                            map.style?.addSource(mapPointSources(kmPoint, "km"))
+                            map.style?.addLayer(mapPointStyle("km", 5f, 1f, 0xFFFF9800.toInt(), 0xFFFFFFFF.toInt()))
 
                             map.style?.addSource(mapPointSources(listOf(start), "start"))
                             map.style?.addLayer(mapPointStyle("start", 8f, 2f, 0xFF00FF00.toInt(), 0xFF199ED2.toInt()))

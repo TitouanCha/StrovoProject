@@ -5,5 +5,5 @@ import com.example.strovo.data.model.RefreshStravaTokenModel
 
 interface StravaAuthRepository {
     suspend fun getAccessToken(code: String): Result<GetStravaTokenModel>
-    suspend fun refreshAccessToken(refreshToken: String): Result<RefreshStravaTokenModel>
+    suspend fun refreshAccessToken(): Result<RefreshStravaTokenModel>
 }

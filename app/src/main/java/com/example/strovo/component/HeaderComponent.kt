@@ -48,7 +48,6 @@ fun HeaderComponent(title: String, icon: Int?, modifier: Modifier, onclick: () -
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
         }
     }
 }

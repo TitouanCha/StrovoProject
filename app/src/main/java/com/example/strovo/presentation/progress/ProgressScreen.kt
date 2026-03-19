@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,14 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.HeaderComponent
+import com.example.strovo.component.OnErrorComponent
 import com.example.strovo.component.progressScreenComponents.MonthlyAverageStatsComponents
 import com.example.strovo.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.presentation.Screen
+import com.example.strovo.component.Screen
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -44,7 +43,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 
 @Composable
@@ -60,9 +61,12 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
     val selectedYear = progressViewModel.selectedYear.collectAsState().value
 
     LaunchedEffect(Unit) {
+//        val tokenManager = TokenManager(navController.context)
+//        tokenManager.saveTokens("123", tokenManager.getRefreshToken()?:"", tokenManager.getAthleteId()?:"")
         if(progressUiState is ProgressUiState.Success) return@LaunchedEffect
         progressViewModel.loadProgressData(LocalDate.now().year)
     }
+
     LaunchedEffect(progressUiState) {
         if (progressUiState is ProgressUiState.Success) {
             val currentYearData = progressUiState.progressData.selectedYearDistances
@@ -104,7 +108,10 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                         verticalDragToRefresh(
                             refreshScrollState = refreshScrollState,
                         ) {
-                            progressViewModel.loadProgressData(selectedYear)
+                            progressViewModel.loadProgressData(
+                                Instant.now().atZone(ZoneId.systemDefault()).year,
+                                true
+                            )
                         }
                     }
                 },
@@ -140,26 +147,12 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                         }
                     }
                     is ProgressUiState.Error -> {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    text = "Erreur lors du chargement des activités",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 20.sp
-                                )
-                                Text(
-                                    text = "Verrifier votre connexion a Strava.",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 14.sp
-                                )
+                        OnErrorComponent(
+                            errorMessage = progressUiState.message,
+                            onRetry = {
+                                progressViewModel.refreshTokenAndRetry(selectedYear)
                             }
-                        }
+                        )
                     }
                     is ProgressUiState.Success -> {
                         Card(

@@ -34,14 +34,19 @@ fun MonthlyActivitiesScreen(navController: NavController, viewModel: ProgressVie
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     )
-    val actualMonthNumber = Calendar.getInstance().get(Calendar.MONTH)
+
+
+    val progressUiState = viewModel.progressUiState.collectAsState().value
+    val selectedYear = viewModel.selectedYear.collectAsState().value
+
+    var actualMonthNumber = 12
+    if(selectedYear == Calendar.getInstance().get(Calendar.YEAR)){
+        actualMonthNumber = Calendar.getInstance().get(Calendar.MONTH)+1
+    }
     val pagerState = rememberPagerState(
         initialPage = monthIndex,
         pageCount = { actualMonthNumber }
     )
-
-    val progressUiState = viewModel.progressUiState.collectAsState().value
-    val selectedYear = viewModel.selectedYear.collectAsState().value
 
     var monthlyActivities = remember { mutableStateOf<List<MonthlyDistanceModel>>(emptyList()) }
     var lastYearMonthlyActivities = remember { mutableStateOf<List<MonthlyDistanceModel>>(emptyList()) }

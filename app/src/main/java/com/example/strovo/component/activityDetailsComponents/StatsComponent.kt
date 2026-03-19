@@ -90,8 +90,18 @@ fun ActivityStats(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             ) {
-                DataActivityDisplay("Vitesse", speedToPaceMinPerKm(activity.average_speed), dataFontSize)
-                DataActivityDisplay("Vitesse max", speedToPaceMinPerKm(activity.max_speed), dataFontSize)
+                DataActivityDisplay(
+                    "Vitesse",
+                    if(activity.type == "Run") speedToPaceMinPerKm(activity.average_speed)
+                    else "%.1f km/h".format(activity.average_speed * 3.6),
+                    dataFontSize
+                )
+                DataActivityDisplay(
+                    "Vitesse max",
+                    if(activity.type == "Run") speedToPaceMinPerKm(activity.max_speed)
+                    else "%.1f km/h".format(activity.max_speed * 3.6),
+                    dataFontSize
+                )
             }
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),

@@ -33,7 +33,7 @@ fun ActivitiesMapScreen(progressViewModel: ProgressViewModel) {
 
     val tracksPoint = remember { mutableStateOf<List<List<Pair<Double, Double>>>>(listOf()) }
 
-    LaunchedEffect(selectedYear) {
+    LaunchedEffect(selectedYear, Unit) {
         progressViewModel.loadProgressData(selectedYear)
     }
 

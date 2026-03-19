@@ -21,7 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
+import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.toDiscipline
+import com.example.strovo.data.utils.DisciplineManager
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -31,7 +34,8 @@ import kotlin.collections.orEmpty
 
 
 @Composable
-fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, onclick: (List<GetStravaActivitiesModelItem>) -> Unit) {
+fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, selectedDiscipline: List<Discipline>, onclick: (List<GetStravaActivitiesModelItem>) -> Unit) {
+
     val today = remember { LocalDate.now().minusDays(week * 7L) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
     val startOfWeek = remember(today) {
@@ -138,7 +142,10 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, onclic
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = weekActivities.filter { it.type == "Run" }.sumOf { it.distance }
+                text = weekActivities.filter {
+                    var activityType = it.type.toDiscipline()
+                    activityType != null && selectedDiscipline.contains(activityType)
+                }.sumOf { it.distance }
                     .let { "%.0f".format(it / 1000) },
                 textAlign = TextAlign.Center
             )

@@ -6,67 +6,57 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.geojson.Point
 
 
-fun getPointsForLaps(laps: List<Lap>, trackPoints: List<Pair<Double, Double>>): List<Point> {
+fun getPointsForKm(distance: Int, trackPoints: List<Pair<Double, Double>>): List<Point> {
     val result = mutableListOf<Point>()
-    val trackPointsLatLngs = trackPoints.map { LatLng(it.first, it.second) }
-    laps.forEach { lap ->
-        val lapPoints = trackPoints.subList(
-            lap.start_index.coerceIn(0, trackPoints.size),
-            (lap.end_index + 1).coerceIn(0, trackPoints.size)
-        )
+    val trackPointsLatLng = trackPoints.map { LatLng(it.first, it.second) }
 
-        if (lapPoints.isEmpty()) return@forEach
-
-        val lapDistance = calculateLapDistance(trackPointsLatLngs)
-        val interval = if (lapDistance < 1000) {
-            lapDistance / 2
+    var startIndex = 0
+    for(i in 0..<distance.toInt()){
+        val (newPoint, newIndex) = getPointWithIntervalFromIndex(startIndex, trackPointsLatLng, 1000.0)
+        if(newPoint != null){
+            result.add(newPoint)
+            startIndex = newIndex
         } else {
-            1000.0
+            break
         }
-
-        result.addAll(getPointsWithInterval(trackPointsLatLngs, interval))
     }
-
     return result
 }
 
-fun calculateLapDistance(points: List<LatLng>): Double {
-    var totalDistance = 0.0
-    for (i in 0 until points.size - 1) {
-        totalDistance += points[i].distanceTo(points[i + 1])
+fun getPointsForLaps(laps: List<Lap>, trackPoints: List<Pair<Double, Double>>): List<Point> {
+    val result = mutableListOf<Point>()
+    val trackPointsLatLng = trackPoints.map { LatLng(it.first, it.second) }
+
+    var startIndex = 0
+    laps.forEach { lap ->
+        val (newPoint, newIndex) = getPointWithIntervalFromIndex(startIndex, trackPointsLatLng, lap.distance)
+        if (newPoint != null) {
+            result.add(newPoint)
+            startIndex = newIndex
+        } else {
+            return@forEach
+        }
     }
-    return totalDistance
+    return result
 }
 
-fun getPointsWithInterval(points: List<LatLng>, interval: Double): List<Point> {
-    val result = mutableListOf<Point>()
+fun getPointWithIntervalFromIndex(startIndex: Int, trace: List<LatLng>, interval: Double): Pair<Point?, Int> {
     var accumulatedDistance = 0.0
 
-    result.add(Point.fromLngLat(points.first().longitude, points.first().latitude))
-
-    for (i in 0 until points.size - 1) {
-        val current = points[i]
-        val next = points[i + 1]
+    for (i in startIndex until trace.size - 1) {
+        val current = trace[i]
+        val next = trace[i + 1]
         val segmentDistance = current.distanceTo(next)
 
         if (accumulatedDistance + segmentDistance >= interval) {
-            result.add(Point.fromLngLat(next.longitude, next.latitude))
-            accumulatedDistance = 0.0
-        } else {
-            accumulatedDistance += segmentDistance
+            val ratio = (interval - accumulatedDistance) / segmentDistance
+            val lat = current.latitude + ratio * (next.latitude - current.latitude)
+            val lng = current.longitude + ratio * (next.longitude - current.longitude)
+            return Pair(Point.fromLngLat(lng, lat), i)
         }
+
+        accumulatedDistance += segmentDistance
     }
 
-    return result
-}
-
-fun LatLng.distanceTo(other: LatLng): Double {
-    val earthRadius = 6371000.0
-    val dLat = Math.toRadians(other.latitude - this.latitude)
-    val dLng = Math.toRadians(other.longitude - this.longitude)
-    val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(Math.toRadians(this.latitude)) * Math.cos(Math.toRadians(other.latitude)) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2)
-    val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    return earthRadius * c
+    return Pair(null, trace.size - 1)
 }
