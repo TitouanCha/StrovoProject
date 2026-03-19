@@ -70,6 +70,7 @@ fun ActivityDetails(activityId: String, context: Context) {
         is ActivityDetailUiState.Success -> {
             val details = activityDetailsUiState.activityDetail.activityDetail
             val trackPoints = activityDetailsUiState.activityDetail.trackPoints
+            val kmPoints = activityDetailsUiState.activityDetail.kmPoints
             val lapPoints = activityDetailsUiState.activityDetail.lapPoints
             Box(
                 modifier = Modifier
@@ -85,8 +86,9 @@ fun ActivityDetails(activityId: String, context: Context) {
                     MapComponent(
                         context,
                         trackPoints,
-                        lapPoints,
-                        selectedLap.value
+                        kmPoint = kmPoints,
+                        lapPoints = lapPoints,
+                        selectedLapIndex = selectedLap.value,
                     )
                 }
                 Box(

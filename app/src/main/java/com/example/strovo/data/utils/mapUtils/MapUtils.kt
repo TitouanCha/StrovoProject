@@ -6,6 +6,12 @@ import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.style.layers.CircleLayer
 import org.maplibre.android.style.layers.LineLayer
 import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.PropertyFactory.textAnchor
+import org.maplibre.android.style.layers.PropertyFactory.textColor
+import org.maplibre.android.style.layers.PropertyFactory.textField
+import org.maplibre.android.style.layers.PropertyFactory.textOffset
+import org.maplibre.android.style.layers.PropertyFactory.textSize
+import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.FeatureCollection
@@ -42,12 +48,34 @@ fun mapPointSources(points: List<Point>, source: String): GeoJsonSource {
     )
 }
 
+fun mapTextSource(points: List<Point>, labels: List<String>, source: String): GeoJsonSource {
+    val features = points.mapIndexed { index, point ->
+        Feature.fromGeometry(point).also { feature ->
+            feature.addStringProperty("label", labels.getOrElse(index) { "" })
+        }
+    }
+    return GeoJsonSource(
+        "$source-source",
+        FeatureCollection.fromFeatures(features)
+    )
+}
+
 fun mapPointStyle(source: String, radius: Float, width: Float, color: Int, strokeColor: Int): CircleLayer {
      return CircleLayer("$source-layer", "$source-source").withProperties(
         PropertyFactory.circleRadius(radius),
         PropertyFactory.circleColor(color),
         PropertyFactory.circleStrokeWidth(width),
         PropertyFactory.circleStrokeColor(strokeColor)
+    )
+}
+
+fun mapTextLayer(source: String, color: Int, size: Float): SymbolLayer {
+    return SymbolLayer("$source-layer", "$source-source").withProperties(
+        textField("{label}"),
+        textColor(color),
+        textSize(size),
+        textAnchor("top"),
+        textOffset(arrayOf(0f, 1f))
     )
 }
 

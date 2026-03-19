@@ -3,6 +3,7 @@ package com.example.strovo.presentation.settings
 import DisciplineFlowRow
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Horizontal
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -17,6 +18,7 @@ import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -53,10 +55,12 @@ fun SettingsScreen(navController: NavController, settingsViewModel: SettingsView
         Column(
             modifier = Modifier
                 .weight(9f)
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when(settingsUiState) {
                 is SettingsUiState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier)
                 }
                 is SettingsUiState.Error -> {
                 }
