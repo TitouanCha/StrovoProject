@@ -1,4 +1,4 @@
-
+*** API Maintenant indisponible sans Abonnement STRAVA ***
 Application Android qui permet l'analyse et la visualisation de vos activités sportives via l'api strava.
 
 Roadmap :
