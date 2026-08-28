@@ -4,8 +4,8 @@ import android.content.Context
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.domain.repository.ProgressRepository
-import com.example.strovo.model.YearStravaActivitiesModel
-import com.example.strovo.data.services.RetrofitInstance
+import com.example.strovo.model.strava.YearStravaActivitiesModel
+import com.example.strovo.data.services.strava.StravaRetrofitInstance
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.async
@@ -26,7 +26,7 @@ class ProgressRepositoryImpl(context: Context): ProgressRepository {
         return try {
             coroutineScope {
                 val page1 = async {
-                    RetrofitInstance.activityApi.getActivities(
+                    StravaRetrofitInstance.activityApi.getActivities(
                         authorization = "Bearer $token",
                         perPage = 200,
                         page = 1,
@@ -35,7 +35,7 @@ class ProgressRepositoryImpl(context: Context): ProgressRepository {
                     )
                 }
                 val page2 = async {
-                    RetrofitInstance.activityApi.getActivities(
+                    StravaRetrofitInstance.activityApi.getActivities(
                         authorization = "Bearer $token",
                         perPage = 200,
                         page = 2,

@@ -5,7 +5,7 @@ import android.content.Context
 import com.example.strovo.domain.repository.DashboardRepository
 import com.example.strovo.data.model.GetOverallStatsModel
 import com.example.strovo.data.model.GetStravaActivitiesModel
-import com.example.strovo.data.services.RetrofitInstance
+import com.example.strovo.data.services.strava.StravaRetrofitInstance
 import com.example.strovo.data.utils.TokenManager
 
 class DashboardRepositoryImpl(context: Context): DashboardRepository {
@@ -13,7 +13,7 @@ class DashboardRepositoryImpl(context: Context): DashboardRepository {
 
     override suspend fun getMonthData(before: String, after: String): Result<GetStravaActivitiesModel> {
         return try {
-            val activityResponse: GetStravaActivitiesModel = RetrofitInstance.activityApi.getActivities(
+            val activityResponse: GetStravaActivitiesModel = StravaRetrofitInstance.activityApi.getActivities(
                 authorization = "Bearer ${tokenManager.getAccessToken()}",
                 perPage = null,
                 page = null,
@@ -28,7 +28,7 @@ class DashboardRepositoryImpl(context: Context): DashboardRepository {
 
     override suspend fun getOverallStats(): Result<GetOverallStatsModel> {
         return try {
-            val statsResponse: GetOverallStatsModel = RetrofitInstance.athleteApi.getAthleteStats(
+            val statsResponse: GetOverallStatsModel = StravaRetrofitInstance.athleteApi.getAthleteStats(
                 authorization = "Bearer ${tokenManager.getAccessToken()}",
                 athleteId = "${tokenManager.getAthleteId()}"
             )

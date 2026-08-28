@@ -1,7 +1,7 @@
 package com.example.strovo.data.utils
 
 
-import com.example.strovo.model.Lap
+import com.example.strovo.model.strava.Lap
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.geojson.Point
 

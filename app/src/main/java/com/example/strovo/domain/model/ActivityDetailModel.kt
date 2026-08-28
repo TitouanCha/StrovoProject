@@ -1,6 +1,6 @@
 package com.example.strovo.domain.model
 
-import com.example.strovo.model.StravaActivityDetailModel
+import com.example.strovo.model.strava.StravaActivityDetailModel
 import org.maplibre.geojson.Point
 
 data class ActivityDetailModel (

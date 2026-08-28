@@ -1,6 +1,6 @@
 package com.example.strovo.data.model
 
-import com.example.strovo.model.Athlete
+import com.example.strovo.model.strava.Athlete
 
 data class GetStravaTokenModel(
     val access_token: String,

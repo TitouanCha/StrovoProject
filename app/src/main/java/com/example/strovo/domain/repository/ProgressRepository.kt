@@ -1,6 +1,6 @@
 package com.example.strovo.domain.repository
 
-import com.example.strovo.model.YearStravaActivitiesModel
+import com.example.strovo.model.strava.YearStravaActivitiesModel
 
 interface ProgressRepository {
     suspend fun getYearActivities(

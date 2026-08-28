@@ -1,7 +1,7 @@
 package com.example.strovo.data.model
 
-import com.example.strovo.model.Athlete
-import com.example.strovo.model.Map
+import com.example.strovo.model.strava.Athlete
+import com.example.strovo.model.strava.Map
 
 data class GetStravaActivitiesModelItem(
     val achievement_count: Int,

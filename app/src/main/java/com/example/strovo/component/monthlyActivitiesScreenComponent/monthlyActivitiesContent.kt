@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.AverageMonthStatsModel
-import com.example.strovo.model.MonthlyDistanceModel
+import com.example.strovo.model.strava.AverageMonthStatsModel
+import com.example.strovo.model.strava.MonthlyDistanceModel
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal

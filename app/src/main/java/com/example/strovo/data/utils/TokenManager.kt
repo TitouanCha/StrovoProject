@@ -30,6 +30,13 @@ class TokenManager(context: Context) {
         )
     }
 
+    fun saveIntervalsAthleteInfo(athleteId: String, apiKey: String) {
+        sharedPreferences.edit().apply {
+            putString("access_token", apiKey)
+            putString("athlete_id", athleteId)
+            apply()
+        }
+    }
     fun saveTokens(accessToken: String, refreshToken: String, athleteId: String) {
         sharedPreferences.edit().apply {
             putString("access_token", accessToken)
@@ -38,7 +45,6 @@ class TokenManager(context: Context) {
             apply()
         }
     }
-
     fun getAccessToken(): String? {
         return sharedPreferences.getString("access_token", null)
     }
@@ -50,7 +56,6 @@ class TokenManager(context: Context) {
     fun getAthleteId(): String? {
         return sharedPreferences.getString("athlete_id", null)
     }
-
     fun clearTokens() {
         sharedPreferences.edit() { clear() }
     }
