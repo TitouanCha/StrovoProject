@@ -24,4 +24,13 @@ object IntervalsRetrofitClient {
             .build()
             .create(IntervalsAuthServices::class.java)
     }
+
+    val activityApi: ActivityServices by lazy {
+        retrofit2.Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ActivityServices::class.java)
+    }
 }

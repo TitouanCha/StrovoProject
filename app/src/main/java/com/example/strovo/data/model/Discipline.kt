@@ -12,6 +12,7 @@ enum class Discipline {
 
 fun String.toDiscipline(): Discipline? = when (this) {
     "Run" -> Discipline.RUNNING
+    "TrailRun" -> Discipline.RUNNING
     "Ride" -> Discipline.CYCLING
     "Walk" -> Discipline.WALKING
     "Hike" -> Discipline.HIKING

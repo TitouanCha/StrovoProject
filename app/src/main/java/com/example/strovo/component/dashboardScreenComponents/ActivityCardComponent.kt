@@ -23,14 +23,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal
+import com.example.strovo.domain.model.ActivityDetailModel
 
 
 @Composable
-fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem?, modifier: Modifier, onclick: () -> Unit){
+fun ColumnScope.LastActivityCard(
+    activity: ActivityDetailModel?,
+    modifier: Modifier,
+    onclick: () -> Unit
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter
@@ -43,7 +48,7 @@ fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem?, modifi
                 onclick()
             }
         ) {
-            when(activity) {
+            when (activity) {
                 null -> {
                     Text(
                         text = "Aucune activité ne correspond à la discipline sélectionnée ce mois-ci",
@@ -54,6 +59,7 @@ fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem?, modifi
                         fontSize = 20.sp,
                     )
                 }
+
                 else -> {
                     Column(
                         modifier = Modifier
@@ -89,9 +95,7 @@ fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem?, modifi
                                 )
                                 Text(
                                     text = "Course du ${
-                                        stravaDateToLocal(
-                                            activity.start_date_local
-                                        )
+                                        activity.date
                                     }",
                                     modifier = Modifier,
                                     fontSize = 10.sp,
@@ -122,15 +126,15 @@ fun ColumnScope.LastActivityCard(activity: GetStravaActivitiesModelItem?, modifi
                         ) {
                             DataActivityDisplay(
                                 "Distance",
-                                "${"%.1f".format(activity.distance / 1000)}km"
+                                "${"%.1f".format(activity.distance)}km"
                             )
                             DataActivityDisplay(
                                 "Durée",
-                                secondsToHms(activity.moving_time)
+                                activity.time
                             )
                             DataActivityDisplay(
                                 "Allure",
-                                speedToPaceMinPerKm(activity.average_speed)
+                                activity.avgSpeed
                             )
                         }
                     }

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
 import com.example.strovo.model.strava.AverageMonthStatsModel
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.model.strava.MonthlyDistanceModel
 import com.example.strovo.presentation.progress.ProgressUiState
 import com.example.strovo.presentation.progress.ProgressViewModel

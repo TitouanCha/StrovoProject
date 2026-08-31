@@ -39,6 +39,18 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun getUserInfo() {
+        viewModelScope.launch {
+            _authUiState.value = AuthUiState.Loading
+
+            authRepository.isUserInfoSaved().onSuccess { response ->
+                _authUiState.value = AuthUiState.Success(tokenManager.getAccessToken().toString())
+            }.onFailure { exception ->
+                _authUiState.value = AuthUiState.Error(exception.message ?: "Unknown error")
+            }
+        }
+    }
+
     fun refreshStravaToken() {
         val refreshToken = tokenManager.getRefreshToken()
         if(refreshToken == null){

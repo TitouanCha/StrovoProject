@@ -2,18 +2,32 @@ package com.example.strovo.data.repository
 
 import android.content.Context
 import com.example.strovo.domain.repository.AuthRepository
-import com.example.strovo.data.model.GetStravaTokenModel
+import com.example.strovo.data.model.strava.GetStravaTokenModel
 import com.example.strovo.data.services.strava.StravaRetrofitInstance
 import com.example.strovo.BuildConfig
 import com.example.strovo.domain.model.IntervalsUserInfos
-import com.example.strovo.data.model.RefreshStravaTokenModel
+import com.example.strovo.data.model.strava.RefreshStravaTokenModel
 import com.example.strovo.data.services.intervals.IntervalsRetrofitClient
 import com.example.strovo.data.services.intervals.basicAuthHeader
 import com.example.strovo.data.utils.TokenManager
-import kotlin.toString
 
 class AuthRepositoryImpl(context: Context): AuthRepository {
     private val tokenManager = TokenManager(context)
+
+    override  suspend fun isUserInfoSaved(): Result<Boolean> {
+        return try {
+            val athleteId = tokenManager.getAthleteId()
+            val apiKey = tokenManager.getAccessToken()
+            if (athleteId != null && apiKey != null) {
+                Result.success(true)
+            } else {
+                Result.success(false)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 
     override suspend fun saveUserInfo(athleteId: String, accessToken: String): Result<IntervalsUserInfos> {
         return try {

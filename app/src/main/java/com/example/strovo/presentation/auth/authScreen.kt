@@ -49,7 +49,7 @@ fun AuthScreen(viewModel: AuthViewModel, navController: NavController ) {
     val isFirstLaunch = remember { mutableStateOf<Boolean>(FirstLaunchManager(context).isFirstLaunch()) }
 
     LaunchedEffect(Unit) {
-        viewModel.refreshStravaToken()
+        viewModel.getUserInfo()
     }
 
     Box(

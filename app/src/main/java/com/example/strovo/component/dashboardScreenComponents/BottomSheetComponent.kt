@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.domain.model.ActivityDetailModel
 
 
 @Composable
 fun BottomSheetComponent(
-    selectedActivities: List<GetStravaActivitiesModelItem>?,
+    selectedActivities: List<ActivityDetailModel>?,
     onclick: (Int) -> Unit
 ) {
     val activityCount = selectedActivities?.size ?: 0
@@ -43,7 +43,7 @@ fun BottomSheetComponent(
             state = pagerState,
         ) { page ->
             BottomSheetContent(
-                selectedActivities = selectedActivities?.let { listOf(it[page]) },
+                selectedActivities = listOfNotNull(selectedActivities?.getOrNull(page)),
                 onclick = { onclick(page) }
             )
         }

@@ -3,7 +3,7 @@ package com.example.strovo.presentation.progress
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.strava.GetStravaActivitiesModel
 import com.example.strovo.data.repository.ProgressRepositoryImpl
 import com.example.strovo.data.repository.AuthRepositoryImpl
 import com.example.strovo.data.utils.TokenManager

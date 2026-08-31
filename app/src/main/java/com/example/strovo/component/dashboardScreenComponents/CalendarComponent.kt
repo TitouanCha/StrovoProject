@@ -22,19 +22,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.data.model.Discipline
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.data.model.toDiscipline
-import com.example.strovo.data.utils.DisciplineManager
+import com.example.strovo.domain.model.ActivityDetailModel
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import kotlin.collections.orEmpty
+import kotlin.text.compareTo
 
 
 @Composable
-fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, selectedDiscipline: List<Discipline>, onclick: (List<GetStravaActivitiesModelItem>) -> Unit) {
+fun CalendarDisplay(
+    week: Long,
+    data: List<ActivityDetailModel>,
+    selectedDiscipline: List<Discipline>,
+    onclick: (List<ActivityDetailModel>) -> Unit
+) {
 
     val today = remember { LocalDate.now().minusDays(week * 7L) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
@@ -47,15 +53,10 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
         startOfWeek.plusDays(6)
     }
     val weekActivities = data.filter { activity ->
-        val date = OffsetDateTime
-            .parse(activity.start_date_local)
-            .toLocalDate()
-        date >= startOfWeek && date <= endOfWeek
+        activity.date >= startOfWeek && activity.date <= endOfWeek
     }
     val activitiesByDate = remember(weekActivities) {
-        weekActivities.groupBy { activity ->
-            OffsetDateTime.parse(activity.start_date_local).toLocalDate()
-        }
+        weekActivities.groupBy { activity -> activity.date }
     }
     val state = rememberWeekCalendarState(
         startDate = startOfWeek,
@@ -63,7 +64,7 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
         firstDayOfWeek = firstDayOfWeek
     )
 
-    Row{
+    Row {
         Box(
             modifier = Modifier.weight(7f)
         ) {
@@ -86,7 +87,8 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
                             .border(
                                 width = 1.dp,
                                 color = if (activitiesForDay.isNotEmpty() &&
-                                    activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                    activitiesForDay[0].name.contains("Finisher", ignoreCase = true)
+                                )
                                     MaterialTheme.colorScheme.tertiary
                                 else
                                     Color.Transparent,
@@ -103,6 +105,7 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
                             activityCount > 0 -> {
                                 val iconRes = when (activitiesForDay[0].type) {
                                     "Run" -> R.drawable.running_svgrepo_com
+                                    "TrailRun" -> R.drawable.running_svgrepo_com
                                     "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
                                     "Ride" -> R.drawable.biking_svgrepo_com
                                     "Hike" -> R.drawable.man_in_hike_svgrepo_com
@@ -110,19 +113,28 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
                                 }
                                 Icon(
                                     painter =
-                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                        if (activitiesForDay[0].name.contains(
+                                                "Finisher",
+                                                ignoreCase = true
+                                            )
+                                        )
                                             painterResource(id = R.drawable.trophy_cup_silhouette_svgrepo_com)
                                         else
                                             painterResource(id = iconRes),
                                     contentDescription = "Activity Icon",
                                     modifier = Modifier.size(20.dp),
                                     tint =
-                                        if(activitiesForDay[0].name.contains("Finisher", ignoreCase = true))
+                                        if (activitiesForDay[0].name.contains(
+                                                "Finisher",
+                                                ignoreCase = true
+                                            )
+                                        )
                                             MaterialTheme.colorScheme.tertiary
                                         else
                                             MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+
                             else -> {
                                 Text(
                                     text = day.date.dayOfMonth.toString(),
@@ -146,7 +158,7 @@ fun CalendarDisplay(week: Long, data: List<GetStravaActivitiesModelItem>, select
                     var activityType = it.type.toDiscipline()
                     activityType != null && selectedDiscipline.contains(activityType)
                 }.sumOf { it.distance }
-                    .let { "%.0f".format(it / 1000) },
+                    .let { "%.0f".format(it) },
                 textAlign = TextAlign.Center
             )
         }

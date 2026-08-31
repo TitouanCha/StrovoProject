@@ -1,4 +1,4 @@
-package com.example.strovo.data.model
+package com.example.strovo.data.model.strava
 
 data class GetStravaUserInfo(
     val badge_type_id: Int,

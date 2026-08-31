@@ -1,7 +1,7 @@
 package com.example.strovo.data.services.strava
 
 import com.example.strovo.model.strava.StravaActivityDetailModel
-import com.example.strovo.data.model.GetStravaActivitiesModel
+import com.example.strovo.data.model.strava.GetStravaActivitiesModel
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path

@@ -1,7 +1,7 @@
 package com.example.strovo.data.services.strava
 
-import com.example.strovo.data.model.GetStravaTokenModel
-import com.example.strovo.data.model.RefreshStravaTokenModel
+import com.example.strovo.data.model.strava.GetStravaTokenModel
+import com.example.strovo.data.model.strava.RefreshStravaTokenModel
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

@@ -1,4 +1,4 @@
-package com.example.strovo.data.model
+package com.example.strovo.data.model.strava
 
 import com.example.strovo.model.strava.Athlete
 import com.example.strovo.model.strava.Map
