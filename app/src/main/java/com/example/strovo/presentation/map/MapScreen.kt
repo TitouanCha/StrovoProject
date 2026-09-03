@@ -81,14 +81,14 @@ fun ActivitiesMapScreen(progressViewModel: ProgressViewModel) {
                         )
                     }
                     is ProgressUiState.Success -> {
-                        tracksPoint.value = progressUiState.progressData.activitiesTrackPoints
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
-                            text = "Vos traces de l'année",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+//                        tracksPoint.value = progressUiState.progressData.activitiesTrackPoints
+//                        Text(
+//                            modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
+//                            text = "Vos traces de l'année",
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize = 20.sp,
+//                            color = MaterialTheme.colorScheme.primary
+//                        )
                     }
                 }
             }

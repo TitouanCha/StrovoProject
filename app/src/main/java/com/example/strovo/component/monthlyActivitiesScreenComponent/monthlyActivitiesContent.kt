@@ -94,10 +94,7 @@ fun MonthlyActivitiesContent(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text =
-                                    stravaDateToLocal(
-                                        activity.start_date_local
-                                    ),
+                                text = activity.date.toString(),
                                 modifier = Modifier
                                     .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
                                 fontSize = 14.sp,
@@ -115,12 +112,12 @@ fun MonthlyActivitiesContent(
                                 )
                                 DataActivityDisplay(
                                     "Durée",
-                                    secondsToHms(activity.moving_time),
+                                    activity.time,
                                     20
                                 )
                                 DataActivityDisplay(
                                     "Allure",
-                                    speedToPaceMinPerKm(activity.average_speed),
+                                    activity.avgSpeed,
                                     20
                                 )
                             }

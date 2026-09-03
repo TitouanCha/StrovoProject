@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
 import com.example.strovo.model.strava.AverageMonthStatsModel
-import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
+import com.example.strovo.domain.model.ActivityDetailModel
 import com.example.strovo.model.strava.MonthlyDistanceModel
 import com.example.strovo.presentation.progress.ProgressUiState
 import com.example.strovo.presentation.progress.ProgressViewModel
 import java.util.Calendar
 
-fun getMonthAverageStats(activities: ArrayList<GetStravaActivitiesModelItem>): AverageMonthStatsModel {
+fun getMonthAverageStats(activities: ArrayList<ActivityDetailModel>): AverageMonthStatsModel {
     val distance = activities.sumOf { it.distance }
     val weeklyAverage = distance / 4
     return AverageMonthStatsModel(

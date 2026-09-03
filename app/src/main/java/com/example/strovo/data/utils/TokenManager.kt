@@ -57,7 +57,7 @@ class TokenManager(context: Context) {
         return sharedPreferences.getString("athlete_id", null)
     }
     fun clearTokens() {
-        sharedPreferences.edit() { clear() }
+        sharedPreferences.edit { clear() }
     }
 
     fun hasTokens(): Boolean {

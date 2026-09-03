@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.R
 import com.example.strovo.component.HeaderComponent
+import com.example.strovo.component.Screen
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -126,8 +127,7 @@ fun SettingsScreen(navController: NavController, settingsViewModel: SettingsView
                         modifier = Modifier,
                         onClick = {
                             tokenManager.clearTokens()
-
-                            navController.navigate("strava_auth") {
+                            navController.navigate(Screen.Auth.route) {
                                 popUpTo("settings_screen") { inclusive = true }
                             }
                         }
