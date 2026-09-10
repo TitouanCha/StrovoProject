@@ -2,50 +2,43 @@ package com.example.strovo.data.repository
 
 import android.content.Context
 import com.example.strovo.data.model.Discipline
+import com.example.strovo.data.model.FetchActivity
 import com.example.strovo.data.model.toDiscipline
+import com.example.strovo.data.services.intervals.IntervalsRetrofitClient
+import com.example.strovo.data.services.intervals.basicAuthHeader
 import com.example.strovo.domain.repository.ProgressRepository
-import com.example.strovo.model.YearStravaActivitiesModel
-import com.example.strovo.data.services.RetrofitInstance
+import com.example.strovo.model.strava.YearActivitiesModel
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
-import kotlinx.coroutines.async
+import com.example.strovo.domain.model.ActivityDetailModel
 import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class ProgressRepositoryImpl(context: Context): ProgressRepository {
     private val tokenManager = TokenManager(context)
     private val disciplineManager = DisciplineManager(context)
 
-    override suspend fun getYearActivities(year: Int): Result<YearStravaActivitiesModel> {
-        var before = LocalDateTime.of(year, 12, 31, 23, 59, 59).toEpochSecond(ZoneOffset.UTC)
-        var after = LocalDateTime.of(year, 1, 1, 0, 0, 0).toEpochSecond(ZoneOffset.UTC)
+    override suspend fun getYearActivities(year: Int): Result<YearActivitiesModel> {
+        val oldest: String = LocalDateTime.of(year, 1, 1, 0, 0, 0)
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+        val newest: String = LocalDateTime.of(year, 12, 31, 23, 59, 59)
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
         val token = tokenManager.getAccessToken()
+        val athleteId = tokenManager.getAthleteId()
 
         val disciplines: List<Discipline> = disciplineManager.getSelectedDisciplines()
         return try {
             coroutineScope {
-                val page1 = async {
-                    RetrofitInstance.activityApi.getActivities(
-                        authorization = "Bearer $token",
-                        perPage = 200,
-                        page = 1,
-                        before = before.toString(),
-                        after = after.toString()
+                val result: List<FetchActivity> =
+                    IntervalsRetrofitClient.activityApi.getActivities(
+                        authorization = basicAuthHeader(token.toString()),
+                        athleteId = athleteId.toString(),
+                        oldest = oldest,
+                        newest = newest
                     )
-                }
-                val page2 = async {
-                    RetrofitInstance.activityApi.getActivities(
-                        authorization = "Bearer $token",
-                        perPage = 200,
-                        page = 2,
-                        before = before.toString(),
-                        after = after.toString()
-                    )
-                }
-                val allActivities = page1.await().toMutableList()
-                allActivities.addAll(page2.await())
-                Result.success(YearStravaActivitiesModel(
+                val allActivities = result.map{ activity -> ActivityDetailModel.fromApi(activity)}
+                Result.success(YearActivitiesModel(
                     year = year,
                     allActivities = allActivities.filter {
                         val activityDiscipline = it.type.toDiscipline()

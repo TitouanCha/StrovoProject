@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.strovo.model.StravaActivityDetailModel
+import com.example.strovo.model.strava.StravaActivityDetailModel
 
 @Composable
 fun ActivityGraphs(

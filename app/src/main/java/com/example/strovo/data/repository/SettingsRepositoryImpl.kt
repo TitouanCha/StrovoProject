@@ -1,13 +1,11 @@
 package com.example.strovo.data.repository
 
 import android.content.Context
-import androidx.datastore.dataStoreFile
 import com.example.strovo.data.model.Discipline
-import com.example.strovo.data.services.RetrofitInstance
+import com.example.strovo.data.services.strava.StravaRetrofitInstance
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
 import com.example.strovo.domain.repository.SettingsRepository
-import com.example.strovo.presentation.settings.SettingsUiState
 
 class SettingsRepositoryImpl(context: Context): SettingsRepository {
     private val disciplineManager = DisciplineManager(context)
@@ -15,7 +13,7 @@ class SettingsRepositoryImpl(context: Context): SettingsRepository {
 
     override suspend fun getUserStravaName(): String {
         try{
-            val userInfoResponse = RetrofitInstance.athleteApi.getAthleteInfo(
+            val userInfoResponse = StravaRetrofitInstance.athleteApi.getAthleteInfo(
                 authorization = "Bearer ${tokenManager.getAccessToken()}"
             )
             return "${userInfoResponse.firstname} ${userInfoResponse.lastname}"

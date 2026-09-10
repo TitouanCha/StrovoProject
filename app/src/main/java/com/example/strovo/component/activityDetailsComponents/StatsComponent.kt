@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.StravaActivityDetailModel
+import com.example.strovo.model.strava.StravaActivityDetailModel
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal

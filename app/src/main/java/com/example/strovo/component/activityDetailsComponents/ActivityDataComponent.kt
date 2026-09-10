@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.model.StravaActivityDetailModel
+import com.example.strovo.model.strava.StravaActivityDetailModel
 
 @Composable
 fun ActivityData(activityDetail: StravaActivityDetailModel, lapOnClick: (Int) -> Unit) {

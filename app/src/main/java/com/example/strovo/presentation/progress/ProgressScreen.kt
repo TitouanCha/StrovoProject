@@ -150,7 +150,7 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                         OnErrorComponent(
                             errorMessage = progressUiState.message,
                             onRetry = {
-                                progressViewModel.refreshTokenAndRetry(selectedYear)
+                                progressViewModel.loadProgressData(selectedYear, true)
                             }
                         )
                     }

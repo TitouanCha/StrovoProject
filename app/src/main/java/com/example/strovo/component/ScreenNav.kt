@@ -1,7 +1,7 @@
 package com.example.strovo.component
 
 sealed class Screen(val route: String) {
-    object StravaAuth : Screen("strava_auth")
+    object Auth : Screen("auth")
     object MainPager : Screen("main_pager")
     object Map : Screen("map")
     object Settings : Screen("settings")

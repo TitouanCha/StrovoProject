@@ -27,11 +27,10 @@ import com.example.strovo.component.dashboardScreenComponents.AthleteStatsCompon
 import com.example.strovo.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.component.dashboardScreenComponents.LastActivityCard
-import com.example.strovo.data.model.GetStravaActivitiesModelItem
+import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
 import com.example.strovo.component.Screen
-import com.example.strovo.data.model.toDiscipline
-import com.example.strovo.data.utils.DisciplineManager
+import com.example.strovo.domain.model.ActivityDetailModel
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -42,24 +41,15 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val pointerUtils = PointerInputUtils()
 
     val dashboardUiState = dashBoardViewModel.dashboardUiState.collectAsState().value
-    //val selectedDiscipline = DisciplineManager(navController.context).getSelectedDisciplines()
 
     var refreshScrollState = remember { mutableStateOf(false) }
     var sheetState = remember { mutableStateOf(false) }
-    var selectedActivities = remember { mutableStateOf<List<GetStravaActivitiesModelItem>?>(null) }
-
-    val todayDate = Instant.now()
-    val beforeDate = todayDate.epochSecond.toString()
-    val afterDate = todayDate.minus(30, ChronoUnit.DAYS).epochSecond.toString()
+    var selectedActivities = remember { mutableStateOf<List<ActivityDetailModel>?>(null) }
 
     LaunchedEffect(Unit) {
-//        val tokenManager = TokenManager(navController.context)
-//        tokenManager.saveTokens("123", tokenManager.getRefreshToken()?:"", tokenManager.getAthleteId()?:"")
-
         if(dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
-        dashBoardViewModel.getDashBoardData(beforeDate, afterDate)
+        dashBoardViewModel.getDashBoardData()
     }
-
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -75,7 +65,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                         verticalDragToRefresh(
                             refreshScrollState = refreshScrollState
                         ) {
-                            dashBoardViewModel.getDashBoardData(beforeDate, afterDate)
+                            dashBoardViewModel.getDashBoardData()
                         }
                     }
                 },
@@ -110,7 +100,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                         OnErrorComponent(
                             errorMessage = dashboardUiState.message,
                             onRetry = {
-                                dashBoardViewModel.refreshToken(beforeDate, afterDate)
+                                dashBoardViewModel.refreshToken()
                             }
                         )
                     }

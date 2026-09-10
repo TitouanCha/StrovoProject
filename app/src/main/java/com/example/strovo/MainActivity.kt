@@ -33,8 +33,8 @@ import com.example.strovo.presentation.settings.SettingsScreen
 import com.example.strovo.presentation.dashboard.DashboardViewModel
 import com.example.strovo.presentation.progress.ProgressViewModel
 import com.example.strovo.presentation.settings.SettingsViewModel
-import com.example.strovo.presentation.stravaAuth.StravaAuthScreen
-import com.example.strovo.presentation.stravaAuth.StravaAuthViewModel
+import com.example.strovo.presentation.auth.AuthScreen
+import com.example.strovo.presentation.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val scope = rememberCoroutineScope()
 
-                val stravaAuthViewModel: StravaAuthViewModel = viewModel()
+                val stravaAuthViewModel: AuthViewModel = viewModel()
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 val progressViewModel: ProgressViewModel = viewModel()
                 val settingsViewModel: SettingsViewModel = viewModel()
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
-                        if(currentRoute != Screen.StravaAuth.route) {
+                        if(currentRoute != Screen.Auth.route) {
                             BottomNavBar(
                                 currentPage = pagerState.currentPage,
                                 onPageSelected = { page ->
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                 { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.StravaAuth.route,
+                        startDestination = Screen.Auth.route,
                         modifier = Modifier.padding(innerPadding),
                         enterTransition = {
                             slideIntoContainer(
@@ -112,8 +112,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) {
-                        composable(Screen.StravaAuth.route) {
-                            StravaAuthScreen(viewModel = stravaAuthViewModel, navController = navController)
+                        composable(Screen.Auth.route) {
+                            AuthScreen(viewModel = stravaAuthViewModel, navController = navController)
                         }
                         composable(Screen.Settings.route) {
                             SettingsScreen(navController, settingsViewModel)

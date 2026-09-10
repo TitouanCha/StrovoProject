@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.component.DataActivityDisplay
-import com.example.strovo.model.AverageMonthStatsModel
-import com.example.strovo.model.MonthlyDistanceModel
+import com.example.strovo.model.strava.AverageMonthStatsModel
+import com.example.strovo.model.strava.MonthlyDistanceModel
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal
@@ -94,10 +94,7 @@ fun MonthlyActivitiesContent(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text =
-                                    stravaDateToLocal(
-                                        activity.start_date_local
-                                    ),
+                                text = activity.date.toString(),
                                 modifier = Modifier
                                     .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
                                 fontSize = 14.sp,
@@ -115,12 +112,12 @@ fun MonthlyActivitiesContent(
                                 )
                                 DataActivityDisplay(
                                     "Durée",
-                                    secondsToHms(activity.moving_time),
+                                    activity.time,
                                     20
                                 )
                                 DataActivityDisplay(
                                     "Allure",
-                                    speedToPaceMinPerKm(activity.average_speed),
+                                    activity.avgSpeed,
                                     20
                                 )
                             }
