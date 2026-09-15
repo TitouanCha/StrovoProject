@@ -24,7 +24,7 @@ import com.example.strovo.model.strava.StravaActivityDetailModel
 
 @Composable
 fun ActivityData(activityDetail: ActivityDetailModel, activityMetaData: ActivityMetaData, lapOnClick: (Int) -> Unit) {
-    val headerTitle = listOf<String>("Statistic", "Laps")//, "Graphs")
+    val headerTitle = listOf<String>("Statistic", "Laps", "Graphs")
     val selectedHeaderIndex = remember { mutableIntStateOf(0) }
 
     Column(
@@ -75,13 +75,12 @@ fun ActivityData(activityDetail: ActivityDetailModel, activityMetaData: Activity
             }
         }
         when (selectedHeaderIndex.intValue) {
-            0 -> ActivityStats(activityDetail)
+            0 -> ActivityStats(activityDetail, activityMetaData)
             1 -> ActivityLap(activityDetail.laps){ index ->
                 lapOnClick(index)
             }
-            //2 -> ActivityGraphs(activityDetail)
+            2 -> ActivityGraphs(activityMetaData)
         }
-        //icu_intervals
     }
 }
 

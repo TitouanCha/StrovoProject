@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.R
 import com.example.strovo.component.activityDetailsComponents.ActivityData
+import com.example.strovo.component.activityDetailsComponents.MapComponent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -80,13 +81,13 @@ fun ActivityDetails(activityId: String, context: Context) {
                         .fillMaxHeight(mapHeight.value)
                         .align(Alignment.TopCenter)
                 ){
-//                    MapComponent(
-//                        context,
-//                        trackPoints,
-//                        kmPoint = kmPoints,
-//                        lapPoints = lapPoints,
-//                        selectedLapIndex = selectedLap.value,
-//                    )
+                    MapComponent(
+                        context = context,
+                        trackPoints = metaData.trackPoints,
+                        kmPoint = metaData.kmPoint,
+                        lapPoints = emptyList(),
+                        selectedLapIndex = selectedLap.value
+                    )
                 }
                 Box(
                     modifier = Modifier

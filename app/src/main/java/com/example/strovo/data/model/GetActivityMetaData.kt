@@ -5,7 +5,7 @@ data class GetActivityMetaData(
     val anomalies: Any,
     val custom: Boolean,
     val `data`: List<Any>,
-    val data2: Any,
+    val data2: List<Any>?,
     val name: Any,
     val type: String,
     val valueType: String,

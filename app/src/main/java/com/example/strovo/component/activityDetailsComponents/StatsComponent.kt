@@ -24,10 +24,12 @@ import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal
 import com.example.strovo.domain.model.ActivityDetailModel
+import com.example.strovo.domain.model.ActivityMetaData
 
 @Composable
 fun ActivityStats(
-    activity: ActivityDetailModel
+    activity: ActivityDetailModel,
+    metaData: ActivityMetaData
 ) {
     var dataFontSize = 22
     var titleFontSize = 25.sp
@@ -112,6 +114,7 @@ fun ActivityStats(
                     .padding(vertical = 4.dp)
             ) {
                 DataActivityDisplay("Dénivelé", "${activity.elevationGain} d+", dataFontSize)
+                DataActivityDisplay("Bpm moyen", "${metaData.heartrate} bpm", dataFontSize)
             }
         }
     }
