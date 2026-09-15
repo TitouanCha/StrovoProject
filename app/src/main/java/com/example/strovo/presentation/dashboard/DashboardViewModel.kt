@@ -18,7 +18,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
     private val tokenManager = TokenManager(application)

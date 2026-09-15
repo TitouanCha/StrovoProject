@@ -30,6 +30,7 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.Locale
 import kotlin.collections.orEmpty
 import kotlin.text.compareTo
 
@@ -43,7 +44,7 @@ fun CalendarDisplay(
 ) {
 
     val today = remember { LocalDate.now().minusDays(week * 7L) }
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
+    val firstDayOfWeek = remember { firstDayOfWeekFromLocale(Locale.FRANCE) }
     val startOfWeek = remember(today) {
         today.minusDays(
             ((today.dayOfWeek.value - firstDayOfWeek.value + 7) % 7).toLong()

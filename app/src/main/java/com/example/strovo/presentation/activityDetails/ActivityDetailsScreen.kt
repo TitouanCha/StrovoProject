@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.R
 import com.example.strovo.component.activityDetailsComponents.ActivityData
-import com.example.strovo.component.activityDetailsComponents.MapComponent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -68,10 +67,8 @@ fun ActivityDetails(activityId: String, context: Context) {
             )
         }
         is ActivityDetailUiState.Success -> {
-            val details = activityDetailsUiState.activityDetail.activityDetail
-            val trackPoints = activityDetailsUiState.activityDetail.trackPoints
-            val kmPoints = activityDetailsUiState.activityDetail.kmPoints
-            val lapPoints = activityDetailsUiState.activityDetail.lapPoints
+            val details = activityDetailsUiState.activityDetail
+            val metaData = activityDetailsUiState.activityMetaData
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -83,13 +80,13 @@ fun ActivityDetails(activityId: String, context: Context) {
                         .fillMaxHeight(mapHeight.value)
                         .align(Alignment.TopCenter)
                 ){
-                    MapComponent(
-                        context,
-                        trackPoints,
-                        kmPoint = kmPoints,
-                        lapPoints = lapPoints,
-                        selectedLapIndex = selectedLap.value,
-                    )
+//                    MapComponent(
+//                        context,
+//                        trackPoints,
+//                        kmPoint = kmPoints,
+//                        lapPoints = lapPoints,
+//                        selectedLapIndex = selectedLap.value,
+//                    )
                 }
                 Box(
                     modifier = Modifier
@@ -171,7 +168,7 @@ fun ActivityDetails(activityId: String, context: Context) {
                             )
                         }
                 ) {
-                    ActivityData(details){ index ->
+                    ActivityData(details, metaData){ index ->
                         if(selectedLap.value == index){
                             selectedLap.value = null
                         } else {

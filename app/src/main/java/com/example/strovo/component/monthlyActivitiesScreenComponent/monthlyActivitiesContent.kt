@@ -107,7 +107,7 @@ fun MonthlyActivitiesContent(
                             ) {
                                 DataActivityDisplay(
                                     "Distance",
-                                    "${"%.1f".format(activity.distance / 1000)}km",
+                                    "${"%.1f".format(activity.distance)}km",
                                     20
                                 )
                                 DataActivityDisplay(

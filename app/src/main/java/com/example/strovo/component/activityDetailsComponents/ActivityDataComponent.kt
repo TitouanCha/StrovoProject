@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.strovo.domain.model.ActivityDetailModel
+import com.example.strovo.domain.model.ActivityMetaData
 import com.example.strovo.model.strava.StravaActivityDetailModel
 
 @Composable
-fun ActivityData(activityDetail: StravaActivityDetailModel, lapOnClick: (Int) -> Unit) {
+fun ActivityData(activityDetail: ActivityDetailModel, activityMetaData: ActivityMetaData, lapOnClick: (Int) -> Unit) {
     val headerTitle = listOf<String>("Statistic", "Laps")//, "Graphs")
     val selectedHeaderIndex = remember { mutableIntStateOf(0) }
 
@@ -79,6 +81,7 @@ fun ActivityData(activityDetail: StravaActivityDetailModel, lapOnClick: (Int) ->
             }
             //2 -> ActivityGraphs(activityDetail)
         }
+        //icu_intervals
     }
 }
 

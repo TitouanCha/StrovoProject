@@ -67,7 +67,7 @@ fun BottomSheetContent(selectedActivities: List<ActivityDetailModel>, onclick: (
                     "Durée",
                     activity.time
                 )
-                if (activity.type == "Run") {
+                if (activity.type == "Run" || activity.type == "TrailRun" || activity.type == "Hike") {
                     DataActivityDisplay(
                         "Distance",
                         "${"%.1f".format(activity.distance)}km"

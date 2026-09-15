@@ -23,10 +23,11 @@ import com.example.strovo.model.strava.StravaActivityDetailModel
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import com.example.strovo.data.utils.stravaDateToLocal
+import com.example.strovo.domain.model.ActivityDetailModel
 
 @Composable
 fun ActivityStats(
-    activity: StravaActivityDetailModel
+    activity: ActivityDetailModel
 ) {
     var dataFontSize = 22
     var titleFontSize = 25.sp
@@ -56,9 +57,7 @@ fun ActivityStats(
                 Text(
                     modifier = Modifier,
                     text = "Activitées du ${
-                        stravaDateToLocal(
-                            activity.start_date_local
-                        )
+                        activity.date
                     }",
                     fontSize = 18.sp
                 )
@@ -78,8 +77,8 @@ fun ActivityStats(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             ) {
-                DataActivityDisplay("Temps", secondsToHms(activity.moving_time), dataFontSize)
-                DataActivityDisplay("Distance", "%.2f km".format(activity.distance / 1000), dataFontSize)
+                DataActivityDisplay("Temps", activity.time, dataFontSize)
+                DataActivityDisplay("Distance", "%.2f km".format(activity.distance), dataFontSize)
             }
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -92,14 +91,14 @@ fun ActivityStats(
             ) {
                 DataActivityDisplay(
                     "Vitesse",
-                    if(activity.type == "Run") speedToPaceMinPerKm(activity.average_speed)
-                    else "%.1f km/h".format(activity.average_speed * 3.6),
+                    if(activity.type == "Run" || activity.type == "TrailRun") activity.avgSpeed
+                    else "%.1f km/h".format(activity.avgSpeedDouble * 3.6),
                     dataFontSize
                 )
                 DataActivityDisplay(
                     "Vitesse max",
-                    if(activity.type == "Run") speedToPaceMinPerKm(activity.max_speed)
-                    else "%.1f km/h".format(activity.max_speed * 3.6),
+                    if(activity.type == "Run" || activity.type == "TrailRun") activity.maxSpeed
+                    else "%.1f km/h".format(activity.maxSpeedDouble * 3.6),
                     dataFontSize
                 )
             }
@@ -112,7 +111,7 @@ fun ActivityStats(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             ) {
-                DataActivityDisplay("Dénivelé", "${activity.total_elevation_gain} d+", dataFontSize)
+                DataActivityDisplay("Dénivelé", "${activity.elevationGain} d+", dataFontSize)
             }
         }
     }

@@ -23,8 +23,8 @@ fun getMonthAverageStats(activities: ArrayList<ActivityDetailModel>): AverageMon
     val weeklyAverage = distance / 4
     return AverageMonthStatsModel(
         activities = activities.size,
-        distance = distance / 1000,
-        weekly_average = weeklyAverage / 1000
+        distance = distance,
+        weekly_average = weeklyAverage
     )
 }
 
