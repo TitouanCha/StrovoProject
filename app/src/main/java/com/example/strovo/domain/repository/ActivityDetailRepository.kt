@@ -1,7 +1,9 @@
 package com.example.strovo.domain.repository
 
-import com.example.strovo.domain.model.strava.StravaActivityDetailModel
+import com.example.strovo.domain.model.ActivityDetailModel
+import com.example.strovo.domain.model.ActivityMetaData
 
 interface ActivityDetailRepository {
-    suspend fun getActivityDetail(activityId: String): Result<StravaActivityDetailModel>
+    suspend fun getActivityMetaData(activityId: String): Result<ActivityMetaData>
+    suspend fun getActivityDetail(activityId: String): Result<ActivityDetailModel>
 }

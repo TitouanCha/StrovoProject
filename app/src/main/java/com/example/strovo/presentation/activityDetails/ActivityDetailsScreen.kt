@@ -68,10 +68,8 @@ fun ActivityDetails(activityId: String, context: Context) {
             )
         }
         is ActivityDetailUiState.Success -> {
-            val details = activityDetailsUiState.activityDetail.activityDetail
-            val trackPoints = activityDetailsUiState.activityDetail.trackPoints
-            val kmPoints = activityDetailsUiState.activityDetail.kmPoints
-            val lapPoints = activityDetailsUiState.activityDetail.lapPoints
+            val details = activityDetailsUiState.activityDetail
+            val metaData = activityDetailsUiState.activityMetaData
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -84,11 +82,11 @@ fun ActivityDetails(activityId: String, context: Context) {
                         .align(Alignment.TopCenter)
                 ){
                     MapComponent(
-                        context,
-                        trackPoints,
-                        kmPoint = kmPoints,
-                        lapPoints = lapPoints,
-                        selectedLapIndex = selectedLap.value,
+                        context = context,
+                        trackPoints = metaData.trackPoints,
+                        kmPoint = metaData.kmPoint,
+                        lapPoints = emptyList(),
+                        selectedLapIndex = selectedLap.value
                     )
                 }
                 Box(
@@ -171,7 +169,7 @@ fun ActivityDetails(activityId: String, context: Context) {
                             )
                         }
                 ) {
-                    ActivityData(details){ index ->
+                    ActivityData(details, metaData){ index ->
                         if(selectedLap.value == index){
                             selectedLap.value = null
                         } else {

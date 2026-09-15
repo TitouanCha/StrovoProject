@@ -17,11 +17,22 @@ class ActivityDetailViewModel(application : Application): AndroidViewModel(appli
 
     fun getActivityDetails(activityId: String){
         viewModelScope.launch {
-            activityDetailRepository.getActivityDetail(activityId).onSuccess { dataResponse ->
-                _activityDetailUiState.value = ActivityDetailUiState.Success(dataResponse)
-            }.onFailure {
+            val metaDataResponse = activityDetailRepository.getActivityMetaData(activityId)
+            val metaData = metaDataResponse.getOrElse {
                 _activityDetailUiState.value = ActivityDetailUiState.Error(it.message ?: "")
+                return@launch
             }
+
+            val activityDetailResponse = activityDetailRepository.getActivityDetail(activityId)
+            val activityDetail = activityDetailResponse.getOrElse {
+                _activityDetailUiState.value = ActivityDetailUiState.Error(it.message ?: "")
+                return@launch
+            }
+
+            _activityDetailUiState.value = ActivityDetailUiState.Success(
+                activityMetaData = metaData,
+                activityDetail = activityDetail
+            )
         }
     }
 }

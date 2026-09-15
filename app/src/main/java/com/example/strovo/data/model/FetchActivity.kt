@@ -1,5 +1,6 @@
 package com.example.strovo.data.model
 
+import androidx.compose.foundation.lazy.layout.IntervalList
 import com.google.gson.annotations.SerializedName
 
 data class FetchActivity(
@@ -34,5 +35,7 @@ data class FetchActivity(
     @SerializedName("min_altitude")
     var minAltitude: Double = 0.0,
     @SerializedName("max_altitude")
-    var maxAltitude: Double = 0.0
+    var maxAltitude: Double = 0.0,
+    @SerializedName("icu_intervals")
+    var icuIntervals: List<GetActivityLap> = emptyList()
 )

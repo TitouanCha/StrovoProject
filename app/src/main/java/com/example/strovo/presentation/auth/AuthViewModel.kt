@@ -46,10 +46,9 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
             authRepository.isUserInfoSaved().onSuccess { response ->
                 _authUiState.value = AuthUiState.Success(tokenManager.getAccessToken().toString())
             }.onFailure { exception ->
-                _authUiState.value = AuthUiState.Error(exception.message ?: "Unknown error")
+                _authUiState.value = AuthUiState.Error("Impossible de récupérer les informations de l'utilisateur.\n Veuillez vous reconnecter.")
             }
         }
-        _authUiState.value = AuthUiState.Error("Impossible de récupérer les informations de l'utilisateur. Veuillez vous reconnecter.")
     }
 
     fun refreshStravaToken() {

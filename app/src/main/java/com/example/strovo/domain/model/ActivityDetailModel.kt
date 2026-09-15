@@ -4,7 +4,6 @@ import com.example.strovo.data.model.FetchActivity
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
 import java.time.LocalDate
-import kotlin.math.max
 
 data class ActivityDetailModel (
     val id: String,
@@ -16,29 +15,37 @@ data class ActivityDetailModel (
     val avgSpeedDouble: Double,
     val maxSpeed: String,
     val maxSpeedDouble: Double,
-    val elevationGain: Double,
+    val elevationGain: Int,
     val date: LocalDate,
     val type: String,
+    val laps: List<ActivityLapModel>
 ){
     companion object {
-        fun fromApi(apiModel: FetchActivity): ActivityDetailModel {
-            val distanceKm = (apiModel.distance / 1000.0 * 100.0).toInt() / 100.0
-            val time = secondsToHms(apiModel.movingTime)
-            val avgPace = speedToPaceMinPerKm(apiModel.averageSpeed)
-            val maxPace = speedToPaceMinPerKm(apiModel.averageSpeed)
+        fun fromApi(apiData: FetchActivity): ActivityDetailModel {
+            val distanceKm = (apiData.distance / 1000.0 * 100.0).toInt() / 100.0
+            val time = secondsToHms(apiData.icuRecordingTime)
+            val avgPace = speedToPaceMinPerKm(apiData.averageSpeed)
+            val maxPace = speedToPaceMinPerKm(apiData.averageSpeed)
+            var laps = emptyList<ActivityLapModel>()
+            if(apiData.icuIntervals.isNotEmpty()){
+                laps = apiData.icuIntervals.map { lap ->
+                    ActivityLapModel.fromApi(lap, apiData.icuIntervals.indexOf(lap) + 1)
+                }
+            }
             return ActivityDetailModel(
-                id = apiModel.id.toString(),
-                name = apiModel.name,
+                id = apiData.id.toString(),
+                name = apiData.name,
                 distance = distanceKm,
                 time = time,
-                timeDouble = apiModel.movingTime,
+                timeDouble = apiData.movingTime,
                 avgSpeed = avgPace,
-                avgSpeedDouble = apiModel.averageSpeed,
+                avgSpeedDouble = apiData.averageSpeed,
                 maxSpeed = maxPace,
-                maxSpeedDouble = apiModel.maxSpeed,
-                elevationGain = apiModel.totalElevationGain,
-                date = LocalDate.parse(apiModel.startDateLocal.substring(0, 10)),
-                type = apiModel.type
+                maxSpeedDouble = apiData.maxSpeed,
+                elevationGain = apiData.totalElevationGain.toInt(),
+                date = LocalDate.parse(apiData.startDateLocal.substring(0, 10)),
+                type = apiData.type,
+                laps = laps
             )
         }
     }

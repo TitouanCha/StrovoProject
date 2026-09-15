@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Strovo">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-28T10:29:47.077175Z">
+        <DropdownSelection timestamp="2026-09-15T10:56:23.586843Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/titouanchauche/.android/avd/Medium_Phone.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CY53JEKTD" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -17,10 +17,11 @@ import androidx.compose.ui.unit.sp
 import com.example.strovo.model.strava.Lap
 import com.example.strovo.data.utils.secondsToHms
 import com.example.strovo.data.utils.speedToPaceMinPerKm
+import com.example.strovo.domain.model.ActivityLapModel
 
 @Composable
 fun ActivityLap(
-    activityLaps: List<Lap>,
+    activityLaps: List<ActivityLapModel>,
     onClick: (Int) -> Unit
 ) {
     LazyColumn(
@@ -34,7 +35,7 @@ fun ActivityLap(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                         .clickable {
-                            onClick(lap.lap_index)
+                            onClick(lap.lapNumber)
                         }
                 ) {
                     Row() {
@@ -43,7 +44,7 @@ fun ActivityLap(
                             thickness = 2.dp
                         )
                         Text(
-                            text = "Lap ${lap.lap_index}",
+                            text = "Lap ${lap.lapNumber}",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -65,12 +66,12 @@ fun ActivityLap(
                         )
                         Text(
                             modifier = Modifier.weight(1f),
-                            text = speedToPaceMinPerKm(lap.average_speed),
+                            text = lap.avgSpeed,
                             textAlign = TextAlign.Center
                         )
                         Text(
                             modifier = Modifier.weight(1f),
-                            text = secondsToHms(lap.elapsed_time),
+                            text = lap.time,
                             textAlign = TextAlign.Center
                         )
                     }
