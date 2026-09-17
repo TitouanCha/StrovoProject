@@ -8,5 +8,6 @@ data class DashboardModel(
     val selectedDiscipline: List<Discipline>,
     val lastActivity: ActivityDetailModel?,
     val monthActivity: List<ActivityDetailModel>,
+    val healthData: HealthDataModel,
     val overallStats: GetOverallStatsModel?
 )

@@ -33,4 +33,13 @@ object IntervalsRetrofitClient {
             .build()
             .create(ActivityServices::class.java)
     }
+
+    val healthApi: HealthServices by lazy {
+        retrofit2.Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(HealthServices::class.java)
+    }
 }

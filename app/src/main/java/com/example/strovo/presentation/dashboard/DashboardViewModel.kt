@@ -42,20 +42,21 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 return@launch
             }
 
-//            val overallStats = dashboardRepository.getOverallStats().getOrElse {
-//                _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
-//                return@launch
-//            }
+
             val lastActivity = monthData.firstOrNull{
                 var activityDiscipline = it.type.toDiscipline()
                 activityDiscipline != null && selectedDiscipline.contains(activityDiscipline)
             }
-
+            val healthData = dashboardRepository.getHealthStats().getOrElse {
+                _dashboardUiState.value = DashboardUiState.Error(it.message ?: "Unknown error")
+                return@launch
+            }
             _dashboardUiState.value = DashboardUiState.Success(
                 DashboardModel(
                     lastActivity = lastActivity,
                     monthActivity = monthData,
                     selectedDiscipline = selectedDiscipline,
+                    healthData = healthData,
                     overallStats = null
                 )
             )

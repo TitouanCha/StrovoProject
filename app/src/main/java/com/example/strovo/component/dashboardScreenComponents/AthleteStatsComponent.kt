@@ -1,12 +1,7 @@
 package com.example.strovo.component.dashboardScreenComponents
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,9 +16,11 @@ import com.example.strovo.R
 import com.example.strovo.component.DataOverallStatsDisplay
 import com.example.strovo.data.model.strava.GetOverallStatsModel
 import com.example.strovo.data.utils.secondsToHms
+import com.example.strovo.domain.model.HealthDataModel
+import com.example.strovo.model.strava.Athlete
 
 @Composable
-fun ColumnScope.AthleteStatsComponent(athleteStats: GetOverallStatsModel?, modifier: Modifier) {
+fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomCenter
@@ -31,36 +28,54 @@ fun ColumnScope.AthleteStatsComponent(athleteStats: GetOverallStatsModel?, modif
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
         ) {
-            athleteStats?.all_run_totals?.let { stats ->
-                Column(
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(8.dp),
-                            painter = painterResource(R.drawable.progress_svgrepo_com),
-                            contentDescription = "Stats Icon",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        modifier = Modifier
+                            .size(35.dp)
+                            .padding(8.dp),
+                        painter = painterResource(R.drawable.progress_svgrepo_com),
+                        contentDescription = "Stats Icon",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Stats des dernières semaines",
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Spacer(modifier = Modifier.size(4.dp))
+                Row() {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        DataOverallStatsDisplay(
+                            "Forme physique",
+                            "%.2f".format(athleteHealth.form),
                         )
-                        Text(
-                            modifier = Modifier.padding(8.dp),
-                            text = "Stats générales",
-                            fontSize = 18.sp,
-                            lineHeight = 20.sp
+                        DataOverallStatsDisplay(
+                            "Score sommeil",
+                            "${athleteHealth.sleepScore}/100"
                         )
                     }
-                    DataOverallStatsDisplay("Activités", stats.count.toString())
-                    DataOverallStatsDisplay(
-                        "Distance",
-                        "${"%.0f".format(stats.distance / 1000)} km"
-                    )
-                    DataOverallStatsDisplay(
-                        "Temps",
-                        secondsToHms(stats.moving_time)
-                    )
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        DataOverallStatsDisplay(
+                            "Bpm au repos",
+                            "${athleteHealth.restingHeartRate} bpm"
+                        )
+                        DataOverallStatsDisplay(
+                            "Vo2 Max",
+                            "${athleteHealth.vo2Max}"
+                        )
+                    }
                 }
             }
         }

@@ -39,20 +39,19 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardViewModel) {
     val pointerUtils = PointerInputUtils()
-
     val dashboardUiState = dashBoardViewModel.dashboardUiState.collectAsState().value
-
-    var refreshScrollState = remember { mutableStateOf(false) }
-    var sheetState = remember { mutableStateOf(false) }
-    var selectedActivities = remember { mutableStateOf<List<ActivityDetailModel>?>(null) }
+    val refreshScrollState = remember { mutableStateOf(false) }
+    val sheetState = remember { mutableStateOf(false) }
+    val selectedActivities = remember { mutableStateOf<List<ActivityDetailModel>?>(null) }
 
     LaunchedEffect(Unit) {
-        if(dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
+        if (dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
         dashBoardViewModel.getDashBoardData()
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -71,132 +70,123 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
+            // Header
+            HeaderComponent(
+                "Dashboard", R.drawable.baseline_settings_24,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ){
-                HeaderComponent(
-                    "Dashboard", R.drawable.baseline_settings_24,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                ) {
-                    navController.navigate(Screen.Settings.route)
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(9f),
-                contentAlignment = Alignment.TopCenter
+                    .padding(horizontal = 16.dp),
             ) {
-                when (dashboardUiState) {
-                    is DashboardUiState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier)
-                    }
-                    is DashboardUiState.Error -> {
-                        OnErrorComponent(
-                            errorMessage = dashboardUiState.message,
-                            onRetry = {
-                                dashBoardViewModel.refreshToken()
-                            }
-                        )
-                    }
-                    is DashboardUiState.Success -> {
-                        val activitiesData = dashboardUiState.dashboardData.monthActivity
-                        val overallStat = dashboardUiState.dashboardData.overallStats
-                        val lastActivity = dashboardUiState.dashboardData.lastActivity
-                        val selectedDiscipline = dashboardUiState.dashboardData.selectedDiscipline
-                        if (activitiesData.isNotEmpty()) {
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                LastActivityCard(
-                                    lastActivity,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                        .weight(1.5f),
-                                ) {
-                                    navController.navigate(
-                                        Screen.ActivityDetails.createRoute(
-                                            activitiesData[0].id.toString()
-                                        )
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                        .weight(2.5f),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column {
-                                        val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            days.forEach { day ->
-                                                Text(
-                                                    text = day,
-                                                    modifier = Modifier.weight(1f),
-                                                    textAlign = TextAlign.Center,
-                                                    style = MaterialTheme.typography.bodySmall
-                                                )
-                                            }
-                                        }
-                                        CalendarDisplay(3, activitiesData, selectedDiscipline) { activity ->
-                                            selectedActivities.value = activity
-                                            sheetState.value = true
-                                        }
-                                        CalendarDisplay(2, activitiesData, selectedDiscipline) { activity ->
-                                            selectedActivities.value = activity
-                                            sheetState.value = true
-                                        }
-                                        CalendarDisplay(1, activitiesData, selectedDiscipline) { activity ->
-                                            selectedActivities.value = activity
-                                            sheetState.value = true
-                                        }
-                                        CalendarDisplay(0, activitiesData, selectedDiscipline) { activity ->
-                                            selectedActivities.value = activity
-                                            sheetState.value = true
-                                        }
-                                    }
-                                }
-
-                                AthleteStatsComponent(
-                                    overallStat,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 16.dp)
-                                        .weight(1.5f),
-                                )
-                            }
-                        }
-                    }
-                }
-                if (refreshScrollState.value) {
-                    Box(
+                navController.navigate(Screen.Settings.route)
+            }
+            // Refresh Indicator
+            if (refreshScrollState.value) {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(50)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
                         modifier = Modifier
                             .padding(8.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(50)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(8.dp)
+                    )
+                }
+            }
 
+            // Content
+            when (dashboardUiState) {
+                is DashboardUiState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+                }
+                is DashboardUiState.Error -> {
+                    OnErrorComponent(
+                        errorMessage = dashboardUiState.message,
+                        onRetry = {
+                            dashBoardViewModel.refreshToken()
+                        }
+                    )
+                }
+                is DashboardUiState.Success -> {
+                    val activitiesData = dashboardUiState.dashboardData.monthActivity
+                    val healthData = dashboardUiState.dashboardData.healthData
+                    val lastActivity = dashboardUiState.dashboardData.lastActivity
+                    val selectedDiscipline = dashboardUiState.dashboardData.selectedDiscipline
+
+                    if (activitiesData.isNotEmpty()) {
+                        // Last Activity Card
+                        LastActivityCard(
+                            lastActivity,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
+                            navController.navigate(
+                                Screen.ActivityDetails.createRoute(
+                                    activitiesData[0].id.toString()
+                                )
+                            )
+                        }
+
+                        // Calendar Display
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column {
+                                val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    days.forEach { day ->
+                                        Text(
+                                            text = day,
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+                                }
+                                CalendarDisplay(3, activitiesData, selectedDiscipline) { activity ->
+                                    selectedActivities.value = activity
+                                    sheetState.value = true
+                                }
+                                CalendarDisplay(2, activitiesData, selectedDiscipline) { activity ->
+                                    selectedActivities.value = activity
+                                    sheetState.value = true
+                                }
+                                CalendarDisplay(1, activitiesData, selectedDiscipline) { activity ->
+                                    selectedActivities.value = activity
+                                    sheetState.value = true
+                                }
+                                CalendarDisplay(0, activitiesData, selectedDiscipline) { activity ->
+                                    selectedActivities.value = activity
+                                    sheetState.value = true
+                                }
+                            }
+                        }
+
+                        // Athlete Stats Component
+                        AthleteStatsComponent(
+                            healthData,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 16.dp),
                         )
                     }
                 }
             }
+
+
         }
+
+        // Bottom Sheet
         if (sheetState.value) {
             CustomBottomSheet(
                 onDismiss = { sheetState.value = false },
@@ -214,5 +204,3 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
         }
     }
 }
-
-

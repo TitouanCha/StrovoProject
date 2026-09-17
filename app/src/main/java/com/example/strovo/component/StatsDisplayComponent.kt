@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
@@ -43,21 +44,17 @@ fun RowScope.DataActivityDisplay(title: String, data: String, fontSize: Int = 20
 
 @Composable
 fun DataOverallStatsDisplay(title: String, data: String){
-    Row(
-        verticalAlignment = Alignment.CenterVertically
+    Column(
     ){
         Text(
-            modifier = Modifier.weight(1f),
-            text = title
+            text = title,
+            fontSize = 14.sp,
+            lineHeight = 14.sp,
         )
         Text(
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            text = ":"
-        )
-        Text(
-            modifier = Modifier.weight(2f),
-            text = data
+            text = data,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
         )
     }
 }
