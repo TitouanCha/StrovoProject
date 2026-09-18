@@ -51,7 +51,7 @@ class DashboardRepositoryImpl(context: Context): DashboardRepository {
         return try {
             val now = LocalDateTime.now()
             val beforeDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            val afterDate = now.minusDays(15).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val afterDate = now.minusDays(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
             val connectionString = basicAuthHeader(tokenManager.getAccessToken().toString())
             val healthStatsResponse: List<FetchHealthData> = IntervalsRetrofitClient.healthApi.getHealthData(

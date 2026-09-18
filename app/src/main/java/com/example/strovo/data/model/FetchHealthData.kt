@@ -19,7 +19,7 @@ data class FetchHealthData(
     val sleepSecs: Int,
     val soreness: Any,
     val spO2: Double,
-    val steps: Any,
+    val steps: Int,
     val stress: Any,
     val vo2max: Double
 )

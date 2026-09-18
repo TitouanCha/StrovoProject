@@ -31,11 +31,12 @@ import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
 import com.example.strovo.component.Screen
 import com.example.strovo.domain.model.ActivityDetailModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardViewModel) {
     val pointerUtils = PointerInputUtils()
@@ -44,8 +45,9 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
     val sheetState = remember { mutableStateOf(false) }
     val selectedActivities = remember { mutableStateOf<List<ActivityDetailModel>?>(null) }
 
+
     LaunchedEffect(Unit) {
-        if (dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
+        //if (dashboardUiState is DashboardUiState.Success) return@LaunchedEffect
         dashBoardViewModel.getDashBoardData()
     }
 
@@ -58,7 +60,6 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .run {
                     with(pointerUtils) {
                         verticalDragToRefresh(
@@ -117,72 +118,91 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                     val selectedDiscipline = dashboardUiState.dashboardData.selectedDiscipline
 
                     if (activitiesData.isNotEmpty()) {
-                        // Last Activity Card
-                        LastActivityCard(
-                            lastActivity,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            navController.navigate(
-                                Screen.ActivityDetails.createRoute(
-                                    activitiesData[0].id.toString()
+                            // Last Activity Card
+                            LastActivityCard(
+                                lastActivity,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                navController.navigate(
+                                    Screen.ActivityDetails.createRoute(
+                                        activitiesData[0].id.toString()
+                                    )
                                 )
-                            )
-                        }
+                            }
 
-                        // Calendar Display
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column {
-                                val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    days.forEach { day ->
-                                        Text(
-                                            text = day,
-                                            modifier = Modifier.weight(1f),
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
+                            // Calendar Display
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column {
+                                    val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        days.forEach { day ->
+                                            Text(
+                                                text = day,
+                                                modifier = Modifier.weight(1f),
+                                                textAlign = TextAlign.Center,
+                                                style = MaterialTheme.typography.bodySmall
+                                            )
+                                        }
+                                    }
+                                    CalendarDisplay(
+                                        3,
+                                        activitiesData,
+                                        selectedDiscipline
+                                    ) { activity ->
+                                        selectedActivities.value = activity
+                                        sheetState.value = true
+                                    }
+                                    CalendarDisplay(
+                                        2,
+                                        activitiesData,
+                                        selectedDiscipline
+                                    ) { activity ->
+                                        selectedActivities.value = activity
+                                        sheetState.value = true
+                                    }
+                                    CalendarDisplay(
+                                        1,
+                                        activitiesData,
+                                        selectedDiscipline
+                                    ) { activity ->
+                                        selectedActivities.value = activity
+                                        sheetState.value = true
+                                    }
+                                    CalendarDisplay(
+                                        0,
+                                        activitiesData,
+                                        selectedDiscipline
+                                    ) { activity ->
+                                        selectedActivities.value = activity
+                                        sheetState.value = true
                                     }
                                 }
-                                CalendarDisplay(3, activitiesData, selectedDiscipline) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(2, activitiesData, selectedDiscipline) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(1, activitiesData, selectedDiscipline) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
-                                CalendarDisplay(0, activitiesData, selectedDiscipline) { activity ->
-                                    selectedActivities.value = activity
-                                    sheetState.value = true
-                                }
                             }
-                        }
 
-                        // Athlete Stats Component
-                        AthleteStatsComponent(
-                            healthData,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 16.dp),
-                        )
+                            // Athlete Stats Component
+                            AthleteStatsComponent(
+                                healthData,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                            )
+                        }
                     }
                 }
             }
-
 
         }
 
