@@ -1,9 +1,7 @@
 package com.example.strovo.component.dashboardScreenComponents
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
+import com.example.strovo.component.DataChartComponent
 import com.example.strovo.component.DataOverallStatsDisplay
 import com.example.strovo.domain.model.HealthDataModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -23,18 +22,19 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
-import java.util.Locale
 import kotlin.text.format
-import kotlin.text.toInt
-import kotlin.math.ceil
-import kotlin.math.floor
 
 @Composable
 fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: Modifier) {
     val heartRateVariabilityModelProducer = remember { CartesianChartModelProducer() }
     val stepsModelProducer = remember { CartesianChartModelProducer() }
     val sleepTimeModelProducer = remember { CartesianChartModelProducer() }
+
+    val today = LocalDate.now()
+    val last7Days = (5 downTo 0).map { daysAgo ->
+        today.minusDays(daysAgo.toLong())
+            .format(DateTimeFormatter.ofPattern("dd/MM"))
+    }
 
     LaunchedEffect(athleteHealth) {
         val heartRateVariability = athleteHealth.heartRateVariability
@@ -110,17 +110,20 @@ fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: 
                 DataChartComponent(
                     data = athleteHealth.steps,
                     modelProducer = stepsModelProducer,
-                    title = "Nombres de pas"
+                    title = "Nombres de pas",
+                    bottomDataLabel = last7Days
                 )
                 DataChartComponent(
                     data = athleteHealth.sleepTime,
                     modelProducer = sleepTimeModelProducer,
-                    title = "Temps de sommeil"
+                    title = "Temps de sommeil",
+                    bottomDataLabel = last7Days
                 )
                 DataChartComponent(
                     data = athleteHealth.heartRateVariability,
                     modelProducer = heartRateVariabilityModelProducer,
-                    title = "VFC"
+                    title = "VFC",
+                    bottomDataLabel = last7Days
                 )
             }
         }

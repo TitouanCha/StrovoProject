@@ -28,32 +28,36 @@ data class HealthDataModel(
 
         fun fromApi(apiHealthData: List<FetchHealthData>): HealthDataModel {
 
-            val atlList = apiHealthData.map { it.atl }
-            val formList = apiHealthData.map { it.ctl - it.atl }
-            val restingHRList = apiHealthData.map { it.restingHR }
-            val rampRateList = apiHealthData.map { it.rampRate }
+            val atlList = apiHealthData.mapNotNull { it.atl }
+            val formList = apiHealthData.mapNotNull { data ->
+                val ctl = data.ctl
+                val atl = data.atl
+                if (ctl != null && atl != null) ctl - atl else null
+            }
+            val restingHRList = apiHealthData.mapNotNull { it.restingHR }
+            val rampRateList = apiHealthData.mapNotNull { it.rampRate }
             val sleepSecsList = apiHealthData.map { it.sleepSecs }
             val sleepScoreList = apiHealthData.mapNotNull { anyToDoubleOrNull(it.sleepScore) }
             val spO2List = apiHealthData.map { it.spO2 }
-            val vo2Max = apiHealthData.map{ it.vo2max }
+            val vo2Max = apiHealthData.mapNotNull { it.vo2max }
             val ctlList = apiHealthData.map { it.ctl }
-            val hrvList = apiHealthData.map { it.restingHR.toDouble() }
+            val hrvList = apiHealthData.mapNotNull { it.restingHR?.toDouble() }
             val stepsList = apiHealthData.map { it.steps }
-            val sleepTimeList = apiHealthData.map { (it.sleepSecs/ 3600.0) }
+            val sleepTimeList = apiHealthData.map { it.sleepSecs.let { s -> s / 3600.0 } }
 
             return HealthDataModel(
-                fitnessLevel = averageOf(ctlList),
-                fatigueLevel = averageOf(atlList),
-                form = averageOf(formList),
+                fitnessLevel = averageOf(ctlList.map { it.toDouble() }),
+                fatigueLevel = averageOf(atlList.map { it.toDouble() }),
+                form = averageOf(formList.map { it.toDouble() }),
                 restingHeartRate = restingHRList.takeIf { it.isNotEmpty() }
                     ?.let { it.sum() / it.size } ?: 0,
-                trainingRate = averageOf(rampRateList),
+                trainingRate = averageOf(rampRateList.map { it.toDouble() }),
                 sleepDuration = sleepSecsList.takeIf { it.isNotEmpty() }
                     ?.let { (it.sum() / it.size) / 60 } ?: 0,
                 sleepScore = averageOf(sleepScoreList),
-                sp02 = averageOf(spO2List),
-                vo2Max = averageOf(vo2Max),
-                physiqueLevel = ctlList,
+                sp02 = averageOf(spO2List.map { it.toDouble() }),
+                vo2Max = averageOf(vo2Max.map { it.toDouble() }),
+                physiqueLevel = ctlList.map { it.toDouble() },
                 heartRateVariability = hrvList,
                 steps = stepsList,
                 sleepTime = sleepTimeList

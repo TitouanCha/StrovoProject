@@ -1,7 +1,5 @@
-package com.example.strovo.component.dashboardScreenComponents
+package com.example.strovo.component
 
-import androidx.appcompat.widget.DialogTitle
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,9 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.example.strovo.domain.model.HealthDataModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -33,20 +29,14 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun DataChartComponent(
     data: List<Any>,
     modelProducer: CartesianChartModelProducer,
-    title: String
+    title: String,
+    bottomDataLabel: List<String>
 ) {
-    val today = java.time.LocalDate.now()
-    val last7Days = (5 downTo 0).map { daysAgo ->
-        today.minusDays(daysAgo.toLong())
-            .format(DateTimeFormatter.ofPattern("dd/MM"))
-    }
     val minY = remember(data) {
         data.minOfOrNull { (it as? Number)?.toDouble() ?: Double.MAX_VALUE } ?: 0.0
     }
@@ -92,7 +82,7 @@ fun DataChartComponent(
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, x, _ ->
-                        last7Days.getOrNull(x.toInt()) ?: " "
+                        bottomDataLabel.getOrNull(x.toInt()) ?: " "
                     }
                 )
             ),
