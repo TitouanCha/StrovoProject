@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.strovo.data.utils.speedToPaceMinPerKm
+import com.example.strovo.data.utils.speedToPaceMinPerKmGraph
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -35,10 +37,13 @@ fun DataChartComponent(
     data: List<Any>,
     modelProducer: CartesianChartModelProducer,
     title: String,
-    bottomDataLabel: List<String>
+    bottomDataLabel: List<String>,
+    isZoomEnabled: Boolean,
+    minYValue: Double? = null,
+    isPace: Boolean = false
 ) {
-    val minY = remember(data) {
-        data.minOfOrNull { (it as? Number)?.toDouble() ?: Double.MAX_VALUE } ?: 0.0
+    val minY = remember(data, minYValue) {
+        minYValue ?: data.minOfOrNull { (it as? Number)?.toDouble() ?: Double.MAX_VALUE } ?: 0.0
     }
     val maxY = remember(data) {
         data.maxOfOrNull { (it as? Number)?.toDouble() ?: Double.MIN_VALUE } ?: 0.0
@@ -77,8 +82,8 @@ fun DataChartComponent(
                 ),
                 startAxis = VerticalAxis.rememberStart(
                     valueFormatter = { _, value, _ ->
-                        value.toInt().toString()
-                    },
+                        if (isPace) speedToPaceMinPerKmGraph(value.toDouble()) else value.toInt().toString()
+                                     },
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, x, _ ->
@@ -89,7 +94,7 @@ fun DataChartComponent(
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
                 initialZoom = Zoom.Content,
-                zoomEnabled = false
+                zoomEnabled = isZoomEnabled
             ),
             modifier = Modifier
                 .fillMaxWidth()

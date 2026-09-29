@@ -111,19 +111,17 @@ fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: 
                     data = athleteHealth.steps,
                     modelProducer = stepsModelProducer,
                     title = "Nombres de pas",
-                    bottomDataLabel = last7Days
+                    bottomDataLabel = last7Days,
+                    isZoomEnabled = false,
+                    minYValue = 0.0
                 )
                 DataChartComponent(
                     data = athleteHealth.sleepTime,
                     modelProducer = sleepTimeModelProducer,
                     title = "Temps de sommeil",
-                    bottomDataLabel = last7Days
-                )
-                DataChartComponent(
-                    data = athleteHealth.heartRateVariability,
-                    modelProducer = heartRateVariabilityModelProducer,
-                    title = "VFC",
-                    bottomDataLabel = last7Days
+                    bottomDataLabel = last7Days,
+                    isZoomEnabled = false,
+                    minYValue = 0.0
                 )
             }
         }

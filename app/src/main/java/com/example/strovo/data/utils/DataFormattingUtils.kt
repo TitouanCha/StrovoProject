@@ -21,6 +21,13 @@ fun speedToPaceMinPerKm(speed: Double): String {
     return "%d:%02d/km".format(minutes, seconds)
 }
 
+fun speedToPaceMinPerKmGraph(speed: Double): String {
+    val totalSecondsPerKm = 1000 / speed
+    val minutes = (totalSecondsPerKm / 60).toInt()
+    val seconds = (totalSecondsPerKm % 60).toInt()
+    return "%d:%02d".format(minutes, seconds)
+}
+
 fun stravaDateToLocal(date: String): String {
     val instant = Instant.parse(date)
     val localDateTime = instant.atZone(ZoneId.systemDefault())

@@ -25,7 +25,7 @@ data class ActivityDetailModel (
             val distanceKm = (apiData.distance / 1000.0 * 100.0).toInt() / 100.0
             val time = secondsToHms(apiData.icuRecordingTime)
             val avgPace = speedToPaceMinPerKm(apiData.averageSpeed)
-            val maxPace = speedToPaceMinPerKm(apiData.averageSpeed)
+            val maxPace = speedToPaceMinPerKm(apiData.maxSpeed)
             var laps = emptyList<ActivityLapModel>()
             if(apiData.icuIntervals.isNotEmpty()){
                 laps = apiData.icuIntervals.map { lap ->

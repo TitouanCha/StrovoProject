@@ -18,9 +18,20 @@ data class ActivityMetaData(
     val latLng: List<Double>,
     val stepLength: List<Int>,
     val trackPoints: List<Pair<Double, Double>>,
-    val kmPoint: List<Point>
+    val kmPoint: List<Point>,
+    val velocityPerKm: List<Double>,
+    val heartratePerKm: List<Double>,
+    val altitudePerKm: List<Double>,
+    val distanceMarkers: List<Int>,
+    val velocityPerMin: List<Double>,
+    val heartratePerMin: List<Double>,
+    val altitudePerMin: List<Double>,
+    val timeMarkers: List<Int>
 ) {
     companion object {
+
+        private const val SEGMENT_METERS = 100.0
+        private const val SEGMENT_SECONDS = 60.0
 
         private fun findByType(list: List<GetActivityMetaData>, type: String): List<Any?> {
             return list.firstOrNull { it.type == type }?.data.orEmpty()
@@ -72,6 +83,88 @@ data class ActivityMetaData(
             return points
         }
 
+        private fun computePerKmValues(
+            distanceList: List<Double>,
+            valueList: List<Double>
+        ): List<Double> {
+            if (distanceList.isEmpty() || valueList.isEmpty()) return emptyList()
+
+            val maxDistance = distanceList.last()
+            val totalSegments = (maxDistance / SEGMENT_METERS).toInt() + 1
+            val result = mutableListOf<Double>()
+
+            var currentSegment = 0
+            val buffer = mutableListOf<Double>()
+
+            for (index in distanceList.indices) {
+                val distance = distanceList[index]
+                val value = valueList.getOrNull(index) ?: continue
+                val segmentIndex = (distance / SEGMENT_METERS).toInt()
+                if (segmentIndex > currentSegment) {
+                    result.add(if (buffer.isNotEmpty()) buffer.average() else 0.0)
+                    buffer.clear()
+                    currentSegment = segmentIndex
+                }
+
+                buffer.add(value)
+            }
+
+            if (buffer.isNotEmpty()) {
+                result.add(buffer.average())
+            }
+
+            while (result.size < totalSegments) {
+                result.add(0.0)
+            }
+
+            return result
+        }
+
+        private fun computeDistanceMarkers(size: Int): List<Int> {
+            return List(size) { index -> ((index + 1) * SEGMENT_METERS).toInt() }
+        }
+
+        private fun computePerTimeValues(
+            timeList: List<Double>,
+            valueList: List<Double>
+        ): List<Double> {
+            if (timeList.isEmpty() || valueList.isEmpty()) return emptyList()
+
+            val maxTime = timeList.last()
+            val totalSegments = (maxTime / SEGMENT_SECONDS).toInt() + 1
+            val result = mutableListOf<Double>()
+
+            var currentSegment = 0
+            val buffer = mutableListOf<Double>()
+
+            for (index in timeList.indices) {
+                val time = timeList[index]
+                val value = valueList.getOrNull(index) ?: continue
+                val segmentIndex = (time / SEGMENT_SECONDS).toInt()
+                if (segmentIndex > currentSegment) {
+                    result.add(if (buffer.isNotEmpty()) buffer.average() else 0.0)
+                    buffer.clear()
+                    currentSegment = segmentIndex
+                }
+
+                buffer.add(value)
+            }
+
+            if (buffer.isNotEmpty()) {
+                result.add(buffer.average())
+            }
+
+            while (result.size < totalSegments) {
+                result.add(0.0)
+            }
+
+            return result
+        }
+
+        private fun computeTimeMarkers(size: Int): List<Int> {
+            return List(size) { index -> ((index + 1) * SEGMENT_SECONDS).toInt() }
+        }
+
         fun fromApi(id: String, apiModel: List<GetActivityMetaData>): ActivityMetaData {
 
             val timeList = toDoubleList(findByType(apiModel, "time"))
@@ -83,6 +176,16 @@ data class ActivityMetaData(
 
             val alignedTrackPoints = toAlignedLatLngPairs(apiModel)
             val trackPoints = alignedTrackPoints.filterNotNull()
+
+            val velocityPerKm = computePerKmValues(distanceList, velocityList)
+            val heartratePerKm = computePerKmValues(distanceList, heartrateList.map { it.toDouble() })
+            val altitudePerKm = computePerKmValues(distanceList, altitudeList)
+            val distanceMarkers = computeDistanceMarkers(velocityPerKm.size)
+
+            val velocityPer30Sec = computePerTimeValues(timeList, velocityList)
+            val heartratePer30Sec = computePerTimeValues(timeList, heartrateList.map { it.toDouble() })
+            val altitudePer30Sec = computePerTimeValues(timeList, altitudeList)
+            val timeMarkers = computeTimeMarkers(velocityPer30Sec.size)
 
             return ActivityMetaData(
                 id = id,
@@ -100,7 +203,15 @@ data class ActivityMetaData(
                 latLng = trackPoints.flatMap { listOf(it.first, it.second) },
                 stepLength = stepLengthList,
                 trackPoints = trackPoints,
-                kmPoint = computeKmPoints(alignedTrackPoints, distanceList, altitudeList)
+                kmPoint = computeKmPoints(alignedTrackPoints, distanceList, altitudeList),
+                velocityPerKm = velocityPerKm,
+                heartratePerKm = heartratePerKm,
+                altitudePerKm = altitudePerKm,
+                distanceMarkers = distanceMarkers,
+                velocityPerMin = velocityPer30Sec,
+                heartratePerMin = heartratePer30Sec,
+                altitudePerMin = altitudePer30Sec,
+                timeMarkers = timeMarkers
             )
         }
     }
