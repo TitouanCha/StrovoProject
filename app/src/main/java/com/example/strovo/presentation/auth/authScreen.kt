@@ -171,13 +171,13 @@ fun AuthScreen(viewModel: AuthViewModel, navController: NavController ) {
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
-//    if(isFirstLaunch.value) {
-//        OnboardingComponent(
-//            context,
-//            onClick = { disciplines ->
-//                 viewModel.saveUserDisciplines(disciplines)
-//                isFirstLaunch.value = false
-//            }
-//        )
-//    }
+    if(isFirstLaunch.value) {
+        OnboardingComponent(
+            context,
+            onClick = { disciplines ->
+                 viewModel.saveUserDisciplines(disciplines)
+                isFirstLaunch.value = false
+            }
+        )
+    }
 }

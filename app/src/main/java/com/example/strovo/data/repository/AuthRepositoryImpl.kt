@@ -18,11 +18,12 @@ class AuthRepositoryImpl(context: Context): AuthRepository {
         return try {
             val athleteId = tokenManager.getAthleteId()
             val apiKey = tokenManager.getAccessToken()
-            if (athleteId != null && apiKey != null) {
+            if (athleteId != null || apiKey != null) {
                 Result.success(true)
             } else {
                 Result.success(false)
             }
+            Result.success(false)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

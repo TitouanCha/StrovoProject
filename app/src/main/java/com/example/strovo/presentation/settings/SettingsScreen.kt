@@ -27,11 +27,14 @@ import com.example.strovo.component.HeaderComponent
 import com.example.strovo.component.Screen
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.utils.TokenManager
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(navController: NavController, settingsViewModel: SettingsViewModel) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val tokenManager = TokenManager(LocalContext.current)
 
     val settingsUiState = settingsViewModel.settingsUiState.collectAsState().value
@@ -126,9 +129,11 @@ fun SettingsScreen(navController: NavController, settingsViewModel: SettingsView
                     Button(
                         modifier = Modifier,
                         onClick = {
-                            tokenManager.clearTokens()
-                            navController.navigate(Screen.Auth.route) {
-                                popUpTo("settings_screen") { inclusive = true }
+                            coroutineScope.launch {
+                                tokenManager.clearTokens()
+                                navController.navigate(Screen.Auth.route) {
+                                    popUpTo("settings_screen") { inclusive = true }
+                                }
                             }
                         }
                     ) {
