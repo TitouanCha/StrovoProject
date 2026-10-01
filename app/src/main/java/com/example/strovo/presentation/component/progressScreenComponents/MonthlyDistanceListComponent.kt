@@ -23,6 +23,7 @@ fun MonthlyDistanceListComponent(modifier: Modifier,monthlyDistancesList: Mutabl
         if(selectedYear == Calendar.getInstance().get(Calendar.YEAR)){
             actualMonthNumber = Calendar.getInstance().get(Calendar.MONTH)+1
         }
+        actualMonthNumber += 0
         for(i in 0..< actualMonthNumber step 2){
             item {
                 Row(
@@ -37,7 +38,7 @@ fun MonthlyDistanceListComponent(modifier: Modifier,monthlyDistancesList: Mutabl
                         index = i,
                         onClick = { onMonthClick(i) }
                     )
-                    if((actualMonthNumber%2 != 0 && i != actualMonthNumber-1) || actualMonthNumber == 12 ) {
+                    if(actualMonthNumber%2 == 0 || i + 1 < actualMonthNumber){
                         DistanceCardDisplayComponent(
                             title = monthName[i + 1],
                             activityNumber = "${monthlyDistancesList[i + 1].activities.size}",

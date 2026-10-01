@@ -61,8 +61,6 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
     val selectedYear = progressViewModel.selectedYear.collectAsState().value
 
     LaunchedEffect(Unit) {
-//        val tokenManager = TokenManager(navController.context)
-//        tokenManager.saveTokens("123", tokenManager.getRefreshToken()?:"", tokenManager.getAthleteId()?:"")
         if(progressUiState is ProgressUiState.Success) return@LaunchedEffect
         progressViewModel.loadProgressData(LocalDate.now().year)
     }
