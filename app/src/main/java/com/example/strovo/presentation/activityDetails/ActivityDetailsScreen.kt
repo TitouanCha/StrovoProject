@@ -31,8 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.strovo.R
-import com.example.strovo.component.activityDetailsComponents.ActivityData
-import com.example.strovo.component.activityDetailsComponents.MapComponent
+import com.example.strovo.presentation.component.activityDetailsComponents.ActivityData
+import com.example.strovo.presentation.component.activityDetailsComponents.MapComponent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 

@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.R
-import com.example.strovo.component.HeaderComponent
-import com.example.strovo.component.Screen
+import com.example.strovo.presentation.component.HeaderComponent
+import com.example.strovo.presentation.component.Screen
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.coroutineScope

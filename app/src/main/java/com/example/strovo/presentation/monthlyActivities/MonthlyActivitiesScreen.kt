@@ -10,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.strovo.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
+import com.example.strovo.presentation.component.monthlyActivitiesScreenComponent.MonthlyActivitiesContent
 import com.example.strovo.model.strava.AverageMonthStatsModel
 import com.example.strovo.domain.model.ActivityDetailModel
 import com.example.strovo.model.strava.MonthlyDistanceModel

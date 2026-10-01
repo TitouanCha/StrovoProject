@@ -3,6 +3,7 @@ package com.example.strovo.data.repository
 import android.content.Context
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.model.FetchActivity
+import com.example.strovo.data.model.GetActivityMetaData
 import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.data.services.intervals.IntervalsRetrofitClient
 import com.example.strovo.data.services.intervals.basicAuthHeader
@@ -11,6 +12,7 @@ import com.example.strovo.model.strava.YearActivitiesModel
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
 import com.example.strovo.domain.model.ActivityDetailModel
+import com.example.strovo.domain.model.ActivityTrackPoint
 import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,6 +50,31 @@ class ProgressRepositoryImpl(context: Context): ProgressRepository {
             }
         } catch (e: Exception) {
              Result.failure(e)
+        }
+    }
+
+    override suspend fun getActivitiesTrackPoint(activityIds: List<String>): Result<List<ActivityTrackPoint>> {
+        val token = tokenManager.getAccessToken()
+        return try {
+            coroutineScope {
+                val activitiesTrackPoint = mutableListOf<ActivityTrackPoint>()
+
+                for (id in activityIds) {
+                    if (id.isBlank()) {
+                        return@coroutineScope Result.failure(IllegalArgumentException("Activity ID cannot be blank"))
+                    }
+                    val result: List<GetActivityMetaData> =
+                        IntervalsRetrofitClient.activityApi.getActivityMetaData(
+                            authorization = basicAuthHeader(token.toString()),
+                            activityId = id
+                        )
+                    val activityTrackPoint = ActivityTrackPoint.fromApi(result, id)
+                    activitiesTrackPoint.add(activityTrackPoint)
+                }
+                Result.success(activitiesTrackPoint)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

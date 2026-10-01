@@ -10,5 +10,5 @@ data class ProgressModel(
     var averageStats: AverageStatsModel,
     var selectedYearDistances: MutableList<MonthlyDistanceModel>,
     var lastYearDistances: MutableList<MonthlyDistanceModel>,
-    var activitiesTrackPoints: List<List<Pair<Double, Double>>>?,
+    var activitiesTrackPoints: List<ActivityTrackPoint>,
 )

@@ -47,7 +47,7 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
             }.onFailure { exception ->
                 _authUiState.value = AuthUiState.Error("Impossible de récupérer les informations de l'utilisateur.\n Veuillez vous reconnecter.")
             }
-            _authUiState.value = AuthUiState.Initial
+            //_authUiState.value = AuthUiState.Initial
         }
     }
 

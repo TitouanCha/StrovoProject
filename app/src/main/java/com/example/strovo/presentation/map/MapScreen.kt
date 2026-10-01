@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.component.mapScreenComponents.MapYearComponent
-import com.example.strovo.component.progressScreenComponents.YearSelectionComponent
+import com.example.strovo.presentation.component.mapScreenComponents.MapYearComponent
+import com.example.strovo.presentation.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.presentation.progress.ProgressUiState
 import com.example.strovo.presentation.progress.ProgressViewModel
 
@@ -81,14 +81,14 @@ fun ActivitiesMapScreen(progressViewModel: ProgressViewModel) {
                         )
                     }
                     is ProgressUiState.Success -> {
-//                        tracksPoint.value = progressUiState.progressData.activitiesTrackPoints
-//                        Text(
-//                            modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
-//                            text = "Vos traces de l'année",
-//                            fontWeight = FontWeight.Bold,
-//                            fontSize = 20.sp,
-//                            color = MaterialTheme.colorScheme.primary
-//                        )
+                        tracksPoint.value = progressUiState.progressData.activitiesTrackPoints.map { it.trackPoint }
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 2.dp, bottom = 2.dp),
+                            text = "Vos traces de l'année",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
