@@ -32,7 +32,9 @@ fun loadActivityOnMap(style: Style, trackPoints: List<List<Pair<Double, Double>>
     style.sources.filter { it.id.startsWith("activity-") }
         .forEach { style.removeSource(it.id) }
 
-    val allStartPoint = trackPoints.map {
+    val allStartPoint = trackPoints
+        .filter { it.isNotEmpty() }
+        .map {
         val latLng = it.map { p -> LatLng(p.first, p.second) }
         Point.fromLngLat(latLng.first().longitude, latLng.first().latitude)
     }
@@ -43,6 +45,7 @@ fun loadActivityOnMap(style: Style, trackPoints: List<List<Pair<Double, Double>>
     )
 
     trackPoints.forEachIndexed { index, points ->
+        if (points.isEmpty()) return@forEachIndexed
         val latLngPoints = points.map { LatLng(it.first, it.second) }
         style.addSource(mapGeoSource(latLngPoints, "activity-$index"))
         style.addLayer(

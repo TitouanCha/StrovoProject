@@ -34,9 +34,8 @@ fun ActivitiesMapScreen(progressViewModel: ProgressViewModel) {
     val tracksPoint = remember { mutableStateOf<List<List<Pair<Double, Double>>>>(listOf()) }
 
     LaunchedEffect(selectedYear, Unit) {
-        progressViewModel.loadProgressData(selectedYear)
+        progressViewModel.loadProgressData(selectedYear, isRestart = false, loadTrackPoint = true)
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

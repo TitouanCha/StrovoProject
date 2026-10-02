@@ -1,5 +1,6 @@
 package com.example.strovo.presentation.progress
 
+import android.R
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,7 +40,7 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
 
     lateinit var selectedYearActivities: YearActivitiesModel
     lateinit var lastYearActivities: YearActivitiesModel
-    fun loadProgressData(year: Int, isRestart: Boolean = false) {
+    fun loadProgressData(year: Int, isRestart: Boolean = false, loadTrackPoint: Boolean = false) {
         _selectedYear.value = year
         _progressUiState.value = ProgressUiState.Loading
         viewModelScope.launch {
@@ -69,8 +70,6 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                     lastYearActivities = YearActivitiesModel(year - 1, mutableListOf())
                 }
             }
-            val activitiesId = selectedYearActivities.allActivities.map { it.id }
-            val activitiesTrackPoints = loadActivitiesTrackPoints(activitiesId)
             if(_progressUiState.value !is ProgressUiState.Error) {
                 val progressData = ProgressModel(
                     selectedYear = mutableListOf(selectedYearActivities),
@@ -78,7 +77,7 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                     averageStats = getAverageStats(selectedYearActivities),
                     selectedYearDistances = getMonthlyDistances(selectedYearActivities),
                     lastYearDistances = getMonthlyDistances(lastYearActivities),
-                    activitiesTrackPoints = activitiesTrackPoints
+                    activitiesTrackPoints = emptyList()
                 )
 
                 _progressUiState.value = ProgressUiState.Success(progressData)
@@ -88,7 +87,9 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
                 cachedActivities = selectedYearActivities
                 lastYearCachedActivities = lastYearActivities
             }
-
+            if(loadTrackPoint){
+                loadActivitiesTrackPoints()
+            }
 
         }
     }
@@ -127,19 +128,18 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
         )
     }
 
-    suspend fun loadActivitiesTrackPoints(activitiesId: List<String>): List<ActivityTrackPoint> {
+    suspend fun loadActivitiesTrackPoints() {
+        val currentState = _progressUiState.value
+        _progressUiState.value = ProgressUiState.Loading
+        val activitiesId = selectedYearActivities.allActivities.map { it.id }
         val result = progressRepository.getActivitiesTrackPoint(activitiesId)
-
         result.onSuccess { trackPoints ->
-            val currentState = _progressUiState.value
             if (currentState is ProgressUiState.Success) {
                 val updatedProgressData = currentState.progressData.copy(activitiesTrackPoints = trackPoints)
                 _progressUiState.value = ProgressUiState.Success(updatedProgressData)
             }
-            return trackPoints
         }.onFailure { error ->
             _progressUiState.value = ProgressUiState.Error(error.message ?: "Unknown error")
         }
-        return emptyList()
     }
 }
