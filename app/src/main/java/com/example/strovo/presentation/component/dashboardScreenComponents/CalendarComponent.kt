@@ -5,6 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,13 +79,14 @@ fun CalendarDisplay(
                     val activityCount = activitiesForDay.size
                     Box(
                         modifier = Modifier
-                            .padding(6.dp)
-                            .size(35.dp)
+                            .padding(horizontal = 2.dp, vertical = 4.dp)
+                            .fillMaxWidth()
+                            .height(35.dp)
                             .background(
                                 if (activityCount >= 1)
                                     MaterialTheme.colorScheme.primary
                                 else
-                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    MaterialTheme.colorScheme.onSecondary,
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .border(
@@ -105,12 +109,12 @@ fun CalendarDisplay(
                         when {
                             activityCount > 0 -> {
                                 val iconRes = when (activitiesForDay[0].type) {
-                                    "Run" -> R.drawable.running_svgrepo_com
-                                    "TrailRun" -> R.drawable.running_svgrepo_com
+                                    "Run" -> R.drawable.running_svg
+                                    "TrailRun" -> R.drawable.running_svg
                                     "RockClimbing" -> R.drawable.climb_person_people_climber_svgrepo_com
                                     "Ride" -> R.drawable.biking_svgrepo_com
                                     "Hike" -> R.drawable.man_in_hike_svgrepo_com
-                                    else -> R.drawable.man_doing_exercises_svgrepo_com
+                                    else -> R.drawable.training_svg
                                 }
                                 Icon(
                                     painter =
@@ -150,8 +154,15 @@ fun CalendarDisplay(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(6.dp)
-                .size(40.dp),
+                .padding(horizontal = 2.dp, vertical = 4.dp)
+                .fillMaxWidth()
+                .height(35.dp)
+                .border(
+                    width = 1.dp,
+                    color =
+                        MaterialTheme.colorScheme.onSecondary,
+                    shape = RoundedCornerShape(4.dp)
+                ),
             contentAlignment = Alignment.Center,
         ) {
             Text(

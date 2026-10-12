@@ -30,13 +30,13 @@ fun HeaderComponent(title: String, icon: Int?, modifier: Modifier, onclick: () -
                 .padding(8.dp),
             textAlign = TextAlign.Center,
             text = title,
-            fontSize = 30.sp,
+            fontSize = 25.sp,
             fontWeight = FontWeight.Bold
         )
         IconButton(
             modifier = Modifier
                 .weight(1f)
-                .padding(8.dp),
+                .padding(4.dp),
             onClick = {
                 onclick()
             }) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,31 +56,16 @@ fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: 
         modifier = modifier,
         contentAlignment = Alignment.BottomCenter
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier//.padding(16.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        modifier = Modifier
-                            .size(35.dp)
-                            .padding(8.dp),
-                        painter = painterResource(R.drawable.progress_svgrepo_com),
-                        contentDescription = "Stats Icon",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        modifier = Modifier.padding(8.dp),
-                        text = "Stats des dernières semaines",
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = "Stats des dernières semaines",
+                    fontSize = 22.sp,
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Spacer(modifier = Modifier.size(4.dp))
                 Row() {
                     Column(
@@ -124,6 +110,5 @@ fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: 
                     minYValue = 0.0
                 )
             }
-        }
     }
 }

@@ -6,7 +6,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.example.strovo.R
 import com.example.strovo.presentation.component.CustomBottomSheet
 import com.example.strovo.presentation.component.HeaderComponent
@@ -73,7 +76,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
         ) {
             // Header
             HeaderComponent(
-                "Dashboard", R.drawable.baseline_settings_24,
+                "Dashboard", R.drawable.user_svg,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -121,20 +124,6 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                         Column(
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            // Last Activity Card
-                            LastActivityCard(
-                                lastActivity,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                            ) {
-                                navController.navigate(
-                                    Screen.ActivityDetails.createRoute(
-                                        activitiesData[0].id.toString()
-                                    )
-                                )
-                            }
-
                             // Calendar Display
                             Box(
                                 modifier = Modifier
@@ -143,6 +132,13 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column {
+                                    Text(
+                                        text = "Activités des derniers jours",
+                                        modifier = Modifier
+                                            .padding(vertical = 8.dp)
+                                        ,fontSize = 22.sp,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
                                     val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -191,6 +187,28 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                     }
                                 }
                             }
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp),
+                                thickness = 2.dp
+                            )
+
+                            // Last Activity Card
+                            LastActivityCard(
+                                lastActivity,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                navController.navigate(
+                                    Screen.ActivityDetails.createRoute(
+                                        activitiesData[0].id.toString()
+                                    )
+                                )
+                            }
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp),
+                                thickness = 2.dp
+                            )
 
                             // Athlete Stats Component
                             AthleteStatsComponent(
