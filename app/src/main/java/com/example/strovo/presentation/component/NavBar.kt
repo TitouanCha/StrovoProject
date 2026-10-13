@@ -22,14 +22,17 @@ fun BottomNavBar(
     onPageSelected: (Int) -> Unit,
 ) {
     NavigationBar(
+        modifier = Modifier.height(100.dp),
     ){
         NavigationBarItem(
             icon = {
                 Row(){
                     Icon(
-                        painter = painterResource(id = R.drawable.dashboard_svgrepo_com),
+                        painter = painterResource(id = R.drawable.dashboard_svg),
                         contentDescription = "Dashboard Icon",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(26.dp)
                     )
                     Spacer(modifier = Modifier.size(10.dp))
                     Text("Dashboard", color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -45,9 +48,11 @@ fun BottomNavBar(
             icon = {
                 Row() {
                     Icon(
-                        painter = painterResource(id = R.drawable.progress_svgrepo_com),
+                        painter = painterResource(id = R.drawable.progress_svg),
                         contentDescription = "Progress Icon",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(26.dp)
                     )
                     Spacer(modifier = Modifier.size(10.dp))
                     Text("Progrés", color = MaterialTheme.colorScheme.onSurfaceVariant)
