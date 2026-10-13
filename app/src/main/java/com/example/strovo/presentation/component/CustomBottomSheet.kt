@@ -64,7 +64,7 @@ fun CustomBottomSheet(
                     .align(Alignment.BottomCenter)
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                     )
                     .clickable(

@@ -30,7 +30,7 @@ fun BottomSheetComponent(
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 6.dp),
+            .padding(vertical = 16.dp, horizontal = 16.dp),
 
     ) {
         Text(

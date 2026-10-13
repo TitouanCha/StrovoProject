@@ -79,8 +79,8 @@ fun ActivityStats(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             ) {
-                DataActivityDisplay("Temps", activity.time, dataFontSize)
-                DataActivityDisplay("Distance", "%.2f km".format(activity.distance), dataFontSize)
+                DataActivityDisplay("Temps", activity.time, dataFontSize, Modifier)
+                DataActivityDisplay("Distance", "%.2f km".format(activity.distance), dataFontSize, Modifier)
             }
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -95,13 +95,15 @@ fun ActivityStats(
                     "Vitesse",
                     if(activity.type == "Run" || activity.type == "TrailRun") activity.avgSpeed
                     else "%.1f km/h".format(activity.avgSpeedDouble * 3.6),
-                    dataFontSize
+                    dataFontSize,
+                    Modifier
                 )
                 DataActivityDisplay(
                     "Vitesse max",
                     if(activity.type == "Run" || activity.type == "TrailRun") activity.maxSpeed
                     else "%.1f km/h".format(activity.maxSpeedDouble * 3.6),
-                    dataFontSize
+                    dataFontSize,
+                    Modifier
                 )
             }
             HorizontalDivider(
@@ -113,8 +115,10 @@ fun ActivityStats(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             ) {
-                DataActivityDisplay("Dénivelé", "${activity.elevationGain} d+", dataFontSize)
-                DataActivityDisplay("Bpm moyen", "${metaData.heartrate} bpm", dataFontSize)
+                DataActivityDisplay("Dénivelé", "${activity.elevationGain} d+", dataFontSize,
+                    Modifier)
+                DataActivityDisplay("Bpm moyen", "${metaData.heartrate} bpm", dataFontSize,
+                    Modifier)
             }
         }
     }
