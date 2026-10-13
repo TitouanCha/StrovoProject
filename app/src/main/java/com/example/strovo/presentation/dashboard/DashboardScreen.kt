@@ -216,7 +216,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                             ) {
                                 navController.navigate(
                                     Screen.ActivityDetails.createRoute(
-                                        activitiesData[0].id.toString()
+                                        lastActivity?.id.toString()
                                     )
                                 )
                             }
