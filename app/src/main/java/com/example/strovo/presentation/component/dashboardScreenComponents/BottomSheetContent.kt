@@ -35,7 +35,7 @@ fun BottomSheetContent(selectedActivities: List<ActivityDetailModel>, onclick: (
         Column(
             verticalArrangement = Arrangement.Top
         ){
-            var fontSize = 25.sp
+            var fontSize = 20.sp
             if(activity.name.length > 30){
                 fontSize = 18.sp
             }
@@ -118,7 +118,7 @@ fun BottomSheetContent(selectedActivities: List<ActivityDetailModel>, onclick: (
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Button(
