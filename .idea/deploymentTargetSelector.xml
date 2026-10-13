@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="Strovo">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-10-02T14:50:29.369422Z">
+        <DropdownSelection timestamp="2026-10-13T14:51:34.076496Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CY53JEKTD" />

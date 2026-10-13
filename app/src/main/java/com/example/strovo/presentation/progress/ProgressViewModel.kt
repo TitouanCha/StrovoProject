@@ -122,9 +122,9 @@ class ProgressViewModel(application: Application): AndroidViewModel(application)
         }
         return  AverageStatsModel(
             activities = activities.allActivities.size.toString(),
-            distance = "%.2f km".format(distance),
-            monthly_average = "%.2f km".format(monthlyAverage),
-            weekly_average = "%.2f km".format(weeklyAverage)
+            distance = "%.0f km".format(distance),
+            monthly_average = "%.1f km".format(monthlyAverage),
+            weekly_average = "%.1f km".format(weeklyAverage)
         )
     }
 

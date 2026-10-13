@@ -4,14 +4,20 @@ import com.example.strovo.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,7 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.presentation.component.HeaderComponent
 import com.example.strovo.presentation.component.OnErrorComponent
@@ -85,22 +93,20 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ){
             HeaderComponent(
-                "Progrès", R.drawable.map_location_pin_svgrepo_com,
+                "Progrès", R.drawable.map_svg,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal =  16.dp),
+                    .padding(horizontal = 16.dp),
             ) {
                 navController.navigate(Screen.Map.route)
             }
         }
         Box(
             modifier = Modifier
-                .weight(9f)
                 .run {
                     with(pointerUtils) {
                         verticalDragToRefresh(
@@ -117,31 +123,29 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
         ){
             Column{
                 when (progressUiState) {
-                    is ProgressUiState.Loading -> {
-                        Card(
+                    is ProgressUiState.Loading -> Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+                    ) {
+                        YearSelectionComponent(
+                            incrementYear = {
+                                progressViewModel.incrementYear()
+                                progressViewModel.loadProgressData(selectedYear + 1)
+                            },
+                            decrementYear = {
+                                progressViewModel.decrementYear()
+                                progressViewModel.loadProgressData(selectedYear - 1)
+                            },
+                            selectedYear = selectedYear
+                        )
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+                                .padding(30.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            YearSelectionComponent(
-                                incrementYear = {
-                                    progressViewModel.incrementYear()
-                                    progressViewModel.loadProgressData(selectedYear + 1)
-                                },
-                                decrementYear = {
-                                    progressViewModel.decrementYear()
-                                    progressViewModel.loadProgressData(selectedYear - 1)
-                                },
-                                selectedYear = selectedYear
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(30.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
+                            CircularProgressIndicator()
                         }
                     }
                     is ProgressUiState.Error -> {
@@ -153,10 +157,10 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                         )
                     }
                     is ProgressUiState.Success -> {
-                        Card(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+                                .padding(start = 16.dp, end = 16.dp, bottom = 0.dp)
                         ) {
                             YearSelectionComponent(
                                 incrementYear = {
@@ -169,42 +173,72 @@ fun ProgressScreen(navController: NavController, progressViewModel: ProgressView
                                 },
                                 selectedYear = selectedYear
                             )
-                            CartesianChartHost(
-                                rememberCartesianChart(
-                                    rememberColumnCartesianLayer(),
-                                    rememberLineCartesianLayer(
-                                        lineProvider = LineCartesianLayer.LineProvider.series(
-                                            LineCartesianLayer.Line(
-                                                fill = LineCartesianLayer.LineFill.single(
-                                                    fill(MaterialTheme.colorScheme.secondary)
+                            OutlinedCard {
+                                Row (
+                                    modifier = Modifier.padding(top = 8.dp, start = 16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ){
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.progress_svg),
+                                        contentDescription = "chart Icon",
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                            .padding(end = 8.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "Distance mensuelle",
+                                        fontSize = 16.sp,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                }
+                                CartesianChartHost(
+                                    rememberCartesianChart(
+                                        rememberColumnCartesianLayer(),
+                                        rememberLineCartesianLayer(
+                                            lineProvider = LineCartesianLayer.LineProvider.series(
+                                                LineCartesianLayer.Line(
+                                                    fill = LineCartesianLayer.LineFill.single(
+                                                        fill(MaterialTheme.colorScheme.secondary)
+                                                    )
                                                 )
                                             )
+                                        ),
+                                        startAxis = VerticalAxis.rememberStart(
+                                        ),
+                                        bottomAxis = HorizontalAxis.rememberBottom(
+                                            valueFormatter = { x, chartValues, _ ->
+                                                months.getOrNull(chartValues.toInt()) ?: ""
+                                            }
+                                        ),
+                                    ),
+                                    modelProducer = activitiesModelProducer,
+                                    zoomState = rememberVicoZoomState(
+                                        initialZoom = Zoom.Content,
+                                        zoomEnabled = true
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = 8.dp,
+                                            end = 16.dp,
+                                            bottom = 16.dp,
                                         )
-                                    ),
-                                    startAxis = VerticalAxis.rememberStart(
-                                    ),
-                                    bottomAxis = HorizontalAxis.rememberBottom(
-                                        valueFormatter = { x, chartValues, _ ->
-                                            months.getOrNull(chartValues.toInt()) ?: ""
-                                        }
-                                    ),
-                                ),
-                                modelProducer = activitiesModelProducer,
-                                zoomState = rememberVicoZoomState(
-                                    initialZoom = Zoom.Content,
-                                    zoomEnabled = true
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 8.dp, end = 16.dp, bottom = 12.dp)
-                                    .height(180.dp)
-                            )
-                            MonthlyAverageStatsComponents(progressUiState.progressData.averageStats)
+                                        .height(180.dp)
+                                )
+                            }
                         }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp, horizontal = 16.dp),
+                            thickness = 2.dp
+                        )
                         MonthlyDistanceListComponent(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 12.dp),
+                                .padding(top = 0.dp),
+                            progressUiState.progressData.averageStats,
                             progressUiState.progressData.selectedYearDistances,
                             selectedYear,
                             onMonthClick = { monthIndex ->

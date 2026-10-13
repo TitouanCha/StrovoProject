@@ -28,7 +28,7 @@ fun YearSelectionComponent(
 ){
     Row(
         modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 2.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -40,16 +40,16 @@ fun YearSelectionComponent(
                 .weight(1f),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_arrow_left_24),
+                painter = painterResource(id = R.drawable.arrow_left_svg),
                 contentDescription = "Previous Year",
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(35.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Text(
             text = "Donnée de $selectedYear",
             modifier = Modifier
-                .weight(3f),
+                .weight(8f),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -63,9 +63,9 @@ fun YearSelectionComponent(
                     .weight(1f),
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_arrow_right_24),
+                    painter = painterResource(id = R.drawable.arrow_right_svg),
                     contentDescription = "Previous Year",
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(35.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

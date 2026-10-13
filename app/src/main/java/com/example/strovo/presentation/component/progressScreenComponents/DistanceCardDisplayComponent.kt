@@ -1,5 +1,6 @@
 package com.example.strovo.presentation.component.progressScreenComponents
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,9 +29,13 @@ fun RowScope.DistanceCardDisplayComponent( title: String, activityNumber: String
         modifier = Modifier
             .weight(1f)
             .padding(horizontal = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        ),
         onClick = {
             onClick(index)
         }
+
     ){
         Column(
             modifier = Modifier
