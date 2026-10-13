@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.strovo.R
@@ -132,13 +134,25 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column {
-                                    Text(
-                                        text = "Activités des derniers jours",
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
-                                            .padding(vertical = 8.dp)
-                                        ,fontSize = 22.sp,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
+                                            .padding(bottom = 8.dp)
+                                    ){
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.calendar_svg),
+                                            contentDescription = "Calendar Icon",
+                                            modifier = Modifier
+                                                .size(28.dp)
+                                                .padding(end = 8.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = "Activitées des derniers jours",
+                                            fontSize = 22.sp,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    }
                                     val days = listOf("L", "Ma", "Me", "J", "V", "S", "D", "Km")
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -188,10 +202,11 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                 }
                             }
                             HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                                 thickness = 2.dp
                             )
-
                             // Last Activity Card
                             LastActivityCard(
                                 lastActivity,
@@ -206,7 +221,9 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                 )
                             }
                             HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp, 8.dp),
                                 thickness = 2.dp
                             )
 
@@ -215,7 +232,7 @@ fun DashboardScreen(navController: NavController, dashBoardViewModel: DashboardV
                                 healthData,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                             )
                         }
                     }

@@ -51,14 +51,15 @@ fun DataChartComponent(
     Column(
         horizontalAlignment = Alignment.Start,
     ){
-        Spacer(modifier = Modifier.size(16.dp))
         HorizontalDivider(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 16.dp),
             thickness = 2.dp
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(title,
-            modifier = Modifier.padding(start = 8.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 8.dp),
             fontWeight = FontWeight.Bold,
             fontSize = MaterialTheme.typography.titleMedium.fontSize,
         )
@@ -98,7 +99,7 @@ fun DataChartComponent(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 16.dp, bottom = 12.dp)
+                .padding(start = 8.dp, end = 16.dp, bottom = 8.dp)
                 .height(150.dp)
         )
     }

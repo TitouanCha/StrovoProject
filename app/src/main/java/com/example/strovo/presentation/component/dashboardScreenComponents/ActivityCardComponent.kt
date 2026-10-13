@@ -70,22 +70,22 @@ fun ColumnScope.LastActivityCard(
                             //.padding(8.dp)
                     ) {
                         Row(
-
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.history_svg),
+                                contentDescription = "Icon",
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .padding(end = 8.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                             Text(
                                 text = "Dernieres Activités",
                                 modifier = Modifier,
                                 fontSize = 22.sp,
                                 style = MaterialTheme.typography.titleMedium
                                 //lineHeight = 18.sp
-                            )
-                            Icon(
-                                painter = painterResource(id = R.drawable.open_outline_svgrepo_com),
-                                contentDescription = "Arrow Right Icon",
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .padding(start = 8.dp, top = 4.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Spacer(modifier = Modifier.size(10.dp))

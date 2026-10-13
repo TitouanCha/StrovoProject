@@ -59,13 +59,25 @@ fun ColumnScope.AthleteStatsComponent(athleteHealth: HealthDataModel, modifier: 
             Column(
                 modifier = Modifier//.padding(16.dp)
             ) {
-
-                Text(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    text = "Stats des dernières semaines",
-                    fontSize = 22.sp,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ){
+                    Icon(
+                        painter = painterResource(id = R.drawable.health),
+                        contentDescription = "Health Icon",
+                        modifier = Modifier
+                            .size(28.dp)
+                            .padding(end = 8.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        modifier = Modifier,
+                        text = "Santé",
+                        fontSize = 22.sp,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 Spacer(modifier = Modifier.size(4.dp))
                 Row() {
                     Column(
