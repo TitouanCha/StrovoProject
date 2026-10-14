@@ -129,6 +129,7 @@ fun SettingsScreen(navController: NavController, settingsViewModel: SettingsView
                     Button(
                         modifier = Modifier,
                         onClick = {
+
                             coroutineScope.launch {
                                 tokenManager.clearTokens()
                                 navController.navigate(Screen.Auth.route) {

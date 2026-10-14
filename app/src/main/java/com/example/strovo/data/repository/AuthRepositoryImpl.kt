@@ -23,7 +23,6 @@ class AuthRepositoryImpl(context: Context): AuthRepository {
             } else {
                 Result.success(false)
             }
-            Result.success(false)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

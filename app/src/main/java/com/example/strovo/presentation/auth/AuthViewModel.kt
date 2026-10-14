@@ -43,7 +43,11 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch {
             _authUiState.value = AuthUiState.Loading
             authRepository.isUserInfoSaved().onSuccess { response ->
-                _authUiState.value = AuthUiState.Success(tokenManager.getAccessToken().toString())
+                if(response){
+                    _authUiState.value = AuthUiState.Success(tokenManager.getAccessToken().toString())
+                }else{
+                    _authUiState.value = AuthUiState.Error("Impossible de récupérer les informations de l'utilisateur.\n Veuillez vous reconnecter.")
+                }
             }.onFailure { exception ->
                 _authUiState.value = AuthUiState.Error("Impossible de récupérer les informations de l'utilisateur.\n Veuillez vous reconnecter.")
             }

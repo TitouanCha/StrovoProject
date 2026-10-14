@@ -52,4 +52,7 @@ class SettingsViewModel(application: Application): AndroidViewModel(application)
             }
         }
     }
+
+    fun logOut(){
+    }
 }

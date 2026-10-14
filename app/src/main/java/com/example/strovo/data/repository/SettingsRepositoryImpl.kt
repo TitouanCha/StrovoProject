@@ -43,7 +43,7 @@ class SettingsRepositoryImpl(context: Context): SettingsRepository {
         return Discipline.entries
     }
 
-    override suspend fun stravaLogOut() {
-        //TODO("Not yet implemented")
+    override suspend fun logOut(): Result<Void> {
+        return TODO("Provide the return value")
     }
 }
