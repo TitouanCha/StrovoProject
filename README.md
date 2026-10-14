@@ -23,3 +23,9 @@ L'application exploite ensuite les données récupérées afin de proposer une v
 * Calendrier → https://github.com/kizitonwose/Calendar
 * Graphiques → https://github.com/patrykandpatrick/vico
 * API Intervals.icu → https://intervals.icu/api/v1/docs/
+* ## Resources
+
+* Calendrier → https://github.com/kizitonwose/Calendar
+* Graphiques → https://github.com/patrykandpatrick/vico
+* API Intervals.icu → https://intervals.icu/api/v1/docs/
+* Icônes → [Solar Broken Line Icons](https://www.svgrepo.com/collection/solar-broken-line-icons/) par [Solar Icons](https://www.svgrepo.com/author/Solar%20Icons/) — Licence [CC Attribution (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
