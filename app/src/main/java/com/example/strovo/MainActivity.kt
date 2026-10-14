@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         if(currentRoute != Screen.Auth.route) {
                             BottomNavBar(
-                                currentPage = pagerState.currentPage,
+                                currentPage = if (currentRoute == Screen.MainPager.route) pagerState.currentPage else -1,
                                 onPageSelected = { page ->
                                     scope.launch {
                                         pagerState.animateScrollToPage(page)
@@ -155,7 +155,8 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getString("activityId") ?: return@composable
                             ActivityDetails(
                                 activityId = activityId,
-                                context = context
+                                context = context,
+                                navController = navController
                             )
                         }
                     }

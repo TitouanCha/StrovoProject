@@ -91,7 +91,7 @@ fun ActivityStats(
                         shape = RoundedCornerShape(12.dp),
                     ).padding(12.dp)
                 )
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.weight(0.05f))
                 DataActivityDisplay(
                     "Distance", "%.2f km".format(activity.distance), dataFontSize, modifier = Modifier.border(
                         width = 1.dp,
@@ -116,7 +116,7 @@ fun ActivityStats(
                         shape = RoundedCornerShape(12.dp),
                     ).padding(12.dp)
                 )
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.weight(0.05f))
                 DataActivityDisplay(
                     "Vitesse max",
                     if(activity.type == "Run" || activity.type == "TrailRun") activity.maxSpeed
@@ -142,7 +142,7 @@ fun ActivityStats(
                         shape = RoundedCornerShape(12.dp),
                     ).padding(12.dp)
                 )
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.weight(0.05f))
                 DataActivityDisplay("Bpm moyen", "${metaData.heartrate} bpm", dataFontSize,
                     modifier = Modifier.border(
                         width = 1.dp,

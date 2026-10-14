@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +33,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.strovo.R
 import com.example.strovo.presentation.component.activityDetailsComponents.ActivityData
 import com.example.strovo.presentation.component.activityDetailsComponents.MapComponent
@@ -38,7 +42,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ActivityDetails(activityId: String, context: Context) {
+fun ActivityDetails(navController: NavController, activityId: String, context: Context) {
     val viewModel: ActivityDetailViewModel = viewModel()
 
     val activityDetailsUiState = viewModel.activityDetailUiState.collectAsState().value
@@ -89,34 +93,51 @@ fun ActivityDetails(activityId: String, context: Context) {
                         selectedLapIndex = selectedLap.value
                     )
                 }
-                Box(
+                Row(
                     modifier = Modifier
                         .padding(16.dp)
-                        .clickable( onClick = {
-                            scope.launch {
-                                coroutineScope {
-                                    if(mapHeight.value == 1f){
-                                        launch { mapHeight.animateTo(0.5f, tween(500)) }
-                                        launch { dataHeight.animateTo(0.5f, tween(500))}
-                                    } else {
-                                        launch { mapHeight.animateTo(1f, tween(500)) }
-                                        launch { dataHeight.animateTo(0.1f, tween(500)) }
+                ){
+                    IconButton(
+                        onClick = { navController.popBackStack() }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.arrow_back_svg),
+                            contentDescription = "Back Icon",
+                            modifier = Modifier.size(40.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+                            )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                scope.launch {
+                                    coroutineScope {
+                                        if (mapHeight.value == 1f) {
+                                            launch { mapHeight.animateTo(0.5f, tween(500)) }
+                                            launch { dataHeight.animateTo(0.5f, tween(500)) }
+                                        } else {
+                                            launch { mapHeight.animateTo(1f, tween(500)) }
+                                            launch { dataHeight.animateTo(0.1f, tween(500)) }
+                                        }
                                     }
                                 }
-                            }
-                        })
-                ){
-                    Icon(
-                        painter = painterResource(
-                            id = if (mapHeight.value == 0.5f) {
-                                R.drawable.full_screen_svg
-                            } else {
-                                R.drawable.quit_full_screen_svgrepo_com
-                            }),
-                        contentDescription = "Fullscreen Icon",
-                        modifier = Modifier.size(40.dp),
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
+                            })
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (mapHeight.value == 0.5f) {
+                                    R.drawable.full_screen_svg
+                                } else {
+                                    R.drawable.quit_full_screen_svgrepo_com
+                                }
+                            ),
+                            contentDescription = "Fullscreen Icon",
+                            modifier = Modifier.size(40.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 }
                 Box(
                     modifier = Modifier
@@ -136,8 +157,13 @@ fun ActivityDetails(activityId: String, context: Context) {
                                             0.5f -> dataHeight.animateTo(0.9f, tween(500))
                                             else -> {
                                                 coroutineScope {
-                                                    launch{ dataHeight.animateTo(0.5f, tween(500))}
-                                                    launch{mapHeight.animateTo(0.5f, tween(500))}
+                                                    launch {
+                                                        dataHeight.animateTo(
+                                                            0.5f,
+                                                            tween(500)
+                                                        )
+                                                    }
+                                                    launch { mapHeight.animateTo(0.5f, tween(500)) }
                                                 }
                                             }
                                         }
@@ -153,14 +179,28 @@ fun ActivityDetails(activityId: String, context: Context) {
                                     totalDrag += dragAmount
                                     scope.launch {
                                         when {
-                                            totalDrag > 200 -> dataHeight.animateTo(0.5f, tween(500))
+                                            totalDrag > 200 -> dataHeight.animateTo(
+                                                0.5f,
+                                                tween(500)
+                                            )
+
                                             totalDrag < -200f ->
-                                                if(mapHeight.value == 0.5f) {
+                                                if (mapHeight.value == 0.5f) {
                                                     dataHeight.animateTo(0.9f, tween(500))
-                                                }else{
+                                                } else {
                                                     coroutineScope {
-                                                        launch{ dataHeight.animateTo(0.5f, tween(500)) }
-                                                        launch{ mapHeight.animateTo(0.5f, tween(500)) }
+                                                        launch {
+                                                            dataHeight.animateTo(
+                                                                0.5f,
+                                                                tween(500)
+                                                            )
+                                                        }
+                                                        launch {
+                                                            mapHeight.animateTo(
+                                                                0.5f,
+                                                                tween(500)
+                                                            )
+                                                        }
                                                     }
                                                 }
                                         }
