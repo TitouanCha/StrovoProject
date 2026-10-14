@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.example.strovo.presentation.component.DataChartComponent
 import com.example.strovo.domain.model.ActivityMetaData
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 
 @SuppressLint("DefaultLocale")
