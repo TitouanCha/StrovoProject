@@ -109,9 +109,9 @@ fun ActivityDetails(activityId: String, context: Context) {
                     Icon(
                         painter = painterResource(
                             id = if (mapHeight.value == 0.5f) {
-                                R.drawable.baseline_fullscreen_24
+                                R.drawable.full_screen_svg
                             } else {
-                                R.drawable.baseline_fullscreen_exit_24
+                                R.drawable.quit_full_screen_svgrepo_com
                             }),
                         contentDescription = "Fullscreen Icon",
                         modifier = Modifier.size(40.dp),

@@ -50,7 +50,7 @@ fun ActivityStats(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.running_man_icon),
+                    painter = painterResource(id = R.drawable.running_svg),
                     contentDescription = "Activity Date Icon",
                     modifier = Modifier.size(25.dp).padding(end = 4.dp),
                     tint = MaterialTheme.colorScheme.primary
