@@ -1,4 +1,4 @@
-package com.example.strovo.presentation.component
+package com.example.strovo
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")

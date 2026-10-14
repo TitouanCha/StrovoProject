@@ -31,11 +31,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.presentation.component.HeaderComponent
 import com.example.strovo.presentation.component.OnErrorComponent
-import com.example.strovo.presentation.component.progressScreenComponents.MonthlyAverageStatsComponents
 import com.example.strovo.presentation.component.progressScreenComponents.MonthlyDistanceListComponent
 import com.example.strovo.presentation.component.progressScreenComponents.YearSelectionComponent
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.presentation.component.Screen
+import com.example.strovo.Screen
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart

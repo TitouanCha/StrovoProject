@@ -3,32 +3,24 @@ package com.example.strovo.presentation.settings
 import DisciplineFlowRow
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Horizontal
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.strovo.R
 import com.example.strovo.presentation.component.HeaderComponent
-import com.example.strovo.presentation.component.Screen
-import com.example.strovo.data.model.Discipline
+import com.example.strovo.Screen
 import com.example.strovo.data.utils.TokenManager
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable

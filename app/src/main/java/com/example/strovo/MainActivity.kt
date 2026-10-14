@@ -25,7 +25,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.strovo.presentation.component.BottomNavBar
 import com.example.strovo.presentation.component.MainPagerScreen
-import com.example.strovo.presentation.component.Screen
 import com.example.strovo.presentation.map.ActivitiesMapScreen
 import com.example.strovo.presentation.activityDetails.ActivityDetails
 import com.example.strovo.presentation.monthlyActivities.MonthlyActivitiesScreen

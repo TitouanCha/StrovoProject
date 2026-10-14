@@ -6,8 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,14 +30,9 @@ import com.example.strovo.presentation.component.dashboardScreenComponents.Athle
 import com.example.strovo.presentation.component.dashboardScreenComponents.BottomSheetComponent
 import com.example.strovo.presentation.component.dashboardScreenComponents.CalendarDisplay
 import com.example.strovo.presentation.component.dashboardScreenComponents.LastActivityCard
-import com.example.strovo.data.model.strava.GetStravaActivitiesModelItem
 import com.example.strovo.data.utils.PointerInputUtils
-import com.example.strovo.presentation.component.Screen
+import com.example.strovo.Screen
 import com.example.strovo.domain.model.ActivityDetailModel
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 
 @Composable

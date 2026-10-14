@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,7 +53,9 @@ fun RowScope.DataActivityDisplay(title: String, data: String, fontSize: Int = 20
 @Composable
 fun DataOverallStatsDisplay(title: String, data: String){
     OutlinedCard(
-        modifier = Modifier.fillMaxWidth().padding(2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp),
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
@@ -72,53 +75,62 @@ fun DataOverallStatsDisplay(title: String, data: String){
 }
 
 @Composable
-fun MonthAverageStatsDisplay(title: String, data: String, dif: Int){
-    Column(
+fun RowScope.MonthAverageStatsDisplay(title: String, data: String, dif: Int){
+    OutlinedCard (
         modifier = Modifier
-    ) {
-        Text(
-            text = title,
-            fontSize = 12.sp,
-            lineHeight = 12.sp,
-        )
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = data,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .weight(3f)
-                    .padding(4.dp)
-            )
-            Row( modifier = Modifier.weight(1f) ){
-                if(dif != 0) {
-                    Icon(
-                        painter =
-                            if (dif < 0) painterResource(id = R.drawable.baseline_trending_down_24)
-                            else painterResource(id = R.drawable.baseline_trending_up_24),
-                        contentDescription = "Trending Up",
-                        modifier = Modifier.size(30.dp),
-                        tint =
-                            if (dif < 0) Color.Red
-                            else Color.Green
-                    )
-                    Text(
-                        text = if (dif > 0) "+$dif" else "$dif",
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .align(Alignment.CenterVertically),
-                        color =
-                            if (dif < 0) Color.Red
-                            else Color.Green
-                    )
+            .weight(1f)
+            .padding(0.dp)
+    ){
+        Column(
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = data,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        //.weight(1f)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier
+                        //.weight(1f)
+                ) {
+                    if (dif != 0) {
+                        Icon(
+                            painter =
+                                if (dif < 0) painterResource(id = R.drawable.course_down_svg)
+                                else painterResource(id = R.drawable.course_up_svg),
+                            contentDescription = "Trending Up",
+                            modifier = Modifier.size(30.dp),
+                            tint =
+                                if (dif < 0) Color.Red
+                                else Color.Green
+                        )
+                        Text(
+                            text = if (dif > 0) "+$dif" else "$dif",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .align(Alignment.CenterVertically),
+                            color =
+                                if (dif < 0) Color.Red
+                                else Color.Green
+                        )
+                    }
                 }
             }
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                lineHeight = 12.sp,
+            )
         }
     }
 }
