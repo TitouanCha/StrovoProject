@@ -18,12 +18,8 @@ Application Android
 
 L'application exploite ensuite les données récupérées afin de proposer une visualisation détaillée des différentes activités sportives : course à pied, cyclisme, marche, etc.
 
-## Resources
 
-* Calendrier → https://github.com/kizitonwose/Calendar
-* Graphiques → https://github.com/patrykandpatrick/vico
-* API Intervals.icu → https://intervals.icu/api/v1/docs/
-* ## Resources
+## Resources
 
 * Calendrier → https://github.com/kizitonwose/Calendar
 * Graphiques → https://github.com/patrykandpatrick/vico
