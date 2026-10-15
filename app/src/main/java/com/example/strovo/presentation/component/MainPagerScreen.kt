@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.strovo.presentation.dashboard.DashboardScreen
 import com.example.strovo.presentation.dashboard.DashboardViewModel
+import com.example.strovo.presentation.hallOfFame.HallOfFameScreen
 import com.example.strovo.presentation.progress.ProgressScreen
 import com.example.strovo.presentation.progress.ProgressViewModel
 
@@ -14,8 +15,9 @@ fun MainPagerScreen(navController: NavController, dashboardViewModel: DashboardV
 
     HorizontalPager(state = pagerState) { page ->
         when (page) {
-            0 -> DashboardScreen(navController, dashboardViewModel)
-            1 -> ProgressScreen(navController, progressViewModel)
+            0 -> HallOfFameScreen()
+            1 -> DashboardScreen(navController, dashboardViewModel)
+            2 -> ProgressScreen(navController, progressViewModel)
         }
     }
 }

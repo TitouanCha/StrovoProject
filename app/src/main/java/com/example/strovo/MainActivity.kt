@@ -51,8 +51,8 @@ class MainActivity : ComponentActivity() {
                     navBackStackEntry?.destination?.route
                 }
                 val pagerState = rememberPagerState (
-                    initialPage = 0,
-                    pageCount = {2}
+                    initialPage = 1,
+                    pageCount = {3}
                 )
                 val scope = rememberCoroutineScope()
 
