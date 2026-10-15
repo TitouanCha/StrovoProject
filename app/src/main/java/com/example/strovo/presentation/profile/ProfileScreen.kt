@@ -80,38 +80,33 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                     PbComponent(
                         title = "5km",
                         pb = settingsUiState.settingsData.userPb?.distance5km,
-                        onClick = { activityId ->
-
-                        }
-                    )
+                    ){ activityId ->
+                        navController.navigate(Screen.ActivityDetails.createRoute(activityId))
+                    }
                     PbComponent(
                         title = "10km",
-                        pb = settingsUiState.settingsData.userPb?.distance10km,
-                        onClick = { activityId ->
-
-                        }
-                    )
+                        pb = settingsUiState.settingsData.userPb?.distance10km
+                    ){ activityId ->
+                        navController.navigate(Screen.ActivityDetails.createRoute(activityId))
+                    }
                     PbComponent(
                         title = "Semi-marathon",
                         pb = settingsUiState.settingsData.userPb?.distanceHalfMarathon,
-                        onClick = { activityId ->
-
-                        }
-                    )
+                    ){ activityId ->
+                        navController.navigate(Screen.ActivityDetails.createRoute(activityId))
+                    }
                     PbComponent(
                         title = "Marathon",
                         pb = settingsUiState.settingsData.userPb?.distanceMarathon,
-                        onClick = { activityId ->
-
-                        }
-                    )
+                    ){ activityId ->
+                        navController.navigate(Screen.ActivityDetails.createRoute(activityId))
+                    }
                     PbComponent(
                         title = "Course la plus longue",
                         pb = settingsUiState.settingsData.userPb?.distanceLongest,
-                        onClick = { activityId ->
-
-                        }
-                    )
+                    ){ activityId ->
+                        navController.navigate(Screen.ActivityDetails.createRoute(activityId))
+                    }
                     Spacer(modifier = Modifier.weight(1f))
                     DisciplineFlowRow(
                         userDiscipline = settingsUiState.settingsData.selectedDisciplines,

@@ -23,7 +23,7 @@ fun PbComponent(
 ) {
     OutlinedCard(
         modifier = Modifier.padding(vertical = 4.dp),
-        onClick = {}
+        onClick = { onClick(pb?.activityId ?: "") }
     ){
         Column(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
