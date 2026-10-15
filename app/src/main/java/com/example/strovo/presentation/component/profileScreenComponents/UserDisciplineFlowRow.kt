@@ -1,4 +1,4 @@
-package com.example.strovo.presentation.component.settingScreenComponents
+package com.example.strovo.presentation.component.profileScreenComponents
 
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -20,9 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.strovo.presentation.component.settingScreenComponents.UpdateDisciplineFlowRow
+import com.example.strovo.presentation.component.profileScreenComponents.UpdateDisciplineFlowRow
 import com.example.strovo.data.model.Discipline
-import com.example.strovo.data.utils.DisciplineManager
 
 @Composable
 fun OnboardingComponent(

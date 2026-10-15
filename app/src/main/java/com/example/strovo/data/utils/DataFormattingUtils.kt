@@ -10,7 +10,7 @@ fun secondsToHms(seconds: Int): String {
     val h = seconds / 3600
     val m = (seconds % 3600) / 60
     val s = seconds % 60
-    if(h>0){ return "%02dh%02d".format(h, m) }
+    if(h>0){ return "%02dh%02d:%01d".format(h, m, s) }
     return  "%02d:%02d".format(m, s)
 }
 
