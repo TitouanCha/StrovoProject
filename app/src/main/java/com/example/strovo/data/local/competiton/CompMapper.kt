@@ -15,7 +15,7 @@ object CompMapper {
         date = domain.date.time,
         location = domain.location,
         type = domain.type,
-        activityJson = gson.toJson(domain.activityId)
+        activityId = domain.activityId
     )
 
     fun toDomain(entity: CompEntity): CompModel = CompModel(
@@ -25,6 +25,6 @@ object CompMapper {
         date = Date(entity.date),
         location = entity.location,
         type = entity.type,
-        activityId = gson.fromJson(entity.activityJson, ActivityDetailModel::class.java)
+        activityId = entity.activityId
     )
 }

@@ -11,8 +11,7 @@ import com.example.strovo.data.services.intervals.IntervalsRetrofitClient
 import com.example.strovo.data.services.intervals.basicAuthHeader
 import com.example.strovo.data.utils.TokenManager
 
-class AuthRepositoryImpl(context: Context): AuthRepository {
-    private val tokenManager = TokenManager(context)
+class AuthRepositoryImpl(val tokenManager: TokenManager): AuthRepository {
 
     override  suspend fun isUserInfoSaved(): Result<Boolean> {
         return try {

@@ -1,12 +1,12 @@
 package com.example.strovo.data.repository
 
-import android.content.Context
 import com.example.strovo.data.local.competiton.CompDao
 import com.example.strovo.data.local.competiton.CompMapper
 import com.example.strovo.domain.model.CompModel
 import com.example.strovo.domain.repository.HallOfFameRepository
 
-class HallOfFameRepositoryImpl(val context: Context, val local: CompDao): HallOfFameRepository{
+class HallOfFameRepositoryImpl(val local: CompDao): HallOfFameRepository{
+
     override suspend fun getAllComp(): Result<List<CompModel>> {
         try{
             val localDataComps = local.getAll()

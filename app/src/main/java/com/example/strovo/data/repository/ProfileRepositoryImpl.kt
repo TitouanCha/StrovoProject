@@ -14,9 +14,8 @@ import com.example.strovo.presentation.profile.ProfileUiState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class ProfileRepositoryImpl(context: Context): ProfileRepository {
-    private val disciplineManager = DisciplineManager(context)
-    private val tokenManager = TokenManager(context)
+class ProfileRepositoryImpl(val disciplineManager: DisciplineManager, val tokenManager: TokenManager): ProfileRepository {
+
 
     override suspend fun getAthletePB(): Result<AthletePB> {
         val token = tokenManager.getAccessToken()

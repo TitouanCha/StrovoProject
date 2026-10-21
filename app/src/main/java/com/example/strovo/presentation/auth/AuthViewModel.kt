@@ -2,6 +2,7 @@ package com.example.strovo.presentation.auth
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.example.strovo.data.repository.AuthRepositoryImpl
 import com.example.strovo.data.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,13 +12,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.FirstLaunchManager
+import com.example.strovo.domain.repository.AuthRepository
 import kotlinx.coroutines.launch
 
-class AuthViewModel(application: Application): AndroidViewModel(application) {
-    private val tokenManager = TokenManager(application)
-    private val disciplineManager = DisciplineManager(application)
-    private val firstLaunchManager = FirstLaunchManager(application)
-    private val authRepository = AuthRepositoryImpl(application)
+class AuthViewModel(
+    val tokenManager: TokenManager,
+    val disciplineManager: DisciplineManager,
+    val firstLaunchManager: FirstLaunchManager,
+    val authRepository: AuthRepository
+): ViewModel() {
 
     private val _authUiState = MutableStateFlow<AuthUiState>(AuthUiState.Initial)
     val authUiState: StateFlow<AuthUiState> = _authUiState.asStateFlow()

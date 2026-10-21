@@ -16,8 +16,7 @@ import com.example.strovo.domain.model.HealthDataModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class DashboardRepositoryImpl(context: Context): DashboardRepository {
-    val tokenManager: TokenManager = TokenManager(context)
+class DashboardRepositoryImpl(val tokenManager: TokenManager): DashboardRepository {
 
     override suspend fun getMonthData(before: String, after: String): Result<List<ActivityDetailModel>> {
         return try {
