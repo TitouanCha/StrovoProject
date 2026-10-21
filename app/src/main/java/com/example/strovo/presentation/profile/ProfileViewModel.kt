@@ -2,6 +2,7 @@ package com.example.strovo.presentation.profile
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.Discipline
 import com.example.strovo.data.repository.ProfileRepositoryImpl
@@ -13,8 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(application: Application): AndroidViewModel(application) {
-    private val profileRepository: ProfileRepository = ProfileRepositoryImpl(application)
+class ProfileViewModel(val profileRepository: ProfileRepository): ViewModel() {
 
     private val _profileUiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val profileUiState: StateFlow<ProfileUiState> = _profileUiState.asStateFlow()

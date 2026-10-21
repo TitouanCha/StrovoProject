@@ -2,6 +2,7 @@ package com.example.strovo.presentation.dashboard
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.strovo.data.model.strava.GetOverallStatsModel
 import com.example.strovo.data.repository.DashboardRepositoryImpl
@@ -10,6 +11,8 @@ import com.example.strovo.data.model.toDiscipline
 import com.example.strovo.data.repository.AuthRepositoryImpl
 import com.example.strovo.data.utils.DisciplineManager
 import com.example.strovo.data.utils.TokenManager
+import com.example.strovo.domain.repository.AuthRepository
+import com.example.strovo.domain.repository.DashboardRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,12 +22,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class DashboardViewModel(application: Application) : AndroidViewModel(application) {
-    private val tokenManager = TokenManager(application)
-    private val disciplineManager = DisciplineManager(application)
-    private val dashboardRepository = DashboardRepositoryImpl(application)
-    private val authRepository = AuthRepositoryImpl(application)
-
+class DashboardViewModel(
+    val tokenManager: TokenManager,
+    val disciplineManager: DisciplineManager,
+    val dashboardRepository: DashboardRepository,
+    val authRepository: AuthRepository
+) : ViewModel() {
     private val _dashboardUiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading)
     val dashboardUiState: StateFlow<DashboardUiState> = _dashboardUiState.asStateFlow()
 

@@ -1,14 +1,9 @@
 package com.example.strovo.presentation.progress
 
-import android.R
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.strovo.data.repository.ProgressRepositoryImpl
-import com.example.strovo.data.repository.AuthRepositoryImpl
-import com.example.strovo.data.utils.TokenManager
-import com.example.strovo.domain.model.ActivityTrackPoint
 import com.example.strovo.domain.model.ProgressModel
+import com.example.strovo.domain.repository.ProgressRepository
 import com.example.strovo.model.strava.AverageStatsModel
 import com.example.strovo.model.strava.MonthlyDistanceModel
 import com.example.strovo.model.strava.YearActivitiesModel
@@ -20,8 +15,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-class ProgressViewModel(application: Application): AndroidViewModel(application) {
-    private val progressRepository = ProgressRepositoryImpl(application)
+class ProgressViewModel(val progressRepository: ProgressRepository): ViewModel() {
 
     private val currentYear = Instant.now().atZone(ZoneId.systemDefault()).year
 

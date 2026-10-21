@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 android {
     namespace = "com.example.strovo"
@@ -119,6 +120,10 @@ dependencies {
     //implementation("com.google.android.gms:play-services-maps:18.2.0")
     //implementation("org.maplibre.compose:maplibre-compose:0.12.1")
     //implementation("org.osmdroid:osmdroid-android:6.1.18")
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 }
 
 secrets {

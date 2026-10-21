@@ -1,5 +1,6 @@
 package com.example.strovo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,8 +22,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
+import androidx.navigation.Navigation
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.room.Room
+import com.example.strovo.data.local.StrovoDataBase
+import com.example.strovo.data.repository.AuthRepositoryImpl
+import com.example.strovo.data.repository.DashboardRepositoryImpl
+import com.example.strovo.data.repository.HallOfFameRepositoryImpl
+import com.example.strovo.data.repository.ProfileRepositoryImpl
+import com.example.strovo.data.repository.ProgressRepositoryImpl
+import com.example.strovo.data.utils.DisciplineManager
+import com.example.strovo.data.utils.FirstLaunchManager
+import com.example.strovo.data.utils.TokenManager
+import com.example.strovo.domain.repository.DashboardRepository
+import com.example.strovo.domain.repository.ProgressRepository
 import com.example.strovo.presentation.component.BottomNavBar
 import com.example.strovo.presentation.component.MainPagerScreen
 import com.example.strovo.presentation.map.ActivitiesMapScreen
@@ -34,13 +48,49 @@ import com.example.strovo.presentation.progress.ProgressViewModel
 import com.example.strovo.presentation.profile.ProfileViewModel
 import com.example.strovo.presentation.auth.AuthScreen
 import com.example.strovo.presentation.auth.AuthViewModel
+import com.example.strovo.presentation.hallOfFame.AddCompScreen
+import com.example.strovo.presentation.hallOfFame.HallOfFameScreen
+import com.example.strovo.presentation.hallOfFame.HallOfFameViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var appViewModels: AppViewModel
+
+    private fun injectDependencies(tokenManager: TokenManager, disciplineManager: DisciplineManager, firstLaunchManager: FirstLaunchManager): AppViewModel {
+        val database = Room.databaseBuilder(
+            applicationContext,
+            StrovoDataBase::class.java,
+            "strovo_database"
+        ).build()
+        val raceDao = database.compDao()
+
+        val authRepository = AuthRepositoryImpl(tokenManager)
+        val dashboardRepository = DashboardRepositoryImpl(tokenManager)
+        val progressRepository = ProgressRepositoryImpl(tokenManager, disciplineManager)
+        val profileRepository = ProfileRepositoryImpl(disciplineManager, tokenManager)
+        val hallOfFameRepository = HallOfFameRepositoryImpl(raceDao)
+        
+        return AppViewModel(
+            authViewModel = AuthViewModel(tokenManager, disciplineManager, firstLaunchManager, authRepository),
+            dashboardViewModel = DashboardViewModel(tokenManager, disciplineManager, dashboardRepository, authRepository),
+            progressViewModel = ProgressViewModel(progressRepository),
+            profileViewModel = ProfileViewModel(profileRepository),
+            hallOfFameViewModel = HallOfFameViewModel(hallOfFameRepository)
+        )
+    }
+
+    @SuppressLint("ViewModelConstructorInComposable")
     override fun onCreate(savedInstanceState: Bundle?) {
+        val tokenManager = TokenManager(this)
+        val disciplineManager = DisciplineManager(this)
+        val firstLaunchManager = FirstLaunchManager(this)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        appViewModels = injectDependencies(tokenManager, disciplineManager, firstLaunchManager)
+
         setContent {
             StrovoTheme {
                 val navController = rememberNavController()
@@ -50,117 +100,7 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = remember(navBackStackEntry) {
                     navBackStackEntry?.destination?.route
                 }
-                val pagerState = rememberPagerState (
-                    initialPage = 0,
-                    pageCount = {2}
-                )
-                val scope = rememberCoroutineScope()
-
-                val stravaAuthViewModel: AuthViewModel = viewModel()
-                val dashboardViewModel: DashboardViewModel = viewModel()
-                val progressViewModel: ProgressViewModel = viewModel()
-                val profileViewModel: ProfileViewModel = viewModel()
-
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = {
-                        if(currentRoute != Screen.Auth.route) {
-                            BottomNavBar(
-                                currentPage = if (currentRoute == Screen.MainPager.route) pagerState.currentPage else -1,
-                                onPageSelected = { page ->
-                                    scope.launch {
-                                        pagerState.animateScrollToPage(page)
-                                    }
-                                    if(currentRoute != Screen.MainPager.route) {
-                                        navController.navigate(Screen.MainPager.route) {
-                                            popUpTo(Screen.MainPager.route) { inclusive = true }
-                                        }
-                                    }
-                                }
-                            )
-                        }
-                    }
-                )
-                { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Auth.route,
-                        modifier = Modifier.padding(innerPadding),
-                        enterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = tween(300)
-                            )
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                                animationSpec = tween(300)
-                            )
-                        },
-                        popEnterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                animationSpec = tween(300)
-                            )
-                        },
-                        popExitTransition = {
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                                animationSpec = tween(300)
-                            )
-                        }
-                    ) {
-                        composable(Screen.Auth.route) {
-                            AuthScreen(viewModel = stravaAuthViewModel, navController = navController)
-                        }
-                        composable(Screen.Settings.route) {
-                            ProfileScreen(navController, profileViewModel)
-                        }
-                        composable(Screen.MainPager.route) {
-                            MainPagerScreen(
-                                navController = navController,
-                                dashboardViewModel = dashboardViewModel,
-                                progressViewModel = progressViewModel,
-                                pagerState = pagerState,
-                            )
-                        }
-                        composable(Screen.Map.route) {
-                            ActivitiesMapScreen(progressViewModel)
-                        }
-                        composable(
-                            route = Screen.MonthlyActivities.route,
-                            arguments = listOf(
-                                navArgument("monthIndex") {
-                                    type = NavType.IntType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val monthIndex = backStackEntry.arguments?.getInt("monthIndex") ?: 0
-                            MonthlyActivitiesScreen(
-                                navController = navController,
-                                monthIndex = monthIndex,
-                                viewModel = progressViewModel
-                            )
-                        }
-                        composable(
-                            route = Screen.ActivityDetails.route,
-                            arguments = listOf(
-                                navArgument("activityId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val activityId =
-                                backStackEntry.arguments?.getString("activityId") ?: return@composable
-                            ActivityDetails(
-                                activityId = activityId,
-                                context = context,
-                                navController = navController
-                            )
-                        }
-                    }
-                }
+                AppNavigation(context, appViewModels, currentRoute.toString(), navController)
             }
         }
     }

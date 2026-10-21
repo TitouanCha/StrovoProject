@@ -17,9 +17,7 @@ import kotlinx.coroutines.coroutineScope
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ProgressRepositoryImpl(context: Context): ProgressRepository {
-    private val tokenManager = TokenManager(context)
-    private val disciplineManager = DisciplineManager(context)
+class ProgressRepositoryImpl(val tokenManager: TokenManager, val disciplineManager: DisciplineManager): ProgressRepository {
 
     override suspend fun getYearActivities(year: Int): Result<YearActivitiesModel> {
         val oldest: String = LocalDateTime.of(year, 1, 1, 0, 0, 0)

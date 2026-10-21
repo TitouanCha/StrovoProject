@@ -7,8 +7,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,16 +24,16 @@ import com.example.strovo.presentation.component.profileScreenComponents.PbCompo
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel) {
+fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val tokenManager = TokenManager(LocalContext.current)
 
-    val settingsUiState = profileViewModel.profileUiState.collectAsState().value
+    val settingsUiState = viewModel.profileUiState.collectAsState().value
     val isDisciplineListUpdated = remember { mutableStateOf<Boolean>(false) }
 
     LaunchedEffect(Unit) {
-        profileViewModel.loadProfile()
+        viewModel.loadProfile()
     }
 
     Column(
@@ -116,7 +114,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                             .fillMaxWidth(),
                         addDisciplineClick = { newDisciplineList ->
                             if(isDisciplineListUpdated.value){
-                                profileViewModel.addDisciplines(newDisciplineList)
+                                viewModel.addDisciplines(newDisciplineList)
                             }
                             isDisciplineListUpdated.value = !isDisciplineListUpdated.value
                         }

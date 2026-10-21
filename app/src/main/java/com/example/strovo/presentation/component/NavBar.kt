@@ -1,6 +1,7 @@
 package com.example.strovo.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.strovo.R
 import com.example.strovo.Screen
+import java.nio.file.WatchEvent
 
 
 @Composable
@@ -28,19 +30,16 @@ fun BottomNavBar(
     ){
         NavigationBarItem(
             icon = {
-                Row(){
                     Icon(
-                        painter = painterResource(id = R.drawable.dashboard_svg),
-                        contentDescription = "Dashboard Icon",
+                        painter = painterResource(id = R.drawable.medal_1_svg),
+                        contentDescription = "Medal Icon",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .size(26.dp)
                     )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Text("Dashboard", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-
             },
+            label = { Text("Palmares", color = MaterialTheme.colorScheme.onSurfaceVariant)},
+            modifier = Modifier.weight(1f),
             selected = currentPage == 0,
             onClick = {
                 onPageSelected(0)
@@ -48,7 +47,23 @@ fun BottomNavBar(
         )
         NavigationBarItem(
             icon = {
-                Row() {
+                    Icon(
+                        painter = painterResource(id = R.drawable.dashboard_svg),
+                        contentDescription = "Dashboard Icon",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(26.dp)
+                    )
+            },
+            label = { Text("Dashboard", color = MaterialTheme.colorScheme.onSurfaceVariant)},
+            modifier = Modifier.weight(1f),
+            selected = currentPage == 1,
+            onClick = {
+                onPageSelected(1)
+            },
+        )
+        NavigationBarItem(
+            icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.progress_svg),
                         contentDescription = "Progress Icon",
@@ -56,13 +71,12 @@ fun BottomNavBar(
                         modifier = Modifier
                             .size(26.dp)
                     )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Text("Progrés", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
             },
-            selected = currentPage == 1,
+            label = { Text("Progrés", color = MaterialTheme.colorScheme.onSurfaceVariant)},
+            modifier = Modifier.weight(1f),
+            selected = currentPage == 2,
             onClick = {
-                onPageSelected(1)
+                onPageSelected(2)
             }
         )
     }
